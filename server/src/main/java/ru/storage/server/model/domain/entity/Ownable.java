@@ -1,6 +1,6 @@
 package ru.storage.server.model.domain.entity;
 
-import ru.storage.common.api.dto.exceptions.ValidationException;
+import ru.storage.common.dto.exceptions.ValidationException;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

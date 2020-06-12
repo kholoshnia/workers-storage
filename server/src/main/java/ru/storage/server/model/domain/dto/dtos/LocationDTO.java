@@ -1,9 +1,8 @@
 package ru.storage.server.model.domain.dto.dtos;
 
-import ru.storage.common.api.dto.DTO;
-import ru.storage.common.api.dto.exceptions.ValidationException;
+import ru.storage.common.dto.DTO;
+import ru.storage.common.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.dto.OwnableDTO;
-import ru.storage.server.model.domain.dto.Parser;
 import ru.storage.server.model.domain.entity.ID;
 import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 
@@ -24,9 +23,29 @@ public final class LocationDTO extends OwnableDTO implements DTO<Location> {
   public LocationDTO(String addressString, String latitudeString, String longitudeString)
       throws ValidationException {
     super(ID.DEFAULT, ID.DEFAULT);
-    this.address = Parser.parseString(addressString);
-    this.latitude = Parser.parseDouble(latitudeString);
-    this.longitude = Parser.parseDouble(longitudeString);
+    this.address = parseString(addressString);
+    this.latitude = parseDouble(latitudeString);
+    this.longitude = parseDouble(longitudeString);
+  }
+
+  private String parseString(String value) {
+    if (value == null || value.trim().isEmpty()) {
+      return null;
+    }
+
+    return value;
+  }
+
+  private Double parseDouble(String value) throws ValidationException {
+    Double result;
+
+    try {
+      result = Double.parseDouble(value);
+    } catch (NumberFormatException | NullPointerException e) {
+      throw new ValidationException(e);
+    }
+
+    return result;
   }
 
   @Override

@@ -1,9 +1,8 @@
 package ru.storage.server.model.domain.dto.dtos;
 
-import ru.storage.common.api.dto.DTO;
-import ru.storage.common.api.dto.exceptions.ValidationException;
+import ru.storage.common.dto.DTO;
+import ru.storage.common.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.dto.IDDTO;
-import ru.storage.server.model.domain.dto.Parser;
 import ru.storage.server.model.domain.entity.ID;
 import ru.storage.server.model.domain.entity.entities.user.Role;
 import ru.storage.server.model.domain.entity.entities.user.User;
@@ -30,11 +29,19 @@ public final class UserDTO extends IDDTO implements DTO<User> {
 
   public UserDTO(String nameString, String loginString, String passwordString) {
     super(ID.DEFAULT);
-    this.name = Parser.parseString(nameString);
-    this.login = Parser.parseString(loginString);
-    this.password = Parser.parseString(passwordString);
+    this.name = parseString(nameString);
+    this.login = parseString(loginString);
+    this.password = parseString(passwordString);
     this.role = Role.UNAUTHORIZED;
     this.loggedIn = false;
+  }
+
+  private String parseString(String value) {
+    if (value == null || value.trim().isEmpty()) {
+      return null;
+    }
+
+    return value;
   }
 
   @Override

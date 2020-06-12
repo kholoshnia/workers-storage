@@ -1,8 +1,8 @@
 package ru.storage.server.model.domain.entity.entities.worker;
 
-import ru.storage.common.api.dto.DTO;
-import ru.storage.common.api.dto.Entity;
-import ru.storage.common.api.dto.exceptions.ValidationException;
+import ru.storage.common.dto.DTO;
+import ru.storage.common.dto.Entity;
+import ru.storage.common.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.dto.dtos.CoordinatesDTO;
 import ru.storage.server.model.domain.entity.Ownable;
 

@@ -1,6 +1,6 @@
-package ru.storage.common.api.dto;
+package ru.storage.common.dto;
 
-import ru.storage.common.api.dto.exceptions.ValidationException;
+import ru.storage.common.dto.exceptions.ValidationException;
 
 /**
  * Entities with ability to be converted to the DTO type must implement DTO interface.

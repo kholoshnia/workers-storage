@@ -1,8 +1,8 @@
 package ru.storage.server.model.domain.entity.entities.user;
 
-import ru.storage.common.api.dto.DTO;
-import ru.storage.common.api.dto.Entity;
-import ru.storage.common.api.dto.exceptions.ValidationException;
+import ru.storage.common.dto.DTO;
+import ru.storage.common.dto.Entity;
+import ru.storage.common.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.dto.dtos.UserDTO;
 import ru.storage.server.model.domain.entity.ID;
 

@@ -1,4 +1,4 @@
-package ru.storage.common.api.dto;
+package ru.storage.common.dto;
 
 /** DTO entities with ability to be converted to the entity type must implement Entity interface. */
 public interface Entity {

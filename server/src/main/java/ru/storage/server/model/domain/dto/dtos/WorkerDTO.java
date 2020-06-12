@@ -1,9 +1,8 @@
 package ru.storage.server.model.domain.dto.dtos;
 
-import ru.storage.common.api.dto.DTO;
-import ru.storage.common.api.dto.exceptions.ValidationException;
+import ru.storage.common.dto.DTO;
+import ru.storage.common.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.dto.OwnableDTO;
-import ru.storage.server.model.domain.dto.Parser;
 import ru.storage.server.model.domain.entity.ID;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.domain.entity.entities.worker.Status;
@@ -11,6 +10,8 @@ import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public final class WorkerDTO extends OwnableDTO implements DTO<Worker> {
   public final LocalDateTime creationDate;
@@ -57,12 +58,48 @@ public final class WorkerDTO extends OwnableDTO implements DTO<Worker> {
       throws ValidationException {
     super(ID.DEFAULT, ID.DEFAULT);
     this.creationDate = LocalDateTime.now();
-    this.salary = Parser.parseDouble(salaryString);
-    this.status = Parser.parseStatus(statusString);
-    this.startDate = Parser.parseLocalDateTime(startDateString);
-    this.endDate = Parser.parseLocalDateTime(endDateString);
+    this.salary = parseDouble(salaryString);
+    this.status = parseStatus(statusString);
+    this.startDate = parseLocalDateTime(startDateString);
+    this.endDate = parseLocalDateTime(endDateString);
     this.coordinatesDTO = coordinatesDTO;
     this.personDTO = personDTO;
+  }
+
+  private Double parseDouble(String value) throws ValidationException {
+    Double result;
+
+    try {
+      result = Double.parseDouble(value);
+    } catch (NumberFormatException | NullPointerException e) {
+      throw new ValidationException(e);
+    }
+
+    return result;
+  }
+
+  private Status parseStatus(String value) throws ValidationException {
+    Status status;
+
+    try {
+      status = Status.valueOf(value);
+    } catch (IllegalArgumentException | NullPointerException e) {
+      throw new ValidationException(e);
+    }
+
+    return status;
+  }
+
+  private LocalDateTime parseLocalDateTime(String value) throws ValidationException {
+    LocalDateTime result;
+
+    try {
+      result = LocalDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME);
+    } catch (DateTimeParseException | NullPointerException e) {
+      throw new ValidationException(e);
+    }
+
+    return result;
   }
 
   @Override

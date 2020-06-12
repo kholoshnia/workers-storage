@@ -1,4 +1,4 @@
-package ru.storage.common.api;
+package ru.storage.common;
 
 import org.apache.commons.configuration2.Configuration;
 

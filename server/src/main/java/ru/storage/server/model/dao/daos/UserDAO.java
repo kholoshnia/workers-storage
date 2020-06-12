@@ -2,7 +2,7 @@ package ru.storage.server.model.dao.daos;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.api.dto.exceptions.ValidationException;
+import ru.storage.common.dto.exceptions.ValidationException;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.domain.entity.entities.user.Role;

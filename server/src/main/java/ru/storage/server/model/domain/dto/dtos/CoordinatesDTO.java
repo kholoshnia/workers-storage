@@ -1,9 +1,8 @@
 package ru.storage.server.model.domain.dto.dtos;
 
-import ru.storage.common.api.dto.DTO;
-import ru.storage.common.api.dto.exceptions.ValidationException;
+import ru.storage.common.dto.DTO;
+import ru.storage.common.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.dto.OwnableDTO;
-import ru.storage.server.model.domain.dto.Parser;
 import ru.storage.server.model.domain.entity.ID;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 
@@ -23,9 +22,21 @@ public final class CoordinatesDTO extends OwnableDTO implements DTO<Coordinates>
 
   public CoordinatesDTO(String xString, String yString, String zString) throws ValidationException {
     super(ID.DEFAULT, ID.DEFAULT);
-    this.x = Parser.parseDouble(xString);
-    this.y = Parser.parseDouble(yString);
-    this.z = Parser.parseDouble(zString);
+    this.x = parseDouble(xString);
+    this.y = parseDouble(yString);
+    this.z = parseDouble(zString);
+  }
+
+  private Double parseDouble(String value) throws ValidationException {
+    Double result;
+
+    try {
+      result = Double.parseDouble(value);
+    } catch (NumberFormatException | NullPointerException e) {
+      throw new ValidationException(e);
+    }
+
+    return result;
   }
 
   @Override

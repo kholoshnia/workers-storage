@@ -1,9 +1,8 @@
 package ru.storage.server.model.domain.dto.dtos;
 
-import ru.storage.common.api.dto.DTO;
-import ru.storage.common.api.dto.exceptions.ValidationException;
+import ru.storage.common.dto.DTO;
+import ru.storage.common.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.dto.OwnableDTO;
-import ru.storage.server.model.domain.dto.Parser;
 import ru.storage.server.model.domain.entity.ID;
 import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
@@ -27,9 +26,17 @@ public final class PersonDTO extends OwnableDTO implements DTO<Person> {
 
   public PersonDTO(String nameString, String passportIDString, DTO<Location> locationDTO) {
     super(ID.DEFAULT, ID.DEFAULT);
-    this.name = Parser.parseString(nameString);
-    this.passportID = Parser.parseString(passportIDString);
+    this.name = parseString(nameString);
+    this.passportID = parseString(passportIDString);
     this.locationDTO = locationDTO;
+  }
+
+  private String parseString(String value) {
+    if (value == null || value.trim().isEmpty()) {
+      return null;
+    }
+
+    return value;
   }
 
   @Override

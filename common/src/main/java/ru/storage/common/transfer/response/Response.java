@@ -1,7 +1,7 @@
 package ru.storage.common.transfer.response;
 
-import ru.storage.common.api.dto.DTO;
-import ru.storage.common.api.dto.Entity;
+import ru.storage.common.dto.DTO;
+import ru.storage.common.dto.Entity;
 
 public final class Response implements Entity {
   private final Status status;

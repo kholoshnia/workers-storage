@@ -1,7 +1,7 @@
 package ru.storage.server.controller.command.factory.factories;
 
 import org.apache.commons.configuration2.Configuration;
-import ru.storage.common.api.CommandMediator;
+import ru.storage.common.CommandMediator;
 import ru.storage.server.controller.command.Command;
 import ru.storage.server.controller.command.commands.history.ClearHistoryCommand;
 import ru.storage.server.controller.command.commands.history.HistoryCommand;

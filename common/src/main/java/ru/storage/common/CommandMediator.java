@@ -11,6 +11,8 @@ public final class CommandMediator {
   public final String ADD;
   public final String REMOVE;
   public final String UPDATE;
+  public final String EXIT;
+  public final String HELP;
   public final String INFO;
   public final String SHOW;
 
@@ -23,6 +25,8 @@ public final class CommandMediator {
     ADD = configuration.getString("commands.add");
     REMOVE = configuration.getString("commands.remove");
     UPDATE = configuration.getString("commands.update");
+    EXIT = configuration.getString("commands.exit");
+    HELP = configuration.getString("commands.help");
     INFO = configuration.getString("commands.info");
     SHOW = configuration.getString("commands.show");
   }

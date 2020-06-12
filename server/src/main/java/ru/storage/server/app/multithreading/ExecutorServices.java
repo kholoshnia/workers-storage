@@ -1,9 +1,9 @@
-package ru.storage.server.server.multithreading;
+package ru.storage.server.app.multithreading;
 
-import ru.storage.server.server.multithreading.exceptions.ExecutorServicesException;
-import ru.storage.server.server.multithreading.tasks.HandleTask;
-import ru.storage.server.server.multithreading.tasks.ReadTask;
-import ru.storage.server.server.multithreading.tasks.SendTask;
+import ru.storage.server.app.multithreading.exceptions.ExecutorServicesException;
+import ru.storage.server.app.multithreading.tasks.HandleTask;
+import ru.storage.server.app.multithreading.tasks.ReadTask;
+import ru.storage.server.app.multithreading.tasks.SendTask;
 
 import java.util.concurrent.Executor;
 

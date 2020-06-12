@@ -23,7 +23,6 @@ import java.util.ResourceBundle;
 /** Database class that initialize tables. */
 public final class Database extends DataSource implements ExitListener {
   private static final String INIT_USERS_TABLE_EXCEPTION_MESSAGE;
-  private static final String INIT_HISTORY_TABLE_EXCEPTION_MESSAGE;
   private static final String INIT_WORKERS_TABLE_EXCEPTION_MESSAGE;
   private static final String INIT_COORDINATES_TABLE_EXCEPTION_MESSAGE;
   private static final String INIT_PERSONS_TABLE_EXCEPTION_MESSAGE;
@@ -34,8 +33,6 @@ public final class Database extends DataSource implements ExitListener {
 
     INIT_USERS_TABLE_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.initUsersTable");
-    INIT_HISTORY_TABLE_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.initHistoryTable");
     INIT_WORKERS_TABLE_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.initWorkersTable");
     INIT_COORDINATES_TABLE_EXCEPTION_MESSAGE =

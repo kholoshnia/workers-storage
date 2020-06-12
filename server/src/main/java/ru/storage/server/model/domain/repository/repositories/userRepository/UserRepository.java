@@ -78,7 +78,7 @@ public final class UserRepository implements Repository<User> {
 
     List<User> result = query.execute(users);
 
-    logger.debug("Query: " + query + " was executed SUCCESSFULLY.");
+    logger.debug("WorkerQuery: " + query + " was executed SUCCESSFULLY.");
     return result;
   }
 

@@ -109,7 +109,7 @@ public final class WorkerRepository implements Repository<Worker> {
   public synchronized List<Worker> get(@Nonnull Query<Worker> query) throws RepositoryException {
     List<Worker> result = query.execute(workers);
 
-    logger.debug("Query: " + query + " was executed SUCCESSFULLY.");
+    logger.debug("WorkerQuery: " + query + " was executed SUCCESSFULLY.");
     return result;
   }
 

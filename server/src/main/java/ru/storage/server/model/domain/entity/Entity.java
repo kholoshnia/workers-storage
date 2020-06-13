@@ -1,4 +1,6 @@
-package ru.storage.common.dto;
+package ru.storage.server.model.domain.entity;
+
+import ru.storage.server.model.domain.dto.DTO;
 
 /** DTO entities with ability to be converted to the entity type must implement Entity interface. */
 public interface Entity {

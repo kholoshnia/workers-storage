@@ -2,7 +2,7 @@ package ru.storage.server.model.dao.daos;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.domain.entity.entities.worker.person.Location;
@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class LocationDAO implements DAO<Long, Location> {
@@ -28,7 +27,7 @@ public class LocationDAO implements DAO<Long, Location> {
 
   static {
     ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("internal.LocationDAO", Locale.ENGLISH);
+        ResourceBundle.getBundle("internal.LocationDAO");
 
     CANNOT_GET_ALL_LOCATION_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.cannotGetAllLocations");

@@ -1,25 +1,25 @@
 package ru.storage.server.model.domain.dto.dtos;
 
-import ru.storage.common.dto.DTO;
-import ru.storage.common.dto.exceptions.ValidationException;
-import ru.storage.server.model.domain.dto.IDDTO;
-import ru.storage.server.model.domain.entity.ID;
+import ru.storage.server.model.domain.dto.DTO;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.user.Role;
 import ru.storage.server.model.domain.entity.entities.user.User;
 
-public final class UserDTO extends IDDTO implements DTO<User> {
-  public String name;
+public final class UserDTO implements DTO<User> {
+  public final long id;
 
-  public String login;
+  public final String name;
 
-  public String password;
+  public final String login;
 
-  public Role role;
+  public final String password;
 
-  public boolean loggedIn;
+  public final Role role;
+
+  public final boolean loggedIn;
 
   public UserDTO(long id, String name, String login, String password, Role role, boolean loggedIn) {
-    super(id);
+    this.id = id;
     this.name = name;
     this.login = login;
     this.password = password;
@@ -28,7 +28,7 @@ public final class UserDTO extends IDDTO implements DTO<User> {
   }
 
   public UserDTO(String nameString, String loginString, String passwordString) {
-    super(ID.DEFAULT);
+    this.id = User.DEFAULT_ID;
     this.name = parseString(nameString);
     this.login = parseString(loginString);
     this.password = parseString(passwordString);

@@ -1,18 +1,21 @@
 package ru.storage.server.model.domain.entity.entities.worker;
 
-import ru.storage.common.dto.DTO;
-import ru.storage.common.dto.Entity;
-import ru.storage.common.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.dto.dtos.WorkerDTO;
-import ru.storage.server.model.domain.entity.Ownable;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.Entity;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 
 import java.time.LocalDateTime;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public final class Worker extends Ownable implements Cloneable, Entity {
+public final class Worker implements Cloneable, Entity {
+  public static final long DEFAULT_ID = 0L;
+  public static final long DEFAULT_OWNER_ID = 0L;
+
+  public static final String ID_COLUMN = "id";
+  public static final String OWNER_ID_COLUMN = "owner_id";
   public static final String TABLE_NAME = "workers";
   public static final String CREATION_DATE_COLUMN = "creation_date";
   public static final String SALARY_COLUMN = "salary";
@@ -22,6 +25,8 @@ public final class Worker extends Ownable implements Cloneable, Entity {
   public static final String COORDINATES_COLUMN = "coordinates";
   public static final String PERSON_COLUMN = "person";
 
+  private static final String WRONG_ID_EXCEPTION_MESSAGE;
+  private static final String WRONG_OWNER_ID_EXCEPTION_MESSAGE;
   private static final String WRONG_CREATION_DATE_EXCEPTION_MESSAGE;
   private static final String WRONG_SALARY_EXCEPTION_MESSAGE;
   private static final String WRONG_STATUS_EXCEPTION_MESSAGE;
@@ -31,8 +36,10 @@ public final class Worker extends Ownable implements Cloneable, Entity {
   private static final String WRONG_PERSON_EXCEPTION_MESSAGE;
 
   static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Worker", Locale.ENGLISH);
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Worker");
 
+    WRONG_ID_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongId");
+    WRONG_OWNER_ID_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongOwnerId");
     WRONG_CREATION_DATE_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.wrongCreationDate");
     WRONG_SALARY_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongSalary");
@@ -45,6 +52,8 @@ public final class Worker extends Ownable implements Cloneable, Entity {
     WRONG_PERSON_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongPerson");
   }
 
+  private long id;
+  private long ownerID;
   private LocalDateTime creationDate;
   private Double salary;
   private Status status;
@@ -64,7 +73,11 @@ public final class Worker extends Ownable implements Cloneable, Entity {
       Coordinates coordinates,
       Person person)
       throws ValidationException {
-    super(id, ownerID);
+    checkId(id);
+    this.id = id;
+
+    checkOwnerID(ownerID);
+    this.ownerID = ownerID;
 
     checkCreationDate(creationDate);
     this.creationDate = creationDate;
@@ -100,6 +113,40 @@ public final class Worker extends Ownable implements Cloneable, Entity {
         this.endDate,
         this.coordinates.toDTO(),
         this.person.toDTO());
+  }
+
+  public final long getID() {
+    return id;
+  }
+
+  public final void setID(long id) throws ValidationException {
+    checkId(id);
+    this.id = id;
+  }
+
+  private void checkId(long id) throws ValidationException {
+    if (id > 0 || id == DEFAULT_ID) {
+      return;
+    }
+
+    throw new ValidationException(WRONG_ID_EXCEPTION_MESSAGE);
+  }
+
+  public final long getOwnerID() {
+    return ownerID;
+  }
+
+  public final void setOwnerID(long ownerID) throws ValidationException {
+    checkOwnerID(ownerID);
+    this.ownerID = ownerID;
+  }
+
+  private void checkOwnerID(long ownerId) throws ValidationException {
+    if (ownerId > 0 || ownerId == DEFAULT_OWNER_ID) {
+      return;
+    }
+
+    throw new ValidationException(WRONG_OWNER_ID_EXCEPTION_MESSAGE);
   }
 
   public LocalDateTime getCreationDate() {

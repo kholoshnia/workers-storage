@@ -1,17 +1,18 @@
 package ru.storage.server.model.domain.entity.entities.user;
 
-import ru.storage.common.dto.DTO;
-import ru.storage.common.dto.Entity;
-import ru.storage.common.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.dto.dtos.UserDTO;
-import ru.storage.server.model.domain.entity.ID;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.Entity;
 
-import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 /** The User class contains all information about concrete user. */
-public final class User extends ID implements Entity {
+public final class User implements Entity {
+  public static final long DEFAULT_ID = 0L;
+
+  public static final String ID_COLUMN = "id";
   public static final String TABLE_NAME = "users";
   public static final String NAME_COLUMN = "name";
   public static final String LOGIN_COLUMN = "login";
@@ -19,20 +20,23 @@ public final class User extends ID implements Entity {
   public static final String ROLE_COLUMN = "role";
   public static final String STATE_COLUMN = "state";
 
+  private static final String WRONG_ID_EXCEPTION_MESSAGE;
   private static final String WRONG_NAME_EXCEPTION_MESSAGE;
   private static final String WRONG_LOGIN_EXCEPTION_MESSAGE;
   private static final String WRONG_PASSWORD_EXCEPTION_MESSAGE;
   private static final String WRONG_ROLE_EXCEPTION_MESSAGE;
 
   static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.User", Locale.ENGLISH);
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.User");
 
+    WRONG_ID_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongId");
     WRONG_NAME_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongName");
     WRONG_LOGIN_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongLogin");
     WRONG_PASSWORD_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongPassword");
     WRONG_ROLE_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongRole");
   }
 
+  private long id;
   private String name;
   private String login;
   private String password;
@@ -41,7 +45,8 @@ public final class User extends ID implements Entity {
 
   public User(long id, String name, String login, String password, Role role, boolean state)
       throws ValidationException {
-    super(id);
+    checkId(id);
+    this.id = id;
 
     checkName(name);
     this.name = name;
@@ -61,6 +66,23 @@ public final class User extends ID implements Entity {
   @Override
   public DTO<User> toDTO() {
     return new UserDTO(this.id, this.name, this.login, this.password, this.role, this.state);
+  }
+
+  public final long getID() {
+    return id;
+  }
+
+  public final void setID(long id) throws ValidationException {
+    checkId(id);
+    this.id = id;
+  }
+
+  private void checkId(long id) throws ValidationException {
+    if (id > 0 || id == DEFAULT_ID) {
+      return;
+    }
+
+    throw new ValidationException(WRONG_ID_EXCEPTION_MESSAGE);
   }
 
   public String getName() {

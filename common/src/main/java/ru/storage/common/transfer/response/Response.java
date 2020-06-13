@@ -1,9 +1,8 @@
 package ru.storage.common.transfer.response;
 
-import ru.storage.common.dto.DTO;
-import ru.storage.common.dto.Entity;
+import java.io.Serializable;
 
-public final class Response implements Entity {
+public final class Response implements Serializable {
   private final Status status;
   private final String answer;
 
@@ -12,7 +11,16 @@ public final class Response implements Entity {
     this.answer = answer;
   }
 
-  public DTO<Response> toDTO() {
-    return new ResponseDTO(status.getCode(), answer);
+  public Status getStatus() {
+    return status;
+  }
+
+  public String getAnswer() {
+    return answer;
+  }
+
+  @Override
+  public String toString() {
+    return "Response{" + "status=" + status + ", answer='" + answer + '\'' + '}';
   }
 }

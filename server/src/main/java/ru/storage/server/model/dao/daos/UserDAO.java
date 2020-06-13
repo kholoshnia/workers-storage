@@ -2,7 +2,7 @@ package ru.storage.server.model.dao.daos;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.domain.entity.entities.user.Role;
@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class UserDAO implements DAO<String, User> {
@@ -28,7 +27,7 @@ public class UserDAO implements DAO<String, User> {
   private static final String CANNOT_DELETE_USER_EXCEPTION_MESSAGE;
 
   static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.UserDAO", Locale.ENGLISH);
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.UserDAO");
 
     CANNOT_GET_ALL_USER_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.cannotGetAllUsers");

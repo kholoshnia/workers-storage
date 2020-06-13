@@ -1,41 +1,54 @@
 package ru.storage.server.model.domain.entity.entities.worker.person;
 
-import ru.storage.common.dto.DTO;
-import ru.storage.common.dto.Entity;
-import ru.storage.common.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.dto.dtos.PersonDTO;
-import ru.storage.server.model.domain.entity.Ownable;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.Entity;
 
-import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public final class Person extends Ownable implements Cloneable, Entity {
+public final class Person implements Cloneable, Entity {
+  public static final long DEFAULT_ID = 0L;
+  public static final long DEFAULT_OWNER_ID = 0L;
+
+  public static final String ID_COLUMN = "id";
+  public static final String OWNER_ID_COLUMN = "owner_id";
   public static final String TABLE_NAME = "persons";
   public static final String NAME_COLUMN = "name";
   public static final String PASSPORT_ID_COLUMN = "passport_id";
   public static final String LOCATION_COLUMN = "location";
 
+  private static final String WRONG_ID_EXCEPTION_MESSAGE;
+  private static final String WRONG_OWNER_ID_EXCEPTION_MESSAGE;
   private static final String WRONG_NAME_EXCEPTION_MESSAGE;
   private static final String WRONG_PASSPORT_ID_EXCEPTION_MESSAGE;
   private static final String WRONG_LOCATION_EXCEPTION_MESSAGE;
 
   static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Person", Locale.ENGLISH);
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Person");
 
+    WRONG_ID_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongId");
+    WRONG_OWNER_ID_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongOwnerId");
     WRONG_NAME_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongName");
     WRONG_PASSPORT_ID_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.wrongPassportID");
     WRONG_LOCATION_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongLocation");
   }
 
+  private long id;
+  private long ownerID;
   private String name;
   private String passportID;
   private Location location;
 
   public Person(long id, long ownerID, String name, String passportID, Location location)
       throws ValidationException {
-    super(id, ownerID);
+    checkId(id);
+    this.id = id;
+
+    checkOwnerID(ownerID);
+    this.ownerID = ownerID;
 
     checkName(name);
     this.name = name;
@@ -50,6 +63,40 @@ public final class Person extends Ownable implements Cloneable, Entity {
   @Override
   public DTO<Person> toDTO() {
     return new PersonDTO(this.id, this.ownerID, this.name, this.passportID, this.location.toDTO());
+  }
+
+  public final long getID() {
+    return id;
+  }
+
+  public final void setID(long id) throws ValidationException {
+    checkId(id);
+    this.id = id;
+  }
+
+  private void checkId(long id) throws ValidationException {
+    if (id > 0 || id == DEFAULT_ID) {
+      return;
+    }
+
+    throw new ValidationException(WRONG_ID_EXCEPTION_MESSAGE);
+  }
+
+  public final long getOwnerID() {
+    return ownerID;
+  }
+
+  public final void setOwnerID(long ownerID) throws ValidationException {
+    checkOwnerID(ownerID);
+    this.ownerID = ownerID;
+  }
+
+  private void checkOwnerID(long ownerId) throws ValidationException {
+    if (ownerId > 0 || ownerId == DEFAULT_OWNER_ID) {
+      return;
+    }
+
+    throw new ValidationException(WRONG_OWNER_ID_EXCEPTION_MESSAGE);
   }
 
   public String getName() {

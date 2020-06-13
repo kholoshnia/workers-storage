@@ -1,9 +1,7 @@
 package ru.storage.server.model.domain.dto.dtos;
 
-import ru.storage.common.dto.DTO;
-import ru.storage.common.dto.exceptions.ValidationException;
-import ru.storage.server.model.domain.dto.OwnableDTO;
-import ru.storage.server.model.domain.entity.ID;
+import ru.storage.server.model.domain.dto.DTO;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.domain.entity.entities.worker.Status;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
@@ -13,7 +11,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-public final class WorkerDTO extends OwnableDTO implements DTO<Worker> {
+public final class WorkerDTO implements DTO<Worker> {
+  public final long id;
+
+  public final long ownerID;
+
   public final LocalDateTime creationDate;
 
   public final Double salary;
@@ -38,7 +40,8 @@ public final class WorkerDTO extends OwnableDTO implements DTO<Worker> {
       LocalDateTime endDate,
       DTO<Coordinates> coordinatesDTO,
       DTO<Person> personDTO) {
-    super(id, ownerID);
+    this.id = id;
+    this.ownerID = ownerID;
     this.creationDate = creationDate;
     this.salary = salary;
     this.status = status;
@@ -56,7 +59,8 @@ public final class WorkerDTO extends OwnableDTO implements DTO<Worker> {
       DTO<Coordinates> coordinatesDTO,
       DTO<Person> personDTO)
       throws ValidationException {
-    super(ID.DEFAULT, ID.DEFAULT);
+    this.id = Worker.DEFAULT_ID;
+    this.ownerID = Worker.DEFAULT_OWNER_ID;
     this.creationDate = LocalDateTime.now();
     this.salary = parseDouble(salaryString);
     this.status = parseStatus(statusString);

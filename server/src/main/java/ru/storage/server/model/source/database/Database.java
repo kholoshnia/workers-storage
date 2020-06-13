@@ -2,8 +2,8 @@ package ru.storage.server.model.source.database;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.services.exitManager.ExitListener;
-import ru.storage.common.services.exitManager.exceptions.ExitingException;
+import ru.storage.server.controller.services.exitManager.ExitListener;
+import ru.storage.server.controller.services.exitManager.exceptions.ExitingException;
 import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
@@ -17,7 +17,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 /** Database class that initialize tables. */
@@ -29,7 +28,7 @@ public final class Database extends DataSource implements ExitListener {
   private static final String INIT_LOCATIONS_TABLE_EXCEPTION_MESSAGE;
 
   static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Database", Locale.ENGLISH);
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Database");
 
     INIT_USERS_TABLE_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.initUsersTable");

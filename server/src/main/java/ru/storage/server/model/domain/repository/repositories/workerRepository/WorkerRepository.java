@@ -12,9 +12,7 @@ import ru.storage.server.model.domain.repository.repositories.workerRepository.e
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import javax.annotation.Nonnull;
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -23,8 +21,7 @@ public final class WorkerRepository implements Repository<Worker> {
   private static final String WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE;
 
   static {
-    ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("internal.WorkerRepository", Locale.ENGLISH);
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.WorkerRepository");
 
     WORKER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.workerNotFoundInDAO");
@@ -35,17 +32,11 @@ public final class WorkerRepository implements Repository<Worker> {
   private final Logger logger;
   private final DAO<Long, Worker> workerDAO;
   private final List<Worker> workers;
-  private final ZonedDateTime initDateTime;
-  private final Class<?> collectionType;
-  private long collectionSize;
 
   public WorkerRepository(@Nonnull DAO<Long, Worker> workerDAO) throws WorkerRepositoryException {
     this.logger = LogManager.getLogger(WorkerRepository.class);
     this.workerDAO = workerDAO;
     this.workers = initWorkersList();
-    this.initDateTime = ZonedDateTime.now();
-    this.collectionType = workers.getClass();
-    this.collectionSize = workers.size();
   }
 
   /**
@@ -77,34 +68,6 @@ public final class WorkerRepository implements Repository<Worker> {
     }
   }
 
-  /**
-   * Returns collection initialization time. Initialization time is being set on the app launch.
-   *
-   * @return initialization time
-   */
-  public ZonedDateTime getInitDateTime() {
-    return initDateTime;
-  }
-
-  /**
-   * Returns collection type.
-   *
-   * @return type
-   */
-  public Class<?> getCollectionType() {
-    return collectionType;
-  }
-
-  /**
-   * Returns collection size. Collection size is being updates during work of the program so one can
-   * get information without requesting full collection.
-   *
-   * @return size
-   */
-  public long getCollectionSize() {
-    return collectionSize;
-  }
-
   @Override
   public synchronized List<Worker> get(@Nonnull Query<Worker> query) throws RepositoryException {
     List<Worker> result = query.execute(workers);
@@ -127,7 +90,6 @@ public final class WorkerRepository implements Repository<Worker> {
 
     workers.add(result);
 
-    collectionSize = workers.size();
     logger.info("New worker was added to the collection SUCCESSFULLY.");
   }
 
@@ -182,7 +144,6 @@ public final class WorkerRepository implements Repository<Worker> {
       throw new WorkerRepositoryException(WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE);
     }
 
-    collectionSize = workers.size();
     logger.info("Worker was deleted from the collection SUCCESSFULLY.");
   }
 }

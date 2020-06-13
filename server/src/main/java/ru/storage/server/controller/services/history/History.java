@@ -33,7 +33,7 @@ public final class History {
     logger.debug("New record was added to the history SUCCESSFULLY.");
   }
 
-  public void clearRecords() {
+  public void clear() {
     records.clear();
     logger.debug("History was cleared SUCCESSFULLY.");
   }

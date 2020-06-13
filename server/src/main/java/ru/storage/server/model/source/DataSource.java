@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -24,7 +23,7 @@ public abstract class DataSource {
   private static final String CLOSE_PREPARED_STATEMENT_EXCEPTION_MESSAGE;
 
   static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.DataSource", Locale.ENGLISH);
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.DataSource");
 
     SETUP_CONNECTION_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.setupConnection");

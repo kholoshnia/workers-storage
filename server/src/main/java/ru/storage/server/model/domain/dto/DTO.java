@@ -1,6 +1,7 @@
-package ru.storage.common.dto;
+package ru.storage.server.model.domain.dto;
 
-import ru.storage.common.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.Entity;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 
 /**
  * Entities with ability to be converted to the DTO type must implement DTO interface.

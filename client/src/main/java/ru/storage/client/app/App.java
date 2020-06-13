@@ -1,10 +1,10 @@
-package ru.storage.server.app;
+package ru.storage.client.app;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.server.app.guice.ServerModule;
+import ru.storage.client.app.guice.ClientModule;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -33,14 +33,14 @@ public final class App {
       }
 
       LOGGER.info("Creating Guice injector...");
-      Injector injector = Guice.createInjector(new ServerModule(args));
+      Injector injector = Guice.createInjector(new ClientModule());
       LOGGER.info("Guice injector was created SUCCESSFULLY.");
 
-      Server server = injector.getInstance(Server.class);
+      Client client = injector.getInstance(Client.class);
       LOGGER.info("Server was created SUCCESSFULLY.");
 
       LOGGER.info("Server was started.");
-      server.start();
+      client.start();
     } catch (Throwable throwable) {
       LOGGER.fatal("Got a throwable during work of server.", throwable);
       System.err.println(FATAL_ERROR);

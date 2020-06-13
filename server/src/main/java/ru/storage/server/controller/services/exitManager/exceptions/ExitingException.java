@@ -1,4 +1,4 @@
-package ru.storage.common.services.exitManager.exceptions;
+package ru.storage.server.controller.services.exitManager.exceptions;
 
 public class ExitingException extends Exception {
   public ExitingException() {

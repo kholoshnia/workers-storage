@@ -46,9 +46,7 @@ public final class CommandController implements Controller {
     Command command;
 
     try {
-      command =
-          commandFactory.createCommand(
-              request.getCommand(), request.getArguments(), request.getLocale());
+      command = commandFactory.createCommand(request.getCommand(), request.getArguments());
     } catch (CommandFactoryException exception) {
       return new Response(Status.INTERNAL_SERVER_ERROR, COMMAND_CREATION_ERROR_RESPONSE_ANSWER);
     }

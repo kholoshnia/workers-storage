@@ -1,12 +1,14 @@
 package ru.storage.server.model.domain.dto.dtos;
 
-import ru.storage.common.dto.DTO;
-import ru.storage.common.dto.exceptions.ValidationException;
-import ru.storage.server.model.domain.dto.OwnableDTO;
-import ru.storage.server.model.domain.entity.ID;
+import ru.storage.server.model.domain.dto.DTO;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 
-public final class CoordinatesDTO extends OwnableDTO implements DTO<Coordinates> {
+public final class CoordinatesDTO implements DTO<Coordinates> {
+  public final long id;
+
+  public final long ownerID;
+
   public final Double x;
 
   public final Double y;
@@ -14,14 +16,16 @@ public final class CoordinatesDTO extends OwnableDTO implements DTO<Coordinates>
   public final Double z;
 
   public CoordinatesDTO(long id, long ownerID, Double x, Double y, Double z) {
-    super(id, ownerID);
+    this.id = id;
+    this.ownerID = ownerID;
     this.x = x;
     this.y = y;
     this.z = z;
   }
 
   public CoordinatesDTO(String xString, String yString, String zString) throws ValidationException {
-    super(ID.DEFAULT, ID.DEFAULT);
+    this.id = Coordinates.DEFAULT_ID;
+    this.ownerID = Coordinates.DEFAULT_OWNER_ID;
     this.x = parseDouble(xString);
     this.y = parseDouble(yString);
     this.z = parseDouble(zString);

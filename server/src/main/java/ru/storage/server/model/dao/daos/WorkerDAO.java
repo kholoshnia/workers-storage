@@ -2,7 +2,7 @@ package ru.storage.server.model.dao.daos;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
@@ -17,7 +17,6 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class WorkerDAO implements DAO<Long, Worker> {
@@ -28,7 +27,7 @@ public class WorkerDAO implements DAO<Long, Worker> {
   private static final String CANNOT_DELETE_WORKER_EXCEPTION_MESSAGE;
 
   static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.WorkerDAO", Locale.ENGLISH);
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.WorkerDAO");
 
     CANNOT_GET_ALL_WORKER_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.cannotGetAllWorkers");

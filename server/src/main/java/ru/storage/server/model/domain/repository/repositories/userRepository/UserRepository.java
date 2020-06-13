@@ -13,7 +13,6 @@ import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -23,7 +22,7 @@ public final class UserRepository implements Repository<User> {
 
   static {
     ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("internal.UserRepository", Locale.ENGLISH);
+        ResourceBundle.getBundle("internal.UserRepository");
 
     USER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.userNotFoundInCollection");

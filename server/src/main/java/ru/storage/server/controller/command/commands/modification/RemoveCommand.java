@@ -13,7 +13,6 @@ import ru.storage.server.model.domain.repository.exceptions.RepositoryException;
 import ru.storage.server.model.domain.repository.repositories.workerRepository.queries.GetEqualIDWorkers;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -26,12 +25,11 @@ public final class RemoveCommand extends ModificationCommand {
       Configuration configuration,
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
-      Locale locale,
       Repository<Worker> workerRepository) {
-    super(configuration, argumentMediator, arguments, locale, workerRepository);
+    super(configuration, argumentMediator, arguments, workerRepository);
     this.logger = LogManager.getLogger(RemoveCommand.class);
 
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.RemoveCommand", locale);
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.RemoveCommand");
 
     REMOVED_SUCCESSFULLY_ANSWER = resourceBundle.getString("answers.removedSuccessfully");
   }
@@ -41,7 +39,7 @@ public final class RemoveCommand extends ModificationCommand {
     long id;
 
     try {
-      id = Long.parseLong(arguments.get(argumentMediator.ID));
+      id = Long.parseLong(arguments.get(argumentMediator.WORKER_ID));
     } catch (NumberFormatException e) {
       logger.warn("Got wrong id.", e);
       return new Response(Status.BAD_REQUEST, WRONG_ID_ANSWER);
@@ -58,8 +56,8 @@ public final class RemoveCommand extends ModificationCommand {
     }
 
     if (equalIDWorkers.isEmpty()) {
-      logger.info("Collections is empty.");
-      return new Response(Status.NO_CONTENT, COLLECTION_IS_EMPTY_ANSWER);
+      logger.info("Worker with specified id: " + id + " was not found.");
+      return new Response(Status.NOT_FOUND, WORKER_NOT_FOUND_ANSWER);
     }
 
     for (Worker worker : equalIDWorkers) {
@@ -71,6 +69,7 @@ public final class RemoveCommand extends ModificationCommand {
       }
     }
 
+    logger.info("Worker was removed SUCCESSFULLY.");
     return new Response(Status.OK, REMOVED_SUCCESSFULLY_ANSWER);
   }
 }

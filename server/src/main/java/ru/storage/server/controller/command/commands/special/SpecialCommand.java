@@ -2,7 +2,7 @@ package ru.storage.server.controller.command.commands.special;
 
 import org.apache.commons.configuration2.Configuration;
 import ru.storage.common.ArgumentMediator;
-import ru.storage.common.services.exitManager.ExitManager;
+import ru.storage.server.controller.services.exitManager.ExitManager;
 import ru.storage.server.controller.command.Command;
 
 import java.util.Locale;

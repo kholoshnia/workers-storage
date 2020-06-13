@@ -1,15 +1,17 @@
 package ru.storage.server.model.domain.dto.dtos;
 
-import ru.storage.common.dto.DTO;
-import ru.storage.common.dto.exceptions.ValidationException;
-import ru.storage.server.model.domain.dto.OwnableDTO;
-import ru.storage.server.model.domain.entity.ID;
+import ru.storage.server.model.domain.dto.DTO;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 
 import java.util.Objects;
 
-public final class PersonDTO extends OwnableDTO implements DTO<Person> {
+public final class PersonDTO implements DTO<Person> {
+  public final long id;
+
+  public final long ownerID;
+
   public final String name;
 
   public final String passportID;
@@ -18,14 +20,16 @@ public final class PersonDTO extends OwnableDTO implements DTO<Person> {
 
   public PersonDTO(
       long id, long ownerID, String name, String passportID, DTO<Location> locationDTO) {
-    super(id, ownerID);
+    this.id = id;
+    this.ownerID = ownerID;
     this.name = name;
     this.passportID = passportID;
     this.locationDTO = locationDTO;
   }
 
   public PersonDTO(String nameString, String passportIDString, DTO<Location> locationDTO) {
-    super(ID.DEFAULT, ID.DEFAULT);
+    this.id = Person.DEFAULT_ID;
+    this.ownerID = Person.DEFAULT_OWNER_ID;
     this.name = parseString(nameString);
     this.passportID = parseString(passportIDString);
     this.locationDTO = locationDTO;

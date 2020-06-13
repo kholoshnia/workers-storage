@@ -15,7 +15,6 @@ import ru.storage.server.model.domain.repository.Repository;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public final class EntryCommandFactory extends CommandFactory {
@@ -39,13 +38,13 @@ public final class EntryCommandFactory extends CommandFactory {
   }
 
   @Override
-  public Command createCommand(String command, Map<String, String> arguments, Locale locale)
+  public Command createCommand(String command, Map<String, String> arguments)
       throws CommandFactoryException {
     Class<? extends EntryCommand> clazz = commands.get(command);
     try {
       Constructor<? extends EntryCommand> constructor =
-          clazz.getConstructor(Configuration.class, Map.class, Locale.class, Repository.class);
-      return constructor.newInstance(configuration, arguments, locale, userRepository);
+          clazz.getConstructor(Configuration.class, Map.class, Repository.class);
+      return constructor.newInstance(configuration, arguments, userRepository);
     } catch (NoSuchMethodException
         | InstantiationException
         | IllegalAccessException

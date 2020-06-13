@@ -1,5 +1,6 @@
 package ru.storage.server.controller.command.factory.factories;
 
+import com.google.gson.Gson;
 import org.apache.commons.configuration2.Configuration;
 import ru.storage.common.CommandMediator;
 import ru.storage.server.controller.command.Command;
@@ -14,18 +15,20 @@ import ru.storage.server.model.domain.repository.Repository;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public final class ViewCommandFactory extends CommandFactory {
+  private final Gson gson;
   private final Repository<Worker> workerRepository;
   private final Map<String, Class<? extends ViewCommand>> commands;
 
   public ViewCommandFactory(
       Configuration configuration,
       CommandMediator commandMediator,
-      Repository<Worker> workerRepository) {
+      Repository<Worker> workerRepository,
+      Gson gson) {
     super(configuration);
+    this.gson = gson;
     this.workerRepository = workerRepository;
     this.commands =
         new HashMap<String, Class<? extends ViewCommand>>() {
@@ -37,13 +40,13 @@ public final class ViewCommandFactory extends CommandFactory {
   }
 
   @Override
-  public Command createCommand(String command, Map<String, String> arguments, Locale locale)
+  public Command createCommand(String command, Map<String, String> arguments)
       throws CommandFactoryException {
     Class<? extends ViewCommand> clazz = commands.get(command);
     try {
       Constructor<? extends ViewCommand> constructor =
-          clazz.getConstructor(Configuration.class, Map.class, Locale.class, Repository.class);
-      return constructor.newInstance(configuration, arguments, locale, workerRepository);
+          clazz.getConstructor(Configuration.class, Map.class, Gson.class, Repository.class);
+      return constructor.newInstance(configuration, arguments, gson, workerRepository);
     } catch (NoSuchMethodException
         | InstantiationException
         | IllegalAccessException

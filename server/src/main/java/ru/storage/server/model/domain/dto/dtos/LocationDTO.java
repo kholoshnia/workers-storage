@@ -1,12 +1,14 @@
 package ru.storage.server.model.domain.dto.dtos;
 
-import ru.storage.common.dto.DTO;
-import ru.storage.common.dto.exceptions.ValidationException;
-import ru.storage.server.model.domain.dto.OwnableDTO;
-import ru.storage.server.model.domain.entity.ID;
+import ru.storage.server.model.domain.dto.DTO;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 
-public final class LocationDTO extends OwnableDTO implements DTO<Location> {
+public final class LocationDTO implements DTO<Location> {
+  public final long id;
+
+  public final long ownerID;
+
   public final String address;
 
   public final Double latitude;
@@ -14,7 +16,8 @@ public final class LocationDTO extends OwnableDTO implements DTO<Location> {
   public final Double longitude;
 
   public LocationDTO(long id, long ownerID, String address, Double latitude, Double longitude) {
-    super(id, ownerID);
+    this.id = id;
+    this.ownerID = ownerID;
     this.address = address;
     this.latitude = latitude;
     this.longitude = longitude;
@@ -22,7 +25,8 @@ public final class LocationDTO extends OwnableDTO implements DTO<Location> {
 
   public LocationDTO(String addressString, String latitudeString, String longitudeString)
       throws ValidationException {
-    super(ID.DEFAULT, ID.DEFAULT);
+    this.id = Location.DEFAULT_ID;
+    this.ownerID = Location.DEFAULT_OWNER_ID;
     this.address = parseString(addressString);
     this.latitude = parseDouble(latitudeString);
     this.longitude = parseDouble(longitudeString);

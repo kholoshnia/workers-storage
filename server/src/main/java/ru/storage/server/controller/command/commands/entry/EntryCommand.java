@@ -1,12 +1,11 @@
 package ru.storage.server.controller.command.commands.entry;
 
 import org.apache.commons.configuration2.Configuration;
-import ru.storage.common.transfer.response.Response;
+import ru.storage.common.ArgumentMediator;
 import ru.storage.server.controller.command.Command;
 import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.domain.repository.Repository;
 
-import java.util.Locale;
 import java.util.Map;
 
 public abstract class EntryCommand extends Command {
@@ -14,10 +13,10 @@ public abstract class EntryCommand extends Command {
 
   public EntryCommand(
       Configuration configuration,
+      ArgumentMediator argumentMediator,
       Map<String, String> arguments,
-      Locale locale,
       Repository<User> userRepository) {
-    super(configuration, arguments, locale);
+    super(configuration, argumentMediator, arguments);
     this.userRepository = userRepository;
   }
 }

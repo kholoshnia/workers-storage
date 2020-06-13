@@ -2,7 +2,7 @@ package ru.storage.server.model.dao.daos;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class CoordinatesDAO implements DAO<Long, Coordinates> {
@@ -28,7 +27,7 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
 
   static {
     ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("internal.CoordinatesDAO", Locale.ENGLISH);
+        ResourceBundle.getBundle("internal.CoordinatesDAO");
 
     CANNOT_GET_ALL_COORDINATES_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.cannotGetAllCoordinates");

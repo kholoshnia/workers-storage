@@ -1,6 +1,6 @@
 package ru.storage.server.app.multithreading.exceptions;
 
-public class ExecutorServicesException extends RuntimeException {
+public final class ExecutorServicesException extends RuntimeException {
   public ExecutorServicesException() {
     super();
   }

@@ -1,6 +1,6 @@
 package ru.storage.server.controller.services.exitManager.exceptions;
 
-public class ExitingException extends Exception {
+public final class ExitingException extends Exception {
   public ExitingException() {
     super();
   }

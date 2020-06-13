@@ -1,8 +1,6 @@
 package ru.storage.server.model.dao.exceptions;
 
-import ru.storage.server.model.source.exceptions.DataSourceException;
-
-public class DAOException extends Exception {
+public final class DAOException extends Exception {
   public DAOException() {
     super();
   }

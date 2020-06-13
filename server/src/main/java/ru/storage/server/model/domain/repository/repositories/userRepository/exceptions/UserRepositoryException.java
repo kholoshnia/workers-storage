@@ -2,7 +2,7 @@ package ru.storage.server.model.domain.repository.repositories.userRepository.ex
 
 import ru.storage.server.model.domain.repository.exceptions.RepositoryException;
 
-public class UserRepositoryException extends RepositoryException {
+public final class UserRepositoryException extends RepositoryException {
   public UserRepositoryException() {
     super();
   }

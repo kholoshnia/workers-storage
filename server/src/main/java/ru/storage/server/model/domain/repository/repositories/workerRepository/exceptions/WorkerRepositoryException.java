@@ -2,7 +2,7 @@ package ru.storage.server.model.domain.repository.repositories.workerRepository.
 
 import ru.storage.server.model.domain.repository.exceptions.RepositoryException;
 
-public class WorkerRepositoryException extends RepositoryException {
+public final class WorkerRepositoryException extends RepositoryException {
   public WorkerRepositoryException() {
     super();
   }

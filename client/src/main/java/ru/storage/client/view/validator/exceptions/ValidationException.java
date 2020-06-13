@@ -1,4 +1,4 @@
-package ru.storage.server.model.domain.dto.exceptions;
+package ru.storage.client.view.validator.exceptions;
 
 public final class ValidationException extends Exception {
   public ValidationException() {

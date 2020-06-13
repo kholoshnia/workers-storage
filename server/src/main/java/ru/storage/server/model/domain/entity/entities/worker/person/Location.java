@@ -110,7 +110,6 @@ public final class Location implements Cloneable, Entity {
 
   private void checkAddress(String address) throws ValidationException {
     if (address != null && address.length() >= 10 && address.length() <= 100) {
-
       return;
     }
 

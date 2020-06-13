@@ -1,6 +1,6 @@
 package ru.storage.server.controller.services.hashGenerator.exceptions;
 
-public class HashGeneratorException extends Exception {
+public final class HashGeneratorException extends Exception {
   public HashGeneratorException() {
     super();
   }

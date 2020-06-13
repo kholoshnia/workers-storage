@@ -2,7 +2,7 @@ package ru.storage.server.model.source.database.exceptions;
 
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
-public class DatabaseException extends DataSourceException {
+public final class DatabaseException extends DataSourceException {
   public DatabaseException() {
     super();
   }

@@ -13,6 +13,7 @@ import ru.storage.server.model.domain.repository.exceptions.RepositoryException;
 import ru.storage.server.model.domain.repository.repositories.workerRepository.queries.GetEqualIDWorkers;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -25,8 +26,9 @@ public final class RemoveCommand extends ModificationCommand {
       Configuration configuration,
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
+      Locale locale,
       Repository<Worker> workerRepository) {
-    super(configuration, argumentMediator, arguments, workerRepository);
+    super(configuration, argumentMediator, arguments, locale, workerRepository);
     this.logger = LogManager.getLogger(RemoveCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.RemoveCommand");

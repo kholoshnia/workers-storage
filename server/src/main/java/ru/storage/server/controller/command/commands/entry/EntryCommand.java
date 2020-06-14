@@ -6,6 +6,7 @@ import ru.storage.server.controller.command.Command;
 import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.domain.repository.Repository;
 
+import java.util.Locale;
 import java.util.Map;
 
 public abstract class EntryCommand extends Command {
@@ -15,8 +16,9 @@ public abstract class EntryCommand extends Command {
       Configuration configuration,
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
+      Locale locale,
       Repository<User> userRepository) {
-    super(configuration, argumentMediator, arguments);
+    super(configuration, argumentMediator, arguments, locale);
     this.userRepository = userRepository;
   }
 }

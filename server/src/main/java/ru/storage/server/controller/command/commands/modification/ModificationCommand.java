@@ -13,6 +13,7 @@ import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.repository.Repository;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -27,12 +28,14 @@ public abstract class ModificationCommand extends Command {
       Configuration configuration,
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
+      Locale locale,
       Repository<Worker> workerRepository) {
-    super(configuration, argumentMediator, arguments);
+    super(configuration, argumentMediator, arguments, locale);
     this.logger = LogManager.getLogger(ModificationCommand.class);
     this.workerRepository = workerRepository;
 
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ModificationCommand");
+    ResourceBundle resourceBundle =
+        ResourceBundle.getBundle("localized.ModificationCommand", locale);
 
     WRONG_ID_ANSWER = resourceBundle.getString("answers.wrongID");
     WORKER_NOT_FOUND_ANSWER = resourceBundle.getString("answers.workerNotFound");

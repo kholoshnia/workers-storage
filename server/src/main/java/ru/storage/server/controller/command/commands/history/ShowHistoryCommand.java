@@ -1,6 +1,5 @@
 package ru.storage.server.controller.command.commands.history;
 
-import com.google.gson.Gson;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +10,7 @@ import ru.storage.server.controller.services.history.History;
 import ru.storage.server.controller.services.history.Record;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public final class ShowHistoryCommand extends HistoryCommand {
@@ -20,10 +20,24 @@ public final class ShowHistoryCommand extends HistoryCommand {
       Configuration configuration,
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
-      Gson gson,
+      Locale locale,
       History history) {
-    super(configuration, argumentMediator, arguments, gson, history);
+    super(configuration, argumentMediator, arguments, locale, history);
     this.logger = LogManager.getLogger(ShowHistoryCommand.class);
+  }
+
+  private String formatArguments(Record record) {
+    StringBuilder arguments = new StringBuilder();
+
+    for (Map.Entry<String, String> entry : record.getArguments().entrySet()) {
+      arguments
+          .append(entry.getKey())
+          .append(": ")
+          .append(entry.getValue())
+          .append(System.lineSeparator());
+    }
+
+    return arguments.toString();
   }
 
   @Override
@@ -34,9 +48,18 @@ public final class ShowHistoryCommand extends HistoryCommand {
     }
 
     List<Record> records = history.getRecords(10);
-    String result = gson.toJson(records);
+    StringBuilder result = new StringBuilder();
 
-    logger.info("History was converted SUCCESSFULLY.");
-    return new Response(Status.OK, result);
+    for (Record record : records) {
+      result
+          .append(record.getCommand())
+          .append(System.lineSeparator())
+          .append(formatArguments(record))
+          .append(SEPARATOR)
+          .append(System.lineSeparator());
+    }
+
+    logger.info("History was formed SUCCESSFULLY.");
+    return new Response(Status.OK, result.toString());
   }
 }

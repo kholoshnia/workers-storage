@@ -12,6 +12,7 @@ import ru.storage.server.model.domain.repository.repositories.workerRepository.e
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import javax.annotation.Nonnull;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,11 +33,29 @@ public final class WorkerRepository implements Repository<Worker> {
   private final Logger logger;
   private final DAO<Long, Worker> workerDAO;
   private final List<Worker> workers;
+  private final Class<?> type;
+  private final LocalDateTime initTime;
+  private long size;
 
   public WorkerRepository(@Nonnull DAO<Long, Worker> workerDAO) throws WorkerRepositoryException {
     this.logger = LogManager.getLogger(WorkerRepository.class);
     this.workerDAO = workerDAO;
     this.workers = initWorkersList();
+    this.initTime = LocalDateTime.now();
+    this.type = workers.getClass();
+    this.size = workers.size();
+  }
+
+  public Class<?> getType() {
+    return type;
+  }
+
+  public LocalDateTime getInitTime() {
+    return initTime;
+  }
+
+  public long getSize() {
+    return size;
   }
 
   /**
@@ -90,6 +109,7 @@ public final class WorkerRepository implements Repository<Worker> {
 
     workers.add(result);
 
+    size = workers.size();
     logger.info("New worker was added to the collection SUCCESSFULLY.");
   }
 
@@ -144,6 +164,7 @@ public final class WorkerRepository implements Repository<Worker> {
       throw new WorkerRepositoryException(WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE);
     }
 
+    size = workers.size();
     logger.info("Worker was deleted from the collection SUCCESSFULLY.");
   }
 }

@@ -8,6 +8,7 @@ import ru.storage.common.transfer.response.Response;
 import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.domain.repository.Repository;
 
+import java.util.Locale;
 import java.util.Map;
 
 public class RegisterCommand extends EntryCommand {
@@ -17,8 +18,9 @@ public class RegisterCommand extends EntryCommand {
       Configuration configuration,
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
+      Locale locale,
       Repository<User> userRepository) {
-    super(configuration, argumentMediator, arguments, userRepository);
+    super(configuration, argumentMediator, arguments, locale, userRepository);
     this.logger = LogManager.getLogger(RegisterCommand.class);
   }
 

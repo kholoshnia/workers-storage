@@ -1,6 +1,7 @@
 package ru.storage.server.controller.command.factory;
 
 import org.apache.commons.configuration2.Configuration;
+import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
 import ru.storage.server.controller.command.factory.factories.EntryCommandFactory;
 import ru.storage.server.controller.command.factory.factories.HistoryCommandFactory;
@@ -19,18 +20,20 @@ public final class CommandFactoryMediator {
 
   public CommandFactoryMediator(
       Configuration configuration,
+      ArgumentMediator argumentMediator,
       CommandMediator commandMediator,
       History history,
       Repository<User> userRepository,
       Repository<Worker> workerRepository) {
     EntryCommandFactory entryCommandFactory =
-        new EntryCommandFactory(configuration, commandMediator, userRepository);
+        new EntryCommandFactory(configuration, argumentMediator, commandMediator, userRepository);
     HistoryCommandFactory historyCommandFactory =
-        new HistoryCommandFactory(configuration, commandMediator, history);
+        new HistoryCommandFactory(configuration, argumentMediator, commandMediator, history);
     ModificationCommandFactory modificationCommandFactory =
-        new ModificationCommandFactory(configuration, commandMediator, workerRepository);
+        new ModificationCommandFactory(
+            configuration, argumentMediator, commandMediator, workerRepository);
     ViewCommandFactory viewCommandFactory =
-        new ViewCommandFactory(configuration, commandMediator, workerRepository);
+        new ViewCommandFactory(configuration, argumentMediator, commandMediator, workerRepository);
 
     this.commandFactories =
         new HashMap<String, CommandFactory>() {

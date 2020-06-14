@@ -12,6 +12,7 @@ import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.repository.Repository;
 import ru.storage.server.model.domain.repository.exceptions.RepositoryException;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -26,8 +27,9 @@ public final class AddCommand extends ModificationCommand {
       Configuration configuration,
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
+      Locale locale,
       Repository<Worker> workerRepository) {
-    super(configuration, argumentMediator, arguments, workerRepository);
+    super(configuration, argumentMediator, arguments, locale, workerRepository);
     this.logger = LogManager.getLogger(AddCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.AddCommand");

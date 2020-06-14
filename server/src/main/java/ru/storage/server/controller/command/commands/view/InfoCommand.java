@@ -1,6 +1,5 @@
 package ru.storage.server.controller.command.commands.view;
 
-import com.google.gson.Gson;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,24 +8,42 @@ import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.model.domain.repository.repositories.workerRepository.WorkerRepository;
 
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 public final class InfoCommand extends ViewCommand {
+  private final String TYPE_PREFIX;
+  private final String INIT_TIME_PREFIX;
+  private final String SIZE_PREFIX;
+
   private final Logger logger;
 
   public InfoCommand(
       Configuration configuration,
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
-      Gson gson,
+      Locale locale,
       WorkerRepository workerRepository) {
-    super(configuration, argumentMediator, arguments, gson, workerRepository);
+    super(configuration, argumentMediator, arguments, locale, workerRepository);
     this.logger = LogManager.getLogger(InfoCommand.class);
+
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.InfoCommand", locale);
+
+    TYPE_PREFIX = resourceBundle.getString("answers.type");
+    INIT_TIME_PREFIX = resourceBundle.getString("answers.initTime");
+    SIZE_PREFIX = resourceBundle.getString("answers.size");
   }
 
   @Override
   public Response executeCommand() {
-    StringBuilder stringBuilder = new StringBuilder();
-    return new Response(Status.OK, stringBuilder.toString());
+    String result =
+        String.format("%s: %s", TYPE_PREFIX, workerRepository.getType())
+            + String.format(
+                "%s: %s", INIT_TIME_PREFIX, dateFormat.format(workerRepository.getInitTime()))
+            + String.format("%s: %d", SIZE_PREFIX, workerRepository.getSize());
+
+    logger.info("Info was formed SUCCESSFULLY.");
+    return new Response(Status.OK, result);
   }
 }

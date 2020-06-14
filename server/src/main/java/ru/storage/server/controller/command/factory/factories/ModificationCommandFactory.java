@@ -1,7 +1,7 @@
 package ru.storage.server.controller.command.factory.factories;
 
-import com.google.gson.Gson;
 import org.apache.commons.configuration2.Configuration;
+import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
 import ru.storage.server.controller.command.Command;
 import ru.storage.server.controller.command.commands.modification.AddCommand;
@@ -16,20 +16,19 @@ import ru.storage.server.model.domain.repository.Repository;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public final class ModificationCommandFactory extends CommandFactory {
-  private final Gson gson;
   private final Repository<Worker> workerRepository;
   private final Map<String, Class<? extends ModificationCommand>> commands;
 
   public ModificationCommandFactory(
       Configuration configuration,
+      ArgumentMediator argumentMediator,
       CommandMediator commandMediator,
-      Repository<Worker> workerRepository,
-      Gson gson) {
-    super(configuration);
-    this.gson = gson;
+      Repository<Worker> workerRepository) {
+    super(configuration, argumentMediator);
     this.workerRepository = workerRepository;
     this.commands =
         new HashMap<String, Class<? extends ModificationCommand>>() {
@@ -42,13 +41,19 @@ public final class ModificationCommandFactory extends CommandFactory {
   }
 
   @Override
-  public Command createCommand(String command, Map<String, String> arguments)
+  public Command createCommand(String command, Map<String, String> arguments, Locale locale)
       throws CommandFactoryException {
     Class<? extends ModificationCommand> clazz = commands.get(command);
     try {
       Constructor<? extends ModificationCommand> constructor =
-          clazz.getConstructor(Configuration.class, Map.class, Gson.class, Repository.class);
-      return constructor.newInstance(configuration, arguments, gson, workerRepository);
+          clazz.getConstructor(
+              Configuration.class,
+              ArgumentMediator.class,
+              Map.class,
+              Locale.class,
+              Repository.class);
+      return constructor.newInstance(
+          configuration, argumentMediator, arguments, locale, workerRepository);
     } catch (NoSuchMethodException
         | InstantiationException
         | IllegalAccessException

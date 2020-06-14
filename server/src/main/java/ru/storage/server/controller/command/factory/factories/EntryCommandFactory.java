@@ -1,6 +1,7 @@
 package ru.storage.server.controller.command.factory.factories;
 
 import org.apache.commons.configuration2.Configuration;
+import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
 import ru.storage.server.controller.command.Command;
 import ru.storage.server.controller.command.commands.entry.EntryCommand;
@@ -15,6 +16,7 @@ import ru.storage.server.model.domain.repository.Repository;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public final class EntryCommandFactory extends CommandFactory {
@@ -23,9 +25,10 @@ public final class EntryCommandFactory extends CommandFactory {
 
   public EntryCommandFactory(
       Configuration configuration,
+      ArgumentMediator argumentMediator,
       CommandMediator commandMediator,
       Repository<User> userRepository) {
-    super(configuration);
+    super(configuration, argumentMediator);
     this.userRepository = userRepository;
     this.commands =
         new HashMap<String, Class<? extends EntryCommand>>() {
@@ -38,13 +41,19 @@ public final class EntryCommandFactory extends CommandFactory {
   }
 
   @Override
-  public Command createCommand(String command, Map<String, String> arguments)
+  public Command createCommand(String command, Map<String, String> arguments, Locale locale)
       throws CommandFactoryException {
     Class<? extends EntryCommand> clazz = commands.get(command);
     try {
       Constructor<? extends EntryCommand> constructor =
-          clazz.getConstructor(Configuration.class, Map.class, Repository.class);
-      return constructor.newInstance(configuration, arguments, userRepository);
+          clazz.getConstructor(
+              Configuration.class,
+              ArgumentMediator.class,
+              Map.class,
+              Repository.class,
+              Locale.class);
+      return constructor.newInstance(
+          configuration, argumentMediator, arguments, userRepository, locale);
     } catch (NoSuchMethodException
         | InstantiationException
         | IllegalAccessException

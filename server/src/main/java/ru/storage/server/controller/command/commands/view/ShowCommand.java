@@ -1,6 +1,5 @@
 package ru.storage.server.controller.command.commands.view;
 
-import com.google.gson.Gson;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,11 +8,12 @@ import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.repository.Query;
-import ru.storage.server.model.domain.repository.Repository;
 import ru.storage.server.model.domain.repository.exceptions.RepositoryException;
+import ru.storage.server.model.domain.repository.repositories.workerRepository.WorkerRepository;
 import ru.storage.server.model.domain.repository.repositories.workerRepository.queries.GetAllWorkers;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -26,9 +26,9 @@ public final class ShowCommand extends ViewCommand {
       Configuration configuration,
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
-      Gson gson,
-      Repository<Worker> workerRepository) {
-    super(configuration, argumentMediator, arguments, gson, workerRepository);
+      Locale locale,
+      WorkerRepository workerRepository) {
+    super(configuration, argumentMediator, arguments, locale, workerRepository);
     this.logger = LogManager.getLogger(ShowCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.ShowCommand");
@@ -53,9 +53,14 @@ public final class ShowCommand extends ViewCommand {
       return new Response(Status.NO_CONTENT, COLLECTION_IS_EMPTY_ANSWER);
     }
 
-    String result = gson.toJson(allWorkers);
+    StringBuilder result = new StringBuilder();
+    for (Worker worker : allWorkers) {
+      appendWorker(result, worker);
+      result.append(System.lineSeparator());
+      result.append(SEPARATOR);
+    }
 
     logger.info("All workers were converted SUCCESSFULLY.");
-    return new Response(Status.OK, result);
+    return new Response(Status.OK, result.toString());
   }
 }

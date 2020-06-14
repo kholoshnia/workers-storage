@@ -1,6 +1,5 @@
 package ru.storage.server.controller.command.commands.history;
 
-import com.google.gson.Gson;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +8,7 @@ import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.services.history.History;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -21,12 +21,12 @@ public final class ClearHistoryCommand extends HistoryCommand {
       Configuration configuration,
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
-      Gson gson,
+      Locale locale,
       History history) {
-    super(configuration, argumentMediator, arguments, gson, history);
+    super(configuration, argumentMediator, arguments, locale, history);
     this.logger = LogManager.getLogger(ClearHistoryCommand.class);
 
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ClearHistoryCommand");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ClearHistoryCommand", locale);
 
     CLEARED_SUCCESSFULLY_ANSWER = resourceBundle.getString("answers.clearedSuccessfully");
   }

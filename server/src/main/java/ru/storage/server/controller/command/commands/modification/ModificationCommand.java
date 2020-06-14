@@ -49,21 +49,21 @@ public abstract class ModificationCommand extends Command {
             arguments.get(argumentMediator.COORDINATES_X),
             arguments.get(argumentMediator.COORDINATES_Y),
             arguments.get(argumentMediator.COORDINATES_Z));
-    logger.info("CoordinatesDTO was created SUCCESSFULLY.");
+    logger.info(() -> "CoordinatesDTO was created.");
 
     LocationDTO locationDTO =
         new LocationDTO(
             arguments.get(argumentMediator.LOCATION_ADDRESS),
             arguments.get(argumentMediator.LOCATION_LATITUDE),
             arguments.get(argumentMediator.LOCATION_LONGITUDE));
-    logger.info("LocationDTO was created SUCCESSFULLY.");
+    logger.info(() -> "LocationDTO was created.");
 
     PersonDTO personDTO =
         new PersonDTO(
             arguments.get(argumentMediator.PERSON_NAME),
             arguments.get(argumentMediator.PERSON_PASSPORT_ID),
             locationDTO);
-    logger.info("PersonDTO was created SUCCESSFULLY.");
+    logger.info(() -> "PersonDTO was created.");
 
     WorkerDTO workerDTO =
         new WorkerDTO(
@@ -73,7 +73,7 @@ public abstract class ModificationCommand extends Command {
             arguments.get(argumentMediator.WORKER_END_DATE),
             coordinatesDTO,
             personDTO);
-    logger.info("WorkerDTO was created SUCCESSFULLY.");
+    logger.info(() -> "WorkerDTO was created.");
 
     return workerDTO;
   }

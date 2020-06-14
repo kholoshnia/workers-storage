@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import ru.storage.server.controller.services.hashGenerator.exceptions.HashGeneratorException;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
 import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -29,11 +28,11 @@ public final class SHA256Generator extends HashGenerator {
       msdDigest.update(string.getBytes(StandardCharsets.UTF_8), 0, string.length());
       sha256 = DatatypeConverter.printHexBinary(msdDigest.digest());
     } catch (NoSuchAlgorithmException e) {
-      logger.fatal("An exception was caught during the work of SHA-256 hash generator.", e);
+      logger.fatal(() -> "An exception was caught during the work of SHA-256 hash generator.", e);
       throw new HashGeneratorException(e);
     }
 
-    logger.info("SHA-256 hash generated SUCCESSFULLY.");
+    logger.info(() -> "SHA-256 hash generated.");
     return sha256;
   }
 }

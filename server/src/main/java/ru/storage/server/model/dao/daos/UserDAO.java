@@ -2,9 +2,9 @@ package ru.storage.server.model.dao.daos;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.user.Role;
 import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.source.DataSource;
@@ -109,13 +109,13 @@ public class UserDAO implements DAO<String, User> {
         allUsers.add(user);
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot get all users.", e);
+      logger.error(() -> "Cannot get all users.", e);
       throw new DAOException(CANNOT_GET_ALL_USER_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Got all users SUCCESSFULLY.");
+    logger.info(() -> "Got all users.");
     return allUsers;
   }
 
@@ -138,13 +138,13 @@ public class UserDAO implements DAO<String, User> {
         user = new User(id, name, login, password, role, state);
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot get user by id.", e);
+      logger.error(() -> "Cannot get user by id.", e);
       throw new DAOException(CANNOT_GET_USER_BY_ID_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Got user by id SUCCESSFULLY.");
+    logger.info(() -> "Got user by id.");
     return user;
   }
 
@@ -167,13 +167,13 @@ public class UserDAO implements DAO<String, User> {
         user.setID(generatedKeys.getLong(1));
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot insert user.", e);
+      logger.error(() -> "Cannot insert user.", e);
       throw new DAOException(CANNOT_INSERT_USER_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("User was inserted SUCCESSFULLY.");
+    logger.info(() -> "User was inserted.");
     return user;
   }
 
@@ -192,13 +192,13 @@ public class UserDAO implements DAO<String, User> {
 
       preparedStatement.execute();
     } catch (SQLException e) {
-      logger.error("Cannot update user.", e);
+      logger.error(() -> "Cannot update user.", e);
       throw new DAOException(CANNOT_UPDATE_USER_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("User was updated SUCCESSFULLY.");
+    logger.info(() -> "User was updated.");
     return user;
   }
 
@@ -212,12 +212,12 @@ public class UserDAO implements DAO<String, User> {
 
       preparedStatement.execute();
     } catch (SQLException e) {
-      logger.error("Cannot delete user.", e);
+      logger.error(() -> "Cannot delete user.", e);
       throw new DAOException(CANNOT_DELETE_USER_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("User was deleted SUCCESSFULLY.");
+    logger.info(() -> "User was deleted.");
   }
 }

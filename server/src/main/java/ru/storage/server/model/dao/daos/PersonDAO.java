@@ -106,13 +106,13 @@ public class PersonDAO implements DAO<Long, Person> {
         allPersons.add(person);
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot get all persons.", e);
+      logger.error(() -> "Cannot get all persons.", e);
       throw new DAOException(CANNOT_GET_ALL_PERSON_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Got all persons SUCCESSFULLY.");
+    logger.info(() -> "Got all persons.");
     return allPersons;
   }
 
@@ -140,7 +140,7 @@ public class PersonDAO implements DAO<Long, Person> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Got person by id SUCCESSFULLY.");
+    logger.info(() -> "Got person by id.");
     return person;
   }
 
@@ -165,13 +165,13 @@ public class PersonDAO implements DAO<Long, Person> {
         person.setID(generatedKeys.getLong(1));
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot insert person.", e);
+      logger.error(() -> "Cannot insert person.", e);
       throw new DAOException(CANNOT_INSERT_PERSON_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Person was inserted SUCCESSFULLY.");
+    logger.info(() -> "Person was inserted.");
     return person;
   }
 
@@ -192,13 +192,13 @@ public class PersonDAO implements DAO<Long, Person> {
 
       preparedStatement.execute();
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot update person.", e);
+      logger.error(() -> "Cannot update person.", e);
       throw new DAOException(CANNOT_UPDATE_PERSON_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Person was updated SUCCESSFULLY.");
+    logger.info(() -> "Person was updated.");
     return person;
   }
 
@@ -214,12 +214,12 @@ public class PersonDAO implements DAO<Long, Person> {
 
       preparedStatement.execute();
     } catch (SQLException e) {
-      logger.error("Cannot delete person.", e);
+      logger.error(() -> "Cannot delete person.", e);
       throw new DAOException(CANNOT_DELETE_PERSON_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Person was deleted SUCCESSFULLY.");
+    logger.info(() -> "Person was deleted.");
   }
 }

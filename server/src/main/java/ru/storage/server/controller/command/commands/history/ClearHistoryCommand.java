@@ -26,7 +26,8 @@ public final class ClearHistoryCommand extends HistoryCommand {
     super(configuration, argumentMediator, arguments, locale, history);
     this.logger = LogManager.getLogger(ClearHistoryCommand.class);
 
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ClearHistoryCommand", locale);
+    ResourceBundle resourceBundle =
+        ResourceBundle.getBundle("localized.ClearHistoryCommand", locale);
 
     CLEARED_SUCCESSFULLY_ANSWER = resourceBundle.getString("answers.clearedSuccessfully");
   }
@@ -34,13 +35,13 @@ public final class ClearHistoryCommand extends HistoryCommand {
   @Override
   public Response executeCommand() {
     if (history.getSize() == 0L) {
-      logger.info("History is empty.");
+      logger.info(() -> "History is empty.");
       return new Response(Status.NO_CONTENT, HISTORY_IS_EMPTY_ANSWER);
     }
 
     history.clear();
 
-    logger.info("History was cleared SUCCESSFULLY.");
+    logger.info(() -> "History was cleared.");
     return new Response(Status.OK, CLEARED_SUCCESSFULLY_ANSWER);
   }
 }

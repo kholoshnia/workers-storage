@@ -39,7 +39,7 @@ public final class CommandController implements Controller {
     CommandFactory commandFactory = commandFactoryMediator.getCommandFactory(request.getCommand());
 
     if (commandFactory == null) {
-      logger.error("There is no such command, factory was not created.");
+      logger.error(() -> "There is no such command, factory was not created.");
       return new Response(Status.BAD_REQUEST, NO_SUCH_COMMAND_RESPONSE_ANSWER);
     }
 
@@ -54,7 +54,7 @@ public final class CommandController implements Controller {
     }
 
     if (command == null) {
-      logger.error("Got null command form factory.");
+      logger.error(() -> "Got null command form factory.");
       return new Response(Status.INTERNAL_SERVER_ERROR, GOT_NULL_COMMAND_RESPONSE_ANSWER);
     }
 

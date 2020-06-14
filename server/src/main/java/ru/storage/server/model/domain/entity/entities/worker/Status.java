@@ -3,7 +3,7 @@ package ru.storage.server.model.domain.entity.entities.worker;
 public enum Status {
   FIRED,
   HIRED,
-  RECOMMENDED_FOR_PROMOTION;
+  PROMOTION;
 
   public static Status getStatus(String statusString) {
     if (statusString == null) {

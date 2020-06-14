@@ -3,6 +3,7 @@ package ru.storage.server.controller.command.commands.modification;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Supplier;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
@@ -43,7 +44,7 @@ public final class RemoveCommand extends ModificationCommand {
     try {
       id = Long.parseLong(arguments.get(argumentMediator.WORKER_ID));
     } catch (NumberFormatException e) {
-      logger.warn("Got wrong id.", e);
+      logger.warn(() -> "Got wrong id.", e);
       return new Response(Status.BAD_REQUEST, WRONG_ID_ANSWER);
     }
 
@@ -53,12 +54,12 @@ public final class RemoveCommand extends ModificationCommand {
     try {
       equalIDWorkers = workerRepository.get(query);
     } catch (RepositoryException e) {
-      logger.error("Cannot get workers which ids are equal to " + id + ".", e);
+      logger.error("Cannot get workers which ids are equal to {}.", (Supplier<?>) () -> id, e);
       return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
     if (equalIDWorkers.isEmpty()) {
-      logger.info("Worker with specified id: " + id + " was not found.");
+      logger.info("Worker with specified id: {} was not found.", () -> id);
       return new Response(Status.NOT_FOUND, WORKER_NOT_FOUND_ANSWER);
     }
 
@@ -66,12 +67,12 @@ public final class RemoveCommand extends ModificationCommand {
       try {
         workerRepository.delete(worker);
       } catch (RepositoryException e) {
-        logger.error("Cannot remove worker which id is equal to " + id + ".", e);
+        logger.error("Cannot remove worker which id is equal to {}.", (Supplier<?>) () -> id, e);
         return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
       }
     }
 
-    logger.info("Worker was removed SUCCESSFULLY.");
+    logger.info(() -> "Worker was removed.");
     return new Response(Status.OK, REMOVED_SUCCESSFULLY_ANSWER);
   }
 }

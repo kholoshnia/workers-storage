@@ -2,8 +2,7 @@ package ru.storage.server.model.source.database;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.server.controller.services.exitManager.ExitListener;
-import ru.storage.server.controller.services.exitManager.exceptions.ExitingException;
+import org.apache.logging.log4j.util.Supplier;
 import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
@@ -20,7 +19,7 @@ import java.sql.Statement;
 import java.util.ResourceBundle;
 
 /** Database class that initialize tables. */
-public final class Database extends DataSource implements ExitListener {
+public final class Database extends DataSource {
   private static final String INIT_USERS_TABLE_EXCEPTION_MESSAGE;
   private static final String INIT_WORKERS_TABLE_EXCEPTION_MESSAGE;
   private static final String INIT_COORDINATES_TABLE_EXCEPTION_MESSAGE;
@@ -237,7 +236,7 @@ public final class Database extends DataSource implements ExitListener {
     initPersonsTable();
     initWorkersTable();
 
-    logger.debug("All tables were initialized SUCCESSFULLY.");
+    logger.debug(() -> "All tables were initialized.");
   }
 
   /**
@@ -253,13 +252,15 @@ public final class Database extends DataSource implements ExitListener {
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
       logger.fatal(
-          "Cannot create users table, query: " + CREATE_IF_NOT_EXISTS_USERS_TABLE + ".", e);
+          "Cannot create users table, query: {}.",
+          (Supplier<?>) () -> CREATE_IF_NOT_EXISTS_USERS_TABLE,
+          e);
       throw new DatabaseException(INIT_USERS_TABLE_EXCEPTION_MESSAGE, e);
     } finally {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug("Users table was initialized SUCCESSFULLY.");
+    logger.debug(() -> "Users table was initialized.");
   }
 
   /**
@@ -275,16 +276,15 @@ public final class Database extends DataSource implements ExitListener {
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
       logger.fatal(
-          "Cannot initialize coordinates table, query: "
-              + CREATE_IF_NOT_EXISTS_COORDINATES_TABLE
-              + ".",
+          "Cannot initialize coordinates table, query: {}.",
+          (Supplier<?>) () -> CREATE_IF_NOT_EXISTS_COORDINATES_TABLE,
           e);
       throw new DatabaseException(INIT_COORDINATES_TABLE_EXCEPTION_MESSAGE, e);
     } finally {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug("Coordinates table was initialized SUCCESSFULLY.");
+    logger.debug(() -> "Coordinates table was initialized.");
   }
 
   /**
@@ -300,13 +300,15 @@ public final class Database extends DataSource implements ExitListener {
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
       logger.fatal(
-          "Cannot initialize persons table, query: " + CREATE_IF_NOT_EXISTS_PERSONS_TABLE + ".", e);
+          "Cannot initialize persons table, query: {}.",
+          (Supplier<?>) () -> CREATE_IF_NOT_EXISTS_PERSONS_TABLE,
+          e);
       throw new DatabaseException(INIT_PERSONS_TABLE_EXCEPTION_MESSAGE, e);
     } finally {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug("Persons table was initialized SUCCESSFULLY.");
+    logger.debug(() -> "Persons table was initialized.");
   }
 
   /**
@@ -322,14 +324,15 @@ public final class Database extends DataSource implements ExitListener {
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
       logger.fatal(
-          "Cannot initialize locations table, query: " + CREATE_IF_NOT_EXISTS_LOCATIONS_TABLE + ".",
+          "Cannot initialize locations table, query: {}.",
+          (Supplier<?>) () -> CREATE_IF_NOT_EXISTS_LOCATIONS_TABLE,
           e);
       throw new DatabaseException(INIT_LOCATIONS_TABLE_EXCEPTION_MESSAGE, e);
     } finally {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug("Locations table was initialized SUCCESSFULLY.");
+    logger.debug(() -> "Locations table was initialized.");
   }
 
   /**
@@ -345,23 +348,14 @@ public final class Database extends DataSource implements ExitListener {
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
       logger.fatal(
-          "Cannot create workers table, query: " + CREATE_IF_NOT_EXISTS_WORKERS_TABLE + ".", e);
+          "Cannot create workers table, query: {}.",
+          (Supplier<?>) () -> CREATE_IF_NOT_EXISTS_WORKERS_TABLE,
+          e);
       throw new DatabaseException(INIT_WORKERS_TABLE_EXCEPTION_MESSAGE, e);
     } finally {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug("Workers table was initialized SUCCESSFULLY.");
-  }
-
-  public void exit() throws ExitingException {
-    try {
-      closeConnection();
-    } catch (DataSourceException e) {
-      logger.fatal("Cannot close connection with database.");
-      throw new ExitingException(e);
-    }
-
-    logger.debug("Connection with database was closed SUCCESSFULLY.");
+    logger.debug(() -> "Workers table was initialized.");
   }
 }

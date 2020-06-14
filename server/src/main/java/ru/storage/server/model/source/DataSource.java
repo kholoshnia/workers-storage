@@ -2,6 +2,9 @@ package ru.storage.server.model.source;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Supplier;
+import ru.storage.common.exitManager.ExitListener;
+import ru.storage.common.exitManager.exceptions.ExitingException;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import java.sql.Connection;
@@ -16,7 +19,7 @@ import java.util.ResourceBundle;
  * @see Connection
  * @see PreparedStatement
  */
-public abstract class DataSource {
+public abstract class DataSource implements ExitListener {
   private static final String SETUP_CONNECTION_EXCEPTION_MESSAGE;
   private static final String CLOSE_CONNECTION_EXCEPTION_MESSAGE;
   private static final String GET_PREPARED_STATEMENT_EXCEPTION_MESSAGE;
@@ -66,11 +69,11 @@ public abstract class DataSource {
     try {
       connection = DriverManager.getConnection(url, user, password);
     } catch (SQLException e) {
-      logger.fatal("Cannot connect to database", e);
+      logger.fatal(() -> "Cannot connect to database", e);
       throw new DataSourceException(SETUP_CONNECTION_EXCEPTION_MESSAGE, e);
     }
 
-    logger.debug("Connection setup completed SUCCESSFULLY.");
+    logger.debug(() -> "Connection setup completed.");
     return connection;
   }
 
@@ -89,11 +92,12 @@ public abstract class DataSource {
     try {
       preparedStatement = connection.prepareStatement(statement, type);
     } catch (SQLException e) {
-      logger.error("Statement for request: \"" + statement + "\" was not prepared.", e);
+      logger.error(
+          "Statement for request: \"{}\" was not prepared", (Supplier<?>) () -> statement, e);
       throw new DataSourceException(GET_PREPARED_STATEMENT_EXCEPTION_MESSAGE, e);
     }
 
-    logger.debug("Statement for request: \"" + statement + "\" was prepared SUCCESSFULLY.");
+    logger.error("Statement for request: \"{}\" was not prepared", () -> statement);
     return preparedStatement;
   }
 
@@ -112,12 +116,12 @@ public abstract class DataSource {
       try {
         preparedStatement.close();
       } catch (SQLException e) {
-        logger.error("Statement was not closed.", e);
+        logger.error(() -> "Statement was not closed.", e);
         throw new DataSourceException(CLOSE_PREPARED_STATEMENT_EXCEPTION_MESSAGE, e);
       }
     }
 
-    logger.debug("Statement was closed SUCCESSFULLY.");
+    logger.debug(() -> "Statement was closed.");
   }
 
   /**
@@ -132,11 +136,23 @@ public abstract class DataSource {
       try {
         connection.close();
       } catch (SQLException e) {
-        logger.fatal("Cannot close connection.", e);
+        logger.fatal(() -> "Cannot close connection.", e);
         throw new DataSourceException(CLOSE_CONNECTION_EXCEPTION_MESSAGE, e);
       }
     }
 
-    logger.debug("Connection was closed SUCCESSFULLY.");
+    logger.debug(() -> "Connection was closed.");
+  }
+
+  @Override
+  public void exit() throws ExitingException {
+    try {
+      closeConnection();
+    } catch (DataSourceException e) {
+      logger.fatal(() -> "Cannot close connection with database.", e);
+      throw new ExitingException(e);
+    }
+
+    logger.debug(() -> "Connection with database was closed.");
   }
 }

@@ -1,6 +1,8 @@
 package ru.storage.common.transfer.response;
 
-public enum Status {
+import java.io.Serializable;
+
+public enum Status implements Serializable {
   OK(200),
   CREATED(201),
   NO_CONTENT(204),

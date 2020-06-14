@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public abstract class ViewCommand extends Command {
-  protected final String SEPARATOR = "--------------------";
+  public static final String SEPARATOR = "--------------------";
 
   protected final WorkerRepository workerRepository;
   protected final DateFormat dateFormat;
@@ -183,6 +183,6 @@ public abstract class ViewCommand extends Command {
                 LOCATION_LONGITUDE_PREFIX,
                 numberFormat.format(worker.getPerson().getLocation().getLongitude())));
 
-    logger.info("Worker was appended SUCCESSFULLY.");
+    logger.info(() -> "Worker was appended.");
   }
 }

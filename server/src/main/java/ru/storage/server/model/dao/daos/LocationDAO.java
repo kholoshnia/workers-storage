@@ -104,13 +104,13 @@ public class LocationDAO implements DAO<Long, Location> {
         allLocations.add(location);
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot get all locations.", e);
+      logger.error(() -> "Cannot get all locations.", e);
       throw new DAOException(CANNOT_GET_ALL_LOCATION_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Got all locations SUCCESSFULLY.");
+    logger.info(() -> "Got all locations.");
     return allLocations;
   }
 
@@ -132,13 +132,13 @@ public class LocationDAO implements DAO<Long, Location> {
         location = new Location(id, ownerId, address, latitude, longitude);
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot get location by id.", e);
+      logger.error(() -> "Cannot get location by id.", e);
       throw new DAOException(CANNOT_GET_LOCATION_BY_ID_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Got location by id SUCCESSFULLY.");
+    logger.info(() -> "Got location by id.");
     return location;
   }
 
@@ -160,13 +160,13 @@ public class LocationDAO implements DAO<Long, Location> {
         location.setID(generatedKeys.getLong(1));
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot insert location.", e);
+      logger.error(() -> "Cannot insert location.", e);
       throw new DAOException(CANNOT_INSERT_LOCATION_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Location was inserted SUCCESSFULLY.");
+    logger.info(() -> "Location was inserted.");
     return location;
   }
 
@@ -184,13 +184,13 @@ public class LocationDAO implements DAO<Long, Location> {
 
       preparedStatement.execute();
     } catch (SQLException e) {
-      logger.error("Cannot update location.", e);
+      logger.error(() -> "Cannot update location.", e);
       throw new DAOException(CANNOT_UPDATE_LOCATION_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Location was updated SUCCESSFULLY.");
+    logger.info(() -> "Location was updated.");
     return location;
   }
 
@@ -204,12 +204,12 @@ public class LocationDAO implements DAO<Long, Location> {
 
       preparedStatement.execute();
     } catch (SQLException e) {
-      logger.error("Cannot delete location.", e);
+      logger.error(() -> "Cannot delete location.", e);
       throw new DAOException(CANNOT_DELETE_LOCATION_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Location was deleted SUCCESSFULLY.");
+    logger.info(() -> "Location was deleted.");
   }
 }

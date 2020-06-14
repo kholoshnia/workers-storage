@@ -2,9 +2,9 @@ package ru.storage.server.model.dao.daos;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.domain.entity.entities.worker.Status;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
@@ -134,13 +134,13 @@ public class WorkerDAO implements DAO<Long, Worker> {
         allWorkers.add(worker);
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot get all workers.", e);
+      logger.error(() -> "Cannot get all workers.", e);
       throw new DAOException(CANNOT_GET_ALL_WORKER_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Got all workers SUCCESSFULLY.");
+    logger.info(() -> "Got all workers.");
     return allWorkers;
   }
 
@@ -171,13 +171,13 @@ public class WorkerDAO implements DAO<Long, Worker> {
                 id, ownerId, creationDate, salary, status, startDate, endDate, coordinates, person);
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot get worker by id.", e);
+      logger.error(() -> "Cannot get worker by id.", e);
       throw new DAOException(CANNOT_GET_WORKER_BY_ID_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Got worker by id SUCCESSFULLY.");
+    logger.info(() -> "Got worker by id.");
     return worker;
   }
 
@@ -209,13 +209,13 @@ public class WorkerDAO implements DAO<Long, Worker> {
         worker.setID(generatedKeys.getLong(1));
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot insert worker.", e);
+      logger.error(() -> "Cannot insert worker.", e);
       throw new DAOException(CANNOT_INSERT_WORKER_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Worker was inserted SUCCESSFULLY.");
+    logger.info(() -> "Worker was inserted.");
     return worker;
   }
 
@@ -244,13 +244,13 @@ public class WorkerDAO implements DAO<Long, Worker> {
 
       preparedStatement.execute();
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot update worker.", e);
+      logger.error(() -> "Cannot update worker.", e);
       throw new DAOException(CANNOT_UPDATE_WORKER_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Worker was updated SUCCESSFULLY.");
+    logger.info(() -> "Worker was updated.");
     return worker;
   }
 
@@ -267,12 +267,12 @@ public class WorkerDAO implements DAO<Long, Worker> {
 
       preparedStatement.execute();
     } catch (SQLException e) {
-      logger.error("Cannot delete worker.", e);
+      logger.error(() -> "Cannot delete worker.", e);
       throw new DAOException(CANNOT_DELETE_WORKER_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Worker was deleted SUCCESSFULLY.");
+    logger.info(() -> "Worker was deleted.");
   }
 }

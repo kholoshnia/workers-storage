@@ -1,6 +1,5 @@
 package ru.storage.server.controller.services.history;
 
-import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,12 +29,12 @@ public final class History {
 
   public void addRecord(@Nonnull Record record) {
     records.add(record);
-    logger.debug("New record was added to the history SUCCESSFULLY.");
+    logger.debug(() -> "New record was added to the history.");
   }
 
   public void clear() {
     records.clear();
-    logger.debug("History was cleared SUCCESSFULLY.");
+    logger.debug(() -> "History was cleared.");
   }
 
   public long getSize() {

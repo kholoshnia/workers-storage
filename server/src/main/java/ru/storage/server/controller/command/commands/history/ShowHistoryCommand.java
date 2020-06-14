@@ -26,24 +26,10 @@ public final class ShowHistoryCommand extends HistoryCommand {
     this.logger = LogManager.getLogger(ShowHistoryCommand.class);
   }
 
-  private String formatArguments(Record record) {
-    StringBuilder arguments = new StringBuilder();
-
-    for (Map.Entry<String, String> entry : record.getArguments().entrySet()) {
-      arguments
-          .append(entry.getKey())
-          .append(": ")
-          .append(entry.getValue())
-          .append(System.lineSeparator());
-    }
-
-    return arguments.toString();
-  }
-
   @Override
   public Response executeCommand() {
     if (history.getSize() == 0L) {
-      logger.info("History is empty.");
+      logger.info(() -> "History is empty.");
       return new Response(Status.NO_CONTENT, HISTORY_IS_EMPTY_ANSWER);
     }
 
@@ -51,15 +37,18 @@ public final class ShowHistoryCommand extends HistoryCommand {
     StringBuilder result = new StringBuilder();
 
     for (Record record : records) {
-      result
-          .append(record.getCommand())
-          .append(System.lineSeparator())
-          .append(formatArguments(record))
-          .append(SEPARATOR)
-          .append(System.lineSeparator());
+      result.append(record.getCommand()).append(System.lineSeparator());
+      record
+          .getArguments()
+          .forEach(
+              (key, value) ->
+                  result
+                      .append(String.format("%s: %s", key, value))
+                      .append(System.lineSeparator()));
+      result.append(SEPARATOR).append(System.lineSeparator());
     }
 
-    logger.info("History was formed SUCCESSFULLY.");
+    logger.info(() -> "History was formed.");
     return new Response(Status.OK, result.toString());
   }
 }

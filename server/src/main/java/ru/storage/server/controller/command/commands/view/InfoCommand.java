@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class InfoCommand extends ViewCommand {
+  private final String INFO_PREFIX;
   private final String TYPE_PREFIX;
   private final String INIT_TIME_PREFIX;
   private final String SIZE_PREFIX;
@@ -30,6 +31,7 @@ public final class InfoCommand extends ViewCommand {
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.InfoCommand", locale);
 
+    INFO_PREFIX = resourceBundle.getString("answers.info");
     TYPE_PREFIX = resourceBundle.getString("answers.type");
     INIT_TIME_PREFIX = resourceBundle.getString("answers.initTime");
     SIZE_PREFIX = resourceBundle.getString("answers.size");
@@ -38,12 +40,22 @@ public final class InfoCommand extends ViewCommand {
   @Override
   public Response executeCommand() {
     String result =
-        String.format("%s: %s", TYPE_PREFIX, workerRepository.getType())
+        SEPARATOR
+            + System.lineSeparator()
+            + INFO_PREFIX
+            + System.lineSeparator()
+            + SEPARATOR
+            + System.lineSeparator()
+            + String.format("%s: %s", TYPE_PREFIX, workerRepository.getType())
+            + System.lineSeparator()
             + String.format(
                 "%s: %s", INIT_TIME_PREFIX, dateFormat.format(workerRepository.getInitTime()))
-            + String.format("%s: %d", SIZE_PREFIX, workerRepository.getSize());
+            + System.lineSeparator()
+            + String.format("%s: %d", SIZE_PREFIX, workerRepository.getSize())
+            + System.lineSeparator()
+            + SEPARATOR;
 
-    logger.info("Info was formed SUCCESSFULLY.");
+    logger.info(() -> "Info was formed.");
     return new Response(Status.OK, result);
   }
 }

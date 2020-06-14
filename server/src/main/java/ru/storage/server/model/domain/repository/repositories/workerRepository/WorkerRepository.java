@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
 
 public final class WorkerRepository implements Repository<Worker> {
   private static final String WORKER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE;
@@ -46,14 +47,17 @@ public final class WorkerRepository implements Repository<Worker> {
     this.size = workers.size();
   }
 
+  /** Returns type of the collection. */
   public Class<?> getType() {
     return type;
   }
 
+  /** Returns initialization time of the collection. */
   public LocalDateTime getInitTime() {
     return initTime;
   }
 
+  /** Returns current size of the collection. */
   public long getSize() {
     return size;
   }
@@ -72,13 +76,13 @@ public final class WorkerRepository implements Repository<Worker> {
       List<Worker> allWorkers = workerDAO.getAll();
 
       if (allWorkers.isEmpty()) {
-        logger.warn("No workers were found in DAO, the collection was not filled.");
+        logger.warn(() -> "No workers were found in DAO, the collection was not filled.");
         return workers;
       }
 
       for (Worker worker : allWorkers) {
         workers.add(worker);
-        logger.debug("Added worker from DAO: " + worker + ".");
+        logger.debug("Added worker from DAO: {}.", () -> worker);
       }
 
       return workers;
@@ -91,7 +95,7 @@ public final class WorkerRepository implements Repository<Worker> {
   public synchronized List<Worker> get(@Nonnull Query<Worker> query) throws RepositoryException {
     List<Worker> result = query.execute(workers);
 
-    logger.debug("WorkerQuery: " + query + " was executed SUCCESSFULLY.");
+    logger.debug("WorkerQuery: {} was executed.", () -> query);
     return result;
   }
 
@@ -101,16 +105,16 @@ public final class WorkerRepository implements Repository<Worker> {
 
     try {
       result = workerDAO.insert(worker);
-      logger.info("Got worker with id from DAO SUCCESSFULLY.");
+      logger.info("Got worker with id from DAO.");
     } catch (DAOException | DataSourceException e) {
-      logger.error("Cannot add new worker to the collection.", e);
+      logger.error(() -> "Cannot add new worker to the collection.", e);
       throw new WorkerRepositoryException(e);
     }
 
     workers.add(result);
 
     size = workers.size();
-    logger.info("New worker was added to the collection SUCCESSFULLY.");
+    logger.info(() -> "Worker was added to the collection.");
   }
 
   @Override
@@ -119,12 +123,13 @@ public final class WorkerRepository implements Repository<Worker> {
       Worker result = workerDAO.getByKey(worker.getID());
 
       if (result == null) {
-        logger.error("Cannot update worker, no such worker in DAO, target worker: %s." + worker);
+        logger.error(
+            "Cannot update worker, no such worker in DAO, target worker: {}.", () -> worker);
         throw new WorkerRepositoryException(WORKER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE);
       }
 
       workerDAO.update(result);
-      logger.info("Worker was updated in DAO SUCCESSFULLY.");
+      logger.info("Worker was updated in DAO.");
     } catch (DAOException | DataSourceException e) {
       logger.error("Cannot update worker in DAO, target worker: %s." + worker, e);
       throw new WorkerRepositoryException(e);
@@ -132,13 +137,14 @@ public final class WorkerRepository implements Repository<Worker> {
 
     if (workers.remove(worker)) {
       logger.error(
-          "Cannot delete worker, no such worker in the collection, target worker: %s." + worker);
+          "Cannot delete worker, no such worker in the collection, target worker: {}.",
+          () -> worker);
       throw new WorkerRepositoryException(WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE);
     }
 
     workers.add(worker);
 
-    logger.info("Worker was updated in the collection SUCCESSFULLY.");
+    logger.info(() -> "Worker was updated in the collection.");
   }
 
   @Override
@@ -147,24 +153,27 @@ public final class WorkerRepository implements Repository<Worker> {
       Worker result = workerDAO.getByKey(worker.getID());
 
       if (result == null) {
-        logger.error("Cannot delete worker. No such worker in DAO, target worker: " + worker);
+        logger.error(
+            "Cannot delete worker. No such worker in DAO, target worker: {}.", () -> worker);
         throw new WorkerRepositoryException(WORKER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE);
       }
 
       workerDAO.delete(worker);
-      logger.info("Worker was deleted from DAO SUCCESSFULLY.");
+      logger.info("Worker was deleted from DAO.");
     } catch (DAOException | DataSourceException e) {
-      logger.error("Cannot delete worker using DAO, target worker: %s." + worker, e);
+      logger.error(
+          "Cannot delete worker using DAO, target worker: {}.", (Supplier<?>) () -> worker, e);
       throw new WorkerRepositoryException(e);
     }
 
     if (workers.remove(worker)) {
       logger.error(
-          "Cannot delete worker, no such worker in the collection, target worker: %s." + worker);
+          "Cannot delete worker, no such worker in the collection, target worker: {}.",
+          () -> worker);
       throw new WorkerRepositoryException(WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE);
     }
 
     size = workers.size();
-    logger.info("Worker was deleted from the collection SUCCESSFULLY.");
+    logger.info(() -> "Worker was deleted from the collection.");
   }
 }

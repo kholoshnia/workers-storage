@@ -2,9 +2,9 @@ package ru.storage.server.model.dao.daos;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.exceptions.DataSourceException;
@@ -26,8 +26,7 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
   private static final String CANNOT_DELETE_COORDINATES_EXCEPTION_MESSAGE;
 
   static {
-    ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("internal.CoordinatesDAO");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.CoordinatesDAO");
 
     CANNOT_GET_ALL_COORDINATES_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.cannotGetAllCoordinates");
@@ -104,13 +103,13 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
         allCoordinates.add(coordinates);
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot get all coordinates.", e);
+      logger.error(() -> "Cannot get all coordinates.", e);
       throw new DAOException(CANNOT_GET_ALL_COORDINATES_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Got all coordinates SUCCESSFULLY.");
+    logger.info(() -> "Got all coordinates.");
     return allCoordinates;
   }
 
@@ -132,13 +131,13 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
         coordinates = new Coordinates(id, ownerId, x, y, z);
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot get coordinates by id.", e);
+      logger.error(() -> "Cannot get coordinates by id.", e);
       throw new DAOException(CANNOT_GET_COORDINATES_BY_ID_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Got coordinates by id SUCCESSFULLY.");
+    logger.info(() -> "Got coordinates by id.");
     return coordinates;
   }
 
@@ -161,13 +160,13 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
         coordinates.setID(generatedKeys.getLong(1));
       }
     } catch (SQLException | ValidationException e) {
-      logger.error("Cannot insert coordinates.", e);
+      logger.error(() -> "Cannot insert coordinates.", e);
       throw new DAOException(CANNOT_INSERT_COORDINATES_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Coordinates was inserted SUCCESSFULLY.");
+    logger.info(() -> "Coordinates was inserted.");
     return coordinates;
   }
 
@@ -186,13 +185,13 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
 
       preparedStatement.execute();
     } catch (SQLException e) {
-      logger.error("Cannot update coordinates.", e);
+      logger.error(() -> "Cannot update coordinates.", e);
       throw new DAOException(CANNOT_UPDATE_COORDINATES_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Coordinates was updated SUCCESSFULLY.");
+    logger.info(() -> "Coordinates was updated.");
     return coordinates;
   }
 
@@ -206,12 +205,12 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
 
       preparedStatement.execute();
     } catch (SQLException e) {
-      logger.error("Cannot delete coordinates.", e);
+      logger.error(() -> "Cannot delete coordinates.", e);
       throw new DAOException(CANNOT_DELETE_COORDINATES_EXCEPTION_MESSAGE, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info("Coordinates was deleted SUCCESSFULLY.");
+    logger.info(() -> "Coordinates was deleted.");
   }
 }

@@ -1,6 +1,8 @@
 package ru.storage.server.controller.command.factory;
 
 import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
 import ru.storage.server.controller.command.factory.factories.EntryCommandFactory;
@@ -16,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class CommandFactoryMediator {
+  private final Logger logger;
   private final Map<String, CommandFactory> commandFactories;
 
   public CommandFactoryMediator(
@@ -25,14 +28,16 @@ public final class CommandFactoryMediator {
       History history,
       Repository<User> userRepository,
       Repository<Worker> workerRepository) {
-    EntryCommandFactory entryCommandFactory =
+    this.logger = LogManager.getLogger(CommandFactoryMediator.class);
+
+    CommandFactory entryCommandFactory =
         new EntryCommandFactory(configuration, argumentMediator, commandMediator, userRepository);
-    HistoryCommandFactory historyCommandFactory =
+    CommandFactory historyCommandFactory =
         new HistoryCommandFactory(configuration, argumentMediator, commandMediator, history);
-    ModificationCommandFactory modificationCommandFactory =
+    CommandFactory modificationCommandFactory =
         new ModificationCommandFactory(
             configuration, argumentMediator, commandMediator, workerRepository);
-    ViewCommandFactory viewCommandFactory =
+    CommandFactory viewCommandFactory =
         new ViewCommandFactory(configuration, argumentMediator, commandMediator, workerRepository);
 
     this.commandFactories =
@@ -50,9 +55,14 @@ public final class CommandFactoryMediator {
             put(commandMediator.SHOW, viewCommandFactory);
           }
         };
+
+    logger.debug(() -> "Command factory map was created.");
   }
 
   public CommandFactory getCommandFactory(String command) {
-    return commandFactories.get(command);
+    CommandFactory commandFactory = commandFactories.get(command);
+
+    logger.info("Got command factory: {}, for command: {}.", () -> commandFactory, () -> command);
+    return commandFactory;
   }
 }

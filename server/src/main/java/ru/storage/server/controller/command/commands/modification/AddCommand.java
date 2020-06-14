@@ -46,21 +46,21 @@ public final class AddCommand extends ModificationCommand {
     try {
       workerDTO = createWorkerDTO(arguments);
     } catch (ValidationException e) {
-      logger.warn("Cannot create workerDTO.", e);
+      logger.warn(() -> "Cannot create workerDTO.", e);
       return new Response(Status.BAD_REQUEST, WRONG_WORKER_FORMAT_ANSWER);
     }
 
     try {
       workerRepository.insert(workerDTO.toEntity());
     } catch (ValidationException e) {
-      logger.error("Cannot create worker.", e);
+      logger.error(() -> "Cannot create worker.", e);
       return new Response(Status.BAD_REQUEST, WRONG_WORKER_DATA_ANSWER);
     } catch (RepositoryException e) {
-      logger.error("Cannot add worker.", e);
+      logger.error(() -> "Cannot add worker.", e);
       return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
-    logger.info("Worker was added SUCCESSFULLY.");
+    logger.info(() -> "Worker was added.");
     return new Response(Status.CREATED, ADDED_SUCCESSFULLY_ANSWER);
   }
 }

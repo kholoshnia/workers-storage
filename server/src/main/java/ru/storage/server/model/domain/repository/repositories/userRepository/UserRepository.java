@@ -21,8 +21,7 @@ public final class UserRepository implements Repository<User> {
   private static final String USER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE;
 
   static {
-    ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("internal.UserRepository");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.UserRepository");
 
     USER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE =
         resourceBundle.getString("exceptionMessages.userNotFoundInCollection");
@@ -54,13 +53,13 @@ public final class UserRepository implements Repository<User> {
       List<User> allUsers = userDAO.getAll();
 
       if (allUsers.isEmpty()) {
-        logger.warn("No users were found in DAO, the collection was not filled.");
+        logger.warn(() -> "No users were found in DAO, the collection was not filled.");
         return users;
       }
 
       for (User user : allUsers) {
         users.add(user);
-        logger.debug("Added user from DAO.");
+        logger.debug(() -> "Added user from DAO.");
       }
 
       return users;
@@ -77,7 +76,7 @@ public final class UserRepository implements Repository<User> {
 
     List<User> result = query.execute(users);
 
-    logger.debug("WorkerQuery: " + query + " was executed SUCCESSFULLY.");
+    logger.debug("WorkerQuery: {} was executed.", () -> query);
     return result;
   }
 
@@ -87,15 +86,15 @@ public final class UserRepository implements Repository<User> {
 
     try {
       result = userDAO.insert(user);
-      logger.info("Got user with id from DAO SUCCESSFULLY.");
+      logger.info(() -> "Got user with id from DAO.");
     } catch (DAOException | DataSourceException e) {
-      logger.error("Cannot add new user to the collection.", e);
+      logger.error(() -> "Cannot add new user to the collection.", e);
       throw new UserRepositoryException(e);
     }
 
     users.add(result);
 
-    logger.info("New user was added to the collection SUCCESSFULLY.");
+    logger.info(() -> "User was added to the collection.");
   }
 
   @Override
@@ -104,25 +103,25 @@ public final class UserRepository implements Repository<User> {
       User result = userDAO.getByKey(user.getLogin());
 
       if (result == null) {
-        logger.error("Cannot update user, no such user in DAO.");
+        logger.error(() -> "Cannot update user, no such user in DAO.");
         throw new UserRepositoryException(USER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE);
       }
 
       userDAO.update(user);
-      logger.info("User was updated in DAO SUCCESSFULLY.");
+      logger.info(() -> "User was updated in DAO.");
     } catch (DAOException | DataSourceException e) {
-      logger.error("Cannot update user in DAO.", e);
+      logger.error(() -> "Cannot update user in DAO.", e);
       throw new UserRepositoryException(e);
     }
 
     if (users.remove(user)) {
-      logger.error("Cannot delete user, no such user in the collection.");
+      logger.error(() -> "Cannot delete user, no such user in the collection.");
       throw new UserRepositoryException(USER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE);
     }
 
     users.add(user);
 
-    logger.info("User was updated in the collection SUCCESSFULLY.");
+    logger.info(() -> "User was updated in the collection.");
   }
 
   @Override
@@ -131,22 +130,22 @@ public final class UserRepository implements Repository<User> {
       User result = userDAO.getByKey(user.getLogin());
 
       if (result == null) {
-        logger.error("Cannot delete worker, no such worker in DAO.");
+        logger.error(() -> "Cannot delete worker, no such worker in DAO.");
         throw new UserRepositoryException(USER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE);
       }
 
       userDAO.delete(user);
-      logger.info("User was deleted from DAO SUCCESSFULLY.");
+      logger.info(() -> "User was deleted from DAO.");
     } catch (DAOException | DataSourceException e) {
-      logger.error("Cannot delete user using DAO.");
+      logger.error(() -> "Cannot delete user using DAO.");
       throw new UserRepositoryException(e);
     }
 
     if (users.remove(user)) {
-      logger.error("Cannot delete user, no such user in the collection.");
+      logger.error(() -> "Cannot delete user, no such user in the collection.");
       throw new UserRepositoryException(USER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE);
     }
 
-    logger.info("User was deleted from the collection SUCCESSFULLY.");
+    logger.info(() -> "User was deleted from the collection.");
   }
 }

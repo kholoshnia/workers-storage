@@ -7,9 +7,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class LocationValidator implements LocaleListener {
-  private String wrongAddressExceptionMessage;
-  private String wrongLatitudeExceptionMessage;
-  private String wrongLongitudeExceptionMessage;
+  private String wrongAddressException;
+  private String wrongLatitudeException;
+  private String wrongLongitudeException;
 
   public LocationValidator() {
     changeLocale();
@@ -20,14 +20,14 @@ public final class LocationValidator implements LocaleListener {
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.LocationValidator", Locale.getDefault());
 
-    wrongAddressExceptionMessage = resourceBundle.getString("exceptionMessages.wrongAddress");
-    wrongLatitudeExceptionMessage = resourceBundle.getString("exceptionMessages.wrongLatitude");
-    wrongLongitudeExceptionMessage = resourceBundle.getString("exceptionMessages.wrongLongitude");
+    wrongAddressException = resourceBundle.getString("exceptions.wrongAddress");
+    wrongLatitudeException = resourceBundle.getString("exceptions.wrongLatitude");
+    wrongLongitudeException = resourceBundle.getString("exceptions.wrongLongitude");
   }
 
   public void checkAddress(String addressString) throws ValidationException {
     if (addressString == null || addressString.length() < 10 || addressString.length() > 100) {
-      throw new ValidationException(wrongAddressExceptionMessage);
+      throw new ValidationException(wrongAddressException);
     }
   }
 
@@ -37,11 +37,11 @@ public final class LocationValidator implements LocaleListener {
     try {
       latitude = Double.parseDouble(latitudeString);
     } catch (NumberFormatException | NullPointerException e) {
-      throw new ValidationException(wrongLatitudeExceptionMessage);
+      throw new ValidationException(wrongLatitudeException);
     }
 
     if (latitude < -85.0 || latitude > 85.0) {
-      throw new ValidationException(wrongLatitudeExceptionMessage);
+      throw new ValidationException(wrongLatitudeException);
     }
   }
 
@@ -51,11 +51,11 @@ public final class LocationValidator implements LocaleListener {
     try {
       longitude = Double.parseDouble(longitudeString);
     } catch (NumberFormatException | NullPointerException e) {
-      throw new ValidationException(wrongLongitudeExceptionMessage);
+      throw new ValidationException(wrongLongitudeException);
     }
 
     if (longitude < -180.0 || longitude > 180.0) {
-      throw new ValidationException(wrongLongitudeExceptionMessage);
+      throw new ValidationException(wrongLongitudeException);
     }
   }
 }

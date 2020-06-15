@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.transfer.response.Response;
+import ru.storage.common.transfer.response.Status;
 import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.domain.repository.Repository;
 
@@ -26,6 +27,6 @@ public class RegisterCommand extends EntryCommand {
 
   @Override
   public Response executeCommand() {
-    return null;
+    return new Response(Status.OK, "");
   }
 }

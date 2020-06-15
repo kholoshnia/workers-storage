@@ -7,8 +7,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class PersonValidator implements LocaleListener {
-  private String wrongNameExceptionMessage;
-  private String wrongPassportIDExceptionMessage;
+  private String wrongNameException;
+  private String wrongPassportIDException;
 
   public PersonValidator() {
     changeLocale();
@@ -19,13 +19,13 @@ public final class PersonValidator implements LocaleListener {
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.PersonValidator", Locale.getDefault());
 
-    wrongNameExceptionMessage = resourceBundle.getString("exceptionMessages.wrongName");
-    wrongPassportIDExceptionMessage = resourceBundle.getString("exceptionMessages.wrongPassportID");
+    wrongNameException = resourceBundle.getString("exceptions.wrongName");
+    wrongPassportIDException = resourceBundle.getString("exceptions.wrongPassportID");
   }
 
   public void checkName(String nameString) throws ValidationException {
     if (nameString == null || nameString.length() < 2 || nameString.length() > 100) {
-      throw new ValidationException(wrongNameExceptionMessage);
+      throw new ValidationException(wrongNameException);
     }
   }
 
@@ -33,7 +33,7 @@ public final class PersonValidator implements LocaleListener {
     if (passportIDString == null
         || passportIDString.length() < 10
         || passportIDString.length() > 40) {
-      throw new ValidationException(wrongPassportIDExceptionMessage);
+      throw new ValidationException(wrongPassportIDException);
     }
   }
 }

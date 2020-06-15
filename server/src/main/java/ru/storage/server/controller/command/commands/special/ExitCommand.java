@@ -7,8 +7,8 @@ import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
-import ru.storage.common.exitManager.ExitManager;
-import ru.storage.common.exitManager.exceptions.ExitingException;
+import ru.storage.common.exit.ExitManager;
+import ru.storage.common.exit.exceptions.ExitingException;
 
 import java.util.Locale;
 import java.util.Map;

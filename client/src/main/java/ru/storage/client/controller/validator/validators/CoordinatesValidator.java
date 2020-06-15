@@ -7,9 +7,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class CoordinatesValidator implements LocaleListener {
-  private String wrongXExceptionMessage;
-  private String wrongYExceptionMessage;
-  private String wrongZExceptionMessage;
+  private String wrongXException;
+  private String wrongYException;
+  private String wrongZException;
 
   public CoordinatesValidator() {
     changeLocale();
@@ -20,9 +20,9 @@ public final class CoordinatesValidator implements LocaleListener {
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.CoordinatesValidator", Locale.getDefault());
 
-    wrongXExceptionMessage = resourceBundle.getString("exceptionMessages.wrongX");
-    wrongYExceptionMessage = resourceBundle.getString("exceptionMessages.wrongY");
-    wrongZExceptionMessage = resourceBundle.getString("exceptionMessages.wrongZ");
+    wrongXException = resourceBundle.getString("exceptions.wrongX");
+    wrongYException = resourceBundle.getString("exceptions.wrongY");
+    wrongZException = resourceBundle.getString("exceptions.wrongZ");
   }
 
   public void checkX(String xString) throws ValidationException {
@@ -31,11 +31,11 @@ public final class CoordinatesValidator implements LocaleListener {
     try {
       x = Double.parseDouble(xString);
     } catch (NumberFormatException | NullPointerException e) {
-      throw new ValidationException(wrongXExceptionMessage);
+      throw new ValidationException(wrongXException);
     }
 
     if (x < -500.0 || x > 500.0) {
-      throw new ValidationException(wrongXExceptionMessage);
+      throw new ValidationException(wrongXException);
     }
   }
 
@@ -45,11 +45,11 @@ public final class CoordinatesValidator implements LocaleListener {
     try {
       y = Double.parseDouble(yString);
     } catch (NumberFormatException | NullPointerException e) {
-      throw new ValidationException(wrongYExceptionMessage);
+      throw new ValidationException(wrongYException);
     }
 
     if (y < -500.0 || y > 500.0) {
-      throw new ValidationException(wrongYExceptionMessage);
+      throw new ValidationException(wrongYException);
     }
   }
 
@@ -59,11 +59,11 @@ public final class CoordinatesValidator implements LocaleListener {
     try {
       z = Double.parseDouble(zString);
     } catch (NumberFormatException | NullPointerException e) {
-      throw new ValidationException(wrongZExceptionMessage);
+      throw new ValidationException(wrongZException);
     }
 
     if (z < -500.0 || z > 500.0) {
-      throw new ValidationException(wrongZExceptionMessage);
+      throw new ValidationException(wrongZException);
     }
   }
 }

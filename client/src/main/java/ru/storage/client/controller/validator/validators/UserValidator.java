@@ -7,9 +7,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class UserValidator implements LocaleListener {
-  private String wrongNameExceptionMessage;
-  private String wrongLoginExceptionMessage;
-  private String wrongPasswordExceptionMessage;
+  private String wrongNameException;
+  private String wrongLoginException;
+  private String wrongPasswordException;
 
   public UserValidator() {
     changeLocale();
@@ -20,26 +20,26 @@ public final class UserValidator implements LocaleListener {
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.UserValidator", Locale.getDefault());
 
-    wrongNameExceptionMessage = resourceBundle.getString("exceptionMessages.wrongName");
-    wrongLoginExceptionMessage = resourceBundle.getString("exceptionMessages.wrongLogin");
-    wrongPasswordExceptionMessage = resourceBundle.getString("exceptionMessages.wrongPassword");
+    wrongNameException = resourceBundle.getString("exceptions.wrongName");
+    wrongLoginException = resourceBundle.getString("exceptions.wrongLogin");
+    wrongPasswordException = resourceBundle.getString("exceptions.wrongPassword");
   }
 
   public void checkName(String nameString) throws ValidationException {
     if (nameString == null || nameString.length() < 2 || nameString.length() > 100) {
-      throw new ValidationException(wrongNameExceptionMessage);
+      throw new ValidationException(wrongNameException);
     }
   }
 
   public void checkLogin(String loginString) throws ValidationException {
     if (loginString == null || loginString.length() < 2 || loginString.length() > 100) {
-      throw new ValidationException(wrongLoginExceptionMessage);
+      throw new ValidationException(wrongLoginException);
     }
   }
 
   public void checkPassword(String passwordString) throws ValidationException {
     if (passwordString == null || passwordString.length() < 8 || passwordString.length() > 100) {
-      throw new ValidationException(wrongPasswordExceptionMessage);
+      throw new ValidationException(wrongPasswordException);
     }
   }
 }

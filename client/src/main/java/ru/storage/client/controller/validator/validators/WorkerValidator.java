@@ -12,10 +12,10 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class WorkerValidator implements LocaleListener {
-  private String wrongSalaryExceptionMessage;
-  private String wrongStatusExceptionMessage;
-  private String wrongStartDateExceptionMessage;
-  private String wrongEndDateExceptionMessage;
+  private String wrongSalaryException;
+  private String wrongStatusException;
+  private String wrongStartDateException;
+  private String wrongEndDateException;
   private List<String> statuses;
 
   public WorkerValidator() {
@@ -27,10 +27,10 @@ public final class WorkerValidator implements LocaleListener {
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.WorkerValidator", Locale.getDefault());
 
-    wrongSalaryExceptionMessage = resourceBundle.getString("exceptionMessages.wrongSalary");
-    wrongStatusExceptionMessage = resourceBundle.getString("exceptionMessages.wrongStatus");
-    wrongStartDateExceptionMessage = resourceBundle.getString("exceptionMessages.wrongStartDate");
-    wrongEndDateExceptionMessage = resourceBundle.getString("exceptionMessages.wrongEndDate");
+    wrongSalaryException = resourceBundle.getString("exceptions.wrongSalary");
+    wrongStatusException = resourceBundle.getString("exceptions.wrongStatus");
+    wrongStartDateException = resourceBundle.getString("exceptions.wrongStartDate");
+    wrongEndDateException = resourceBundle.getString("exceptions.wrongEndDate");
 
     statuses =
         new ArrayList<String>() {
@@ -48,17 +48,17 @@ public final class WorkerValidator implements LocaleListener {
     try {
       salary = Double.parseDouble(salaryString);
     } catch (NumberFormatException | NullPointerException e) {
-      throw new ValidationException(wrongSalaryExceptionMessage);
+      throw new ValidationException(wrongSalaryException);
     }
 
     if (salary <= 0) {
-      throw new ValidationException(wrongSalaryExceptionMessage);
+      throw new ValidationException(wrongSalaryException);
     }
   }
 
   public void checkStatus(String statusString) throws ValidationException {
     if (!statuses.contains(statusString)) {
-      throw new ValidationException(wrongStatusExceptionMessage);
+      throw new ValidationException(wrongStatusException);
     }
   }
 
@@ -66,7 +66,7 @@ public final class WorkerValidator implements LocaleListener {
     try {
       LocalDateTime.parse(startDateString, DateTimeFormatter.ISO_DATE_TIME);
     } catch (DateTimeParseException e) {
-      throw new ValidationException(wrongStartDateExceptionMessage);
+      throw new ValidationException(wrongStartDateException);
     }
   }
 
@@ -74,7 +74,7 @@ public final class WorkerValidator implements LocaleListener {
     try {
       LocalDateTime.parse(endDateString, DateTimeFormatter.ISO_DATE_TIME);
     } catch (DateTimeParseException e) {
-      throw new ValidationException(wrongEndDateExceptionMessage);
+      throw new ValidationException(wrongEndDateException);
     }
   }
 }

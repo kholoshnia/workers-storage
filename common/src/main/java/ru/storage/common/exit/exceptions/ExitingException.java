@@ -1,4 +1,4 @@
-package ru.storage.common.exitManager.exceptions;
+package ru.storage.common.exit.exceptions;
 
 public final class ExitingException extends Exception {
   public ExitingException() {

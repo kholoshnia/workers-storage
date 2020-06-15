@@ -1,4 +1,4 @@
-package ru.storage.client.view.userInterface.userInterfaces.console;
+package ru.storage.client.view.userInterface.console;
 
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
@@ -8,7 +8,7 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import ru.storage.client.controller.localeListener.LocaleListener;
-import ru.storage.client.view.userInterface.userInterfaces.console.exceptions.ConsoleException;
+import ru.storage.client.view.userInterface.console.exceptions.ConsoleException;
 
 import java.io.IOException;
 import java.io.InputStream;

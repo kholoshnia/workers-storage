@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.app.connection.exceptions.ClientException;
 import ru.storage.client.app.connection.exceptions.ConnectionException;
-import ru.storage.common.exitManager.ExitListener;
+import ru.storage.common.exit.ExitListener;
 import ru.storage.common.transfer.serizliser.Serializer;
 
 import java.io.IOException;

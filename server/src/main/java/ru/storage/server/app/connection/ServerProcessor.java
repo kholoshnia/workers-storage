@@ -2,7 +2,7 @@ package ru.storage.server.app.connection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.exitManager.ExitListener;
+import ru.storage.common.exit.ExitListener;
 import ru.storage.common.transfer.serizliser.Serializer;
 import ru.storage.server.app.connection.exceptions.ConnectionException;
 import ru.storage.server.app.connection.exceptions.ServerException;

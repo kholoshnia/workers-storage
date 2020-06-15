@@ -6,7 +6,7 @@ import ru.storage.common.CommandMediator;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.command.commands.view.ViewCommand;
-import ru.storage.common.exitManager.ExitManager;
+import ru.storage.common.exit.ExitManager;
 
 import java.util.Locale;
 import java.util.Map;

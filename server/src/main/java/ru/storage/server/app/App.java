@@ -13,7 +13,7 @@ public final class App {
   private static final String FATAL_ERROR;
   private static final String WRONG_ARGUMENTS_NUMBER;
 
-  private static final Logger logger = LogManager.getLogger(App.class);
+  private static final Logger LOGGER = LogManager.getLogger(App.class);
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.App");
@@ -24,28 +24,28 @@ public final class App {
 
   public static void main(String[] args) {
     try {
-      logger.info(() -> "Launching app...");
+      LOGGER.info(() -> "Launching app...");
 
       if (args.length != 2) {
-        logger.fatal(() -> "Wrong arguments number. App was not started.");
+        LOGGER.fatal(() -> "Wrong arguments number. App was not started.");
         System.err.println(WRONG_ARGUMENTS_NUMBER);
         System.exit(1);
       }
 
-      logger.info(() -> "Creating Guice injector...");
+      LOGGER.info(() -> "Creating Guice injector...");
       Injector injector = Guice.createInjector(new ServerModule(args));
-      logger.info(() -> "Guice injector was created.");
+      LOGGER.info(() -> "Guice injector was created.");
 
       Server server = injector.getInstance(Server.class);
-      logger.info(() -> "Server was created.");
+      LOGGER.info(() -> "Server was created.");
 
-      logger.info(() -> "Server was started.");
+      LOGGER.info(() -> "Server was started.");
       server.start();
     } catch (Throwable throwable) {
-      logger.fatal(() -> "Got a throwable during work of server.", throwable);
+      LOGGER.fatal(() -> "Got a throwable during work of server.", throwable);
       System.err.println(FATAL_ERROR);
       System.err.println(throwable.getMessage());
-      logger.fatal(() -> "App was stopped with error.");
+      LOGGER.fatal(() -> "App was stopped with error.");
       System.exit(1);
     }
   }

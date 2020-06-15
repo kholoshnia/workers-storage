@@ -1,8 +1,8 @@
-package ru.storage.client.view.userInterface.userInterfaces.console;
+package ru.storage.client.view.userInterface.console;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.client.view.userInterface.userInterfaces.console.exceptions.ConsoleException;
+import ru.storage.client.view.userInterface.console.exceptions.ConsoleException;
 
 public final class Console {
   private final Logger logger;

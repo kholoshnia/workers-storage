@@ -1,4 +1,4 @@
-package ru.storage.client.view.userInterface.userInterfaces.console.exceptions;
+package ru.storage.client.view.userInterface.console.exceptions;
 
 import ru.storage.client.view.userInterface.exceptions.UserInterfaceException;
 

@@ -1,5 +1,6 @@
 package ru.storage.server.model.domain.repository.repositories.workerRepository;
 
+import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
@@ -19,16 +20,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 
 public final class WorkerRepository implements Repository<Worker> {
-  private static final String WORKER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE;
-  private static final String WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE;
+  private static final String WORKER_NOT_FOUND_USING_DAO_EXCEPTION;
+  private static final String WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.WorkerRepository");
 
-    WORKER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.workerNotFoundInDAO");
-    WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.workerNotFoundInCollection");
+    WORKER_NOT_FOUND_USING_DAO_EXCEPTION =
+        resourceBundle.getString("exceptions.workerNotFoundUsingDAO");
+    WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION =
+        resourceBundle.getString("exceptions.workerNotFoundInCollection");
   }
 
   private final Logger logger;
@@ -38,6 +39,7 @@ public final class WorkerRepository implements Repository<Worker> {
   private final LocalDateTime initTime;
   private long size;
 
+  @Inject
   public WorkerRepository(@Nonnull DAO<Long, Worker> workerDAO) throws WorkerRepositoryException {
     this.logger = LogManager.getLogger(WorkerRepository.class);
     this.workerDAO = workerDAO;
@@ -63,10 +65,10 @@ public final class WorkerRepository implements Repository<Worker> {
   }
 
   /**
-   * Initializes list of workers. Loads data from DAO. If there is no data in the DAO, creates an
+   * Initializes list of workers. Loads data using DAO. If there is no data in the DAO, creates an
    * empty list.
    *
-   * @return map of workers.
+   * @return list of workers
    * @throws WorkerRepositoryException - in case of corrupted data or exceptions while loading data.
    */
   private List<Worker> initWorkersList() throws WorkerRepositoryException {
@@ -76,7 +78,7 @@ public final class WorkerRepository implements Repository<Worker> {
       List<Worker> allWorkers = workerDAO.getAll();
 
       if (allWorkers.isEmpty()) {
-        logger.warn(() -> "No workers were found in DAO, the collection was not filled.");
+        logger.warn(() -> "No workers were found using DAO, the collection was not filled.");
         return workers;
       }
 
@@ -124,8 +126,9 @@ public final class WorkerRepository implements Repository<Worker> {
 
       if (result == null) {
         logger.error(
-            "Cannot update worker, no such worker in DAO, target worker: {}.", () -> worker);
-        throw new WorkerRepositoryException(WORKER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE);
+            "Cannot update worker, no such worker found using DAO, target worker: {}.",
+            () -> worker);
+        throw new WorkerRepositoryException(WORKER_NOT_FOUND_USING_DAO_EXCEPTION);
       }
 
       workerDAO.update(result);
@@ -139,7 +142,7 @@ public final class WorkerRepository implements Repository<Worker> {
       logger.error(
           "Cannot delete worker, no such worker in the collection, target worker: {}.",
           () -> worker);
-      throw new WorkerRepositoryException(WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE);
+      throw new WorkerRepositoryException(WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION);
     }
 
     workers.add(worker);
@@ -154,8 +157,9 @@ public final class WorkerRepository implements Repository<Worker> {
 
       if (result == null) {
         logger.error(
-            "Cannot delete worker. No such worker in DAO, target worker: {}.", () -> worker);
-        throw new WorkerRepositoryException(WORKER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE);
+            "Cannot delete worker. No such worker found using DAO, target worker: {}.",
+            () -> worker);
+        throw new WorkerRepositoryException(WORKER_NOT_FOUND_USING_DAO_EXCEPTION);
       }
 
       workerDAO.delete(worker);
@@ -170,7 +174,7 @@ public final class WorkerRepository implements Repository<Worker> {
       logger.error(
           "Cannot delete worker, no such worker in the collection, target worker: {}.",
           () -> worker);
-      throw new WorkerRepositoryException(WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE);
+      throw new WorkerRepositoryException(WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION);
     }
 
     size = workers.size();

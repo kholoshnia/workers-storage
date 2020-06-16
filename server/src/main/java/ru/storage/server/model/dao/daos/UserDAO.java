@@ -1,5 +1,6 @@
 package ru.storage.server.model.dao.daos;
 
+import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
@@ -20,25 +21,20 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class UserDAO implements DAO<String, User> {
-  private static final String CANNOT_GET_ALL_USER_EXCEPTION_MESSAGE;
-  private static final String CANNOT_GET_USER_BY_ID_EXCEPTION_MESSAGE;
-  private static final String CANNOT_INSERT_USER_EXCEPTION_MESSAGE;
-  private static final String CANNOT_UPDATE_USER_EXCEPTION_MESSAGE;
-  private static final String CANNOT_DELETE_USER_EXCEPTION_MESSAGE;
+  private static final String CANNOT_GET_ALL_USER_EXCEPTION;
+  private static final String CANNOT_GET_USER_BY_ID_EXCEPTION;
+  private static final String CANNOT_INSERT_USER_EXCEPTION;
+  private static final String CANNOT_UPDATE_USER_EXCEPTION;
+  private static final String CANNOT_DELETE_USER_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.UserDAO");
 
-    CANNOT_GET_ALL_USER_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotGetAllUsers");
-    CANNOT_GET_USER_BY_ID_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotGetUserById");
-    CANNOT_INSERT_USER_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotInsertUser");
-    CANNOT_UPDATE_USER_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotUpdateUser");
-    CANNOT_DELETE_USER_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotDeleteUser");
+    CANNOT_GET_ALL_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotGetAllUsers");
+    CANNOT_GET_USER_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.cannotGetUserById");
+    CANNOT_INSERT_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotInsertUser");
+    CANNOT_UPDATE_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotUpdateUser");
+    CANNOT_DELETE_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteUser");
   }
 
   private final String SELECT_ALL = "SELECT * FROM " + User.TABLE_NAME;
@@ -83,6 +79,7 @@ public class UserDAO implements DAO<String, User> {
   private final Logger logger;
   private final DataSource dataSource;
 
+  @Inject
   public UserDAO(DataSource dataSource) {
     this.logger = LogManager.getLogger(UserDAO.class);
     this.dataSource = dataSource;
@@ -110,7 +107,7 @@ public class UserDAO implements DAO<String, User> {
       }
     } catch (SQLException | ValidationException e) {
       logger.error(() -> "Cannot get all users.", e);
-      throw new DAOException(CANNOT_GET_ALL_USER_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_GET_ALL_USER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -139,7 +136,7 @@ public class UserDAO implements DAO<String, User> {
       }
     } catch (SQLException | ValidationException e) {
       logger.error(() -> "Cannot get user by id.", e);
-      throw new DAOException(CANNOT_GET_USER_BY_ID_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_GET_USER_BY_ID_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -168,7 +165,7 @@ public class UserDAO implements DAO<String, User> {
       }
     } catch (SQLException | ValidationException e) {
       logger.error(() -> "Cannot insert user.", e);
-      throw new DAOException(CANNOT_INSERT_USER_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_INSERT_USER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -193,7 +190,7 @@ public class UserDAO implements DAO<String, User> {
       preparedStatement.execute();
     } catch (SQLException e) {
       logger.error(() -> "Cannot update user.", e);
-      throw new DAOException(CANNOT_UPDATE_USER_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_UPDATE_USER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -213,7 +210,7 @@ public class UserDAO implements DAO<String, User> {
       preparedStatement.execute();
     } catch (SQLException e) {
       logger.error(() -> "Cannot delete user.", e);
-      throw new DAOException(CANNOT_DELETE_USER_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_DELETE_USER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }

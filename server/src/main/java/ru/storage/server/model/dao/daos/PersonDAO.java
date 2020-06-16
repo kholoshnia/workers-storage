@@ -1,10 +1,11 @@
 package ru.storage.server.model.dao.daos;
 
+import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.source.DataSource;
@@ -20,25 +21,20 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class PersonDAO implements DAO<Long, Person> {
-  private static final String CANNOT_GET_ALL_PERSON_EXCEPTION_MESSAGE;
-  private static final String CANNOT_GET_PERSON_BY_ID_EXCEPTION_MESSAGE;
-  private static final String CANNOT_INSERT_PERSON_EXCEPTION_MESSAGE;
-  private static final String CANNOT_UPDATE_PERSON_EXCEPTION_MESSAGE;
-  private static final String CANNOT_DELETE_PERSON_EXCEPTION_MESSAGE;
+  private static final String CANNOT_GET_ALL_PERSON_EXCEPTION;
+  private static final String CANNOT_GET_PERSON_BY_ID_EXCEPTION;
+  private static final String CANNOT_INSERT_PERSON_EXCEPTION;
+  private static final String CANNOT_UPDATE_PERSON_EXCEPTION;
+  private static final String CANNOT_DELETE_PERSON_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.PersonDAO");
 
-    CANNOT_GET_ALL_PERSON_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotGetAllPersons");
-    CANNOT_GET_PERSON_BY_ID_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotGetPersonById");
-    CANNOT_INSERT_PERSON_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotInsertPerson");
-    CANNOT_UPDATE_PERSON_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotUpdatePerson");
-    CANNOT_DELETE_PERSON_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotDeletePerson");
+    CANNOT_GET_ALL_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotGetAllPersons");
+    CANNOT_GET_PERSON_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.cannotGetPersonById");
+    CANNOT_INSERT_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotInsertPerson");
+    CANNOT_UPDATE_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotUpdatePerson");
+    CANNOT_DELETE_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotDeletePerson");
   }
 
   private final String SELECT_ALL = "SELECT * FROM " + Person.TABLE_NAME;
@@ -80,6 +76,7 @@ public class PersonDAO implements DAO<Long, Person> {
   private final DataSource dataSource;
   private final DAO<Long, Location> locationDAO;
 
+  @Inject
   public PersonDAO(DataSource dataSource, DAO<Long, Location> locationDAO) {
     this.logger = LogManager.getLogger(PersonDAO.class);
     this.dataSource = dataSource;
@@ -107,7 +104,7 @@ public class PersonDAO implements DAO<Long, Person> {
       }
     } catch (SQLException | ValidationException e) {
       logger.error(() -> "Cannot get all persons.", e);
-      throw new DAOException(CANNOT_GET_ALL_PERSON_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_GET_ALL_PERSON_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -135,7 +132,7 @@ public class PersonDAO implements DAO<Long, Person> {
       }
     } catch (SQLException | ValidationException e) {
       logger.error("Cannot get person by id.", e);
-      throw new DAOException(CANNOT_GET_PERSON_BY_ID_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_GET_PERSON_BY_ID_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -166,7 +163,7 @@ public class PersonDAO implements DAO<Long, Person> {
       }
     } catch (SQLException | ValidationException e) {
       logger.error(() -> "Cannot insert person.", e);
-      throw new DAOException(CANNOT_INSERT_PERSON_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_INSERT_PERSON_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -193,7 +190,7 @@ public class PersonDAO implements DAO<Long, Person> {
       preparedStatement.execute();
     } catch (SQLException | ValidationException e) {
       logger.error(() -> "Cannot update person.", e);
-      throw new DAOException(CANNOT_UPDATE_PERSON_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_UPDATE_PERSON_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -215,7 +212,7 @@ public class PersonDAO implements DAO<Long, Person> {
       preparedStatement.execute();
     } catch (SQLException e) {
       logger.error(() -> "Cannot delete person.", e);
-      throw new DAOException(CANNOT_DELETE_PERSON_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_DELETE_PERSON_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }

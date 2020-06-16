@@ -12,8 +12,11 @@ import ru.storage.server.controller.services.history.Record;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 public final class ShowHistoryCommand extends HistoryCommand {
+  private final String SHOW_HISTORY_PREFIX;
+
   private final Logger logger;
 
   public ShowHistoryCommand(
@@ -24,6 +27,10 @@ public final class ShowHistoryCommand extends HistoryCommand {
       History history) {
     super(configuration, argumentMediator, arguments, locale, history);
     this.logger = LogManager.getLogger(ShowHistoryCommand.class);
+
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ShowHistoryCommand");
+
+    SHOW_HISTORY_PREFIX = resourceBundle.getString("prefixes.showHistory");
   }
 
   @Override
@@ -34,7 +41,12 @@ public final class ShowHistoryCommand extends HistoryCommand {
     }
 
     List<Record> records = history.getRecords(10);
-    StringBuilder result = new StringBuilder();
+    StringBuilder result =
+        new StringBuilder(SEPARATOR)
+            .append(System.lineSeparator())
+            .append(SHOW_HISTORY_PREFIX)
+            .append(SEPARATOR)
+            .append(System.lineSeparator());
 
     for (Record record : records) {
       result.append(record.getCommand()).append(System.lineSeparator());

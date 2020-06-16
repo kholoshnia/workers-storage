@@ -21,6 +21,8 @@ public abstract class ModificationCommand extends Command {
   protected final String WRONG_ID_ANSWER;
   protected final String WORKER_NOT_FOUND_ANSWER;
   protected final String COLLECTION_IS_EMPTY_ANSWER;
+  protected final String WRONG_WORKER_FORMAT_ANSWER;
+  protected final String WRONG_WORKER_DATA_ANSWER;
   protected final Repository<Worker> workerRepository;
   private final Logger logger;
 
@@ -40,6 +42,8 @@ public abstract class ModificationCommand extends Command {
     WRONG_ID_ANSWER = resourceBundle.getString("answers.wrongID");
     WORKER_NOT_FOUND_ANSWER = resourceBundle.getString("answers.workerNotFound");
     COLLECTION_IS_EMPTY_ANSWER = resourceBundle.getString("answers.collectionIsEmpty");
+    WRONG_WORKER_FORMAT_ANSWER = resourceBundle.getString("answers.wrongWorkerFormat");
+    WRONG_WORKER_DATA_ANSWER = resourceBundle.getString("answers.wrongWorkerData");
   }
 
   protected final WorkerDTO createWorkerDTO(Map<String, String> arguments)

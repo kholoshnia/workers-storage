@@ -2,54 +2,61 @@ package ru.storage.server.app.connection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.transfer.request.Request;
-import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.serizliser.Serializer;
-import ru.storage.common.transfer.serizliser.exceptions.DeserializationException;
-import ru.storage.server.app.connection.exceptions.ServerException;
+import ru.storage.server.app.connection.selector.SelectorConnection;
+import ru.storage.server.app.connection.selector.exceptions.ConnectionException;
+import ru.storage.server.app.exceptions.ServerException;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
-public class ServerConnection {
+public class ServerConnection extends SelectorConnection {
   private final Logger logger;
   private final Serializer serializer;
-  private final SocketChannel client;
+  private final ServerProcessor serverProcessor;
+  private final ServerSocketChannel serverSocketChannel;
 
-  public ServerConnection(Serializer serializer, SocketChannel client) throws ServerException {
+  public ServerConnection(
+      InetAddress address, int port, ServerProcessor serverProcessor, Serializer serializer)
+      throws ConnectionException, ServerException {
     this.logger = LogManager.getLogger(ServerConnection.class);
     this.serializer = serializer;
-    this.client = client;
+    this.serverProcessor = serverProcessor;
 
     try {
-      this.client.configureBlocking(false);
+      this.serverSocketChannel = ServerSocketChannel.open();
+      this.serverSocketChannel.bind(new InetSocketAddress(address, port));
+      this.serverSocketChannel.configureBlocking(false);
+      this.serverSocketChannel.register(selector, serverSocketChannel.validOps());
+      logger.debug(() -> "Server was opened.");
     } catch (IOException e) {
-      logger.info(() -> "Cannot configure client.", e);
+      logger.error(() -> "Cannot open server.", e);
       throw new ServerException(e);
     }
   }
 
-  public Request read() throws ServerException {
+  @Override
+  protected void accept(Selector selector) throws ConnectionException {
     try {
-      ObjectInputStream objectInputStream = new ObjectInputStream(client.socket().getInputStream());
-      String string = objectInputStream.readUTF();
-      return serializer.deserialize(string, Request.class);
-    } catch (IOException | DeserializationException e) {
-      logger.error(() -> "Cannot read request.", e);
-      throw new ServerException(e);
+      SocketChannel client = serverSocketChannel.accept();
+      client.configureBlocking(false);
+      client.register(selector, SelectionKey.OP_READ);
+    } catch (IOException e) {
+      logger.error(() -> "Cannot accept client.", e);
+      throw new ConnectionException(e);
     }
   }
 
-  public void write(Response response) throws ServerException {
-    try {
-      ObjectOutputStream objectOutputStream =
-          new ObjectOutputStream(client.socket().getOutputStream());
-      objectOutputStream.writeUTF(serializer.serialize(response));
-    } catch (IOException e) {
-      logger.error(() -> "Cannot write response.", e);
-      throw new ServerException(e);
-    }
+  @Override
+  protected void handle(SelectionKey selectionKey) throws ConnectionException, ServerException {
+    SocketChannel client = (SocketChannel) selectionKey.channel();
+    Connection connection = new Connection(serializer, client);
+    logger.info(() -> "Connection with client was created.");
+    serverProcessor.process(connection);
   }
 }

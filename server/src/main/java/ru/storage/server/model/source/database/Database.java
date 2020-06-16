@@ -20,25 +20,20 @@ import java.util.ResourceBundle;
 
 /** Database class that initialize tables. */
 public final class Database extends DataSource {
-  private static final String INIT_USERS_TABLE_EXCEPTION_MESSAGE;
-  private static final String INIT_WORKERS_TABLE_EXCEPTION_MESSAGE;
-  private static final String INIT_COORDINATES_TABLE_EXCEPTION_MESSAGE;
-  private static final String INIT_PERSONS_TABLE_EXCEPTION_MESSAGE;
-  private static final String INIT_LOCATIONS_TABLE_EXCEPTION_MESSAGE;
+  private static final String INIT_USERS_TABLE_EXCEPTION;
+  private static final String INIT_WORKERS_TABLE_EXCEPTION;
+  private static final String INIT_COORDINATES_TABLE_EXCEPTION;
+  private static final String INIT_PERSONS_TABLE_EXCEPTION;
+  private static final String INIT_LOCATIONS_TABLE_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Database");
 
-    INIT_USERS_TABLE_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.initUsersTable");
-    INIT_WORKERS_TABLE_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.initWorkersTable");
-    INIT_COORDINATES_TABLE_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.initCoordinatesTable");
-    INIT_PERSONS_TABLE_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.initPersonsTable");
-    INIT_LOCATIONS_TABLE_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.initLocationsTable");
+    INIT_USERS_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initUsersTable");
+    INIT_WORKERS_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initWorkersTable");
+    INIT_COORDINATES_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initCoordinatesTable");
+    INIT_PERSONS_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initPersonsTable");
+    INIT_LOCATIONS_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initLocationsTable");
   }
 
   private final String CREATE_IF_NOT_EXISTS_USERS_TABLE =
@@ -114,21 +109,21 @@ public final class Database extends DataSource {
           + Location.ADDRESS_COLUMN
           + " VARCHAR NOT NULL CHECK(LENGTH("
           + Location.ADDRESS_COLUMN
-          + ")>=10 CHECK(LENGTH("
+          + ")>=10) CHECK(LENGTH("
           + Location.ADDRESS_COLUMN
           + ")<=100), "
           + Location.LATITUDE_COLUMN
           + " REAL NOT NULL CHECK("
           + Location.LATITUDE_COLUMN
-          + ")>=-85 CHECK("
+          + ">=-85) CHECK("
           + Location.LATITUDE_COLUMN
-          + ")<=85), "
+          + "<=85), "
           + Location.LONGITUDE_COLUMN
           + " REAL NOT NULL CHECK("
           + Location.LONGITUDE_COLUMN
-          + ")>=-180 CHECK("
+          + ">=-180) CHECK("
           + Location.LONGITUDE_COLUMN
-          + ")<=180), FOREIGN KEY ("
+          + "<=180), FOREIGN KEY ("
           + Location.OWNER_ID_COLUMN
           + ") REFERENCES "
           + User.TABLE_NAME
@@ -147,9 +142,9 @@ public final class Database extends DataSource {
           + Person.NAME_COLUMN
           + " VARCHAR NOT NULL CHECK(LENGTH("
           + Person.NAME_COLUMN
-          + ")>=10 CHECK(LENGTH("
+          + ")>=10) CHECK(LENGTH("
           + Person.NAME_COLUMN
-          + ")<=100). "
+          + ")<=100), "
           + Person.PASSPORT_ID_COLUMN
           + " VARCHAR NOT NULL CHECK(LENGTH("
           + Person.PASSPORT_ID_COLUMN
@@ -228,7 +223,7 @@ public final class Database extends DataSource {
   public Database(String url, String user, String password)
       throws DataSourceException, DatabaseException {
     super(url, user, password);
-    logger = LogManager.getLogger(Database.class);
+    this.logger = LogManager.getLogger(Database.class);
 
     initUsersTable();
     initCoordinatesTable();
@@ -255,7 +250,7 @@ public final class Database extends DataSource {
           "Cannot create users table, query: {}.",
           (Supplier<?>) () -> CREATE_IF_NOT_EXISTS_USERS_TABLE,
           e);
-      throw new DatabaseException(INIT_USERS_TABLE_EXCEPTION_MESSAGE, e);
+      throw new DatabaseException(INIT_USERS_TABLE_EXCEPTION, e);
     } finally {
       closePrepareStatement(preparedStatement);
     }
@@ -279,7 +274,7 @@ public final class Database extends DataSource {
           "Cannot initialize coordinates table, query: {}.",
           (Supplier<?>) () -> CREATE_IF_NOT_EXISTS_COORDINATES_TABLE,
           e);
-      throw new DatabaseException(INIT_COORDINATES_TABLE_EXCEPTION_MESSAGE, e);
+      throw new DatabaseException(INIT_COORDINATES_TABLE_EXCEPTION, e);
     } finally {
       closePrepareStatement(preparedStatement);
     }
@@ -303,7 +298,7 @@ public final class Database extends DataSource {
           "Cannot initialize persons table, query: {}.",
           (Supplier<?>) () -> CREATE_IF_NOT_EXISTS_PERSONS_TABLE,
           e);
-      throw new DatabaseException(INIT_PERSONS_TABLE_EXCEPTION_MESSAGE, e);
+      throw new DatabaseException(INIT_PERSONS_TABLE_EXCEPTION, e);
     } finally {
       closePrepareStatement(preparedStatement);
     }
@@ -327,7 +322,7 @@ public final class Database extends DataSource {
           "Cannot initialize locations table, query: {}.",
           (Supplier<?>) () -> CREATE_IF_NOT_EXISTS_LOCATIONS_TABLE,
           e);
-      throw new DatabaseException(INIT_LOCATIONS_TABLE_EXCEPTION_MESSAGE, e);
+      throw new DatabaseException(INIT_LOCATIONS_TABLE_EXCEPTION, e);
     } finally {
       closePrepareStatement(preparedStatement);
     }
@@ -351,7 +346,7 @@ public final class Database extends DataSource {
           "Cannot create workers table, query: {}.",
           (Supplier<?>) () -> CREATE_IF_NOT_EXISTS_WORKERS_TABLE,
           e);
-      throw new DatabaseException(INIT_WORKERS_TABLE_EXCEPTION_MESSAGE, e);
+      throw new DatabaseException(INIT_WORKERS_TABLE_EXCEPTION, e);
     } finally {
       closePrepareStatement(preparedStatement);
     }

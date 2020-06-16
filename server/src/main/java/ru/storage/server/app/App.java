@@ -11,35 +11,35 @@ import java.util.ResourceBundle;
 /** Main server application class. */
 public final class App {
   private static final String FATAL_ERROR;
-  private static final String WRONG_ARGUMENTS_NUMBER;
+  private static final String WRONG_ARGUMENTS_NUMBER_ERROR;
 
   private static final Logger LOGGER = LogManager.getLogger(App.class);
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.App");
 
-    FATAL_ERROR = resourceBundle.getString("exceptionMessages.fatalError");
-    WRONG_ARGUMENTS_NUMBER = resourceBundle.getString("exceptionMessages.wrongArgumentsNumber");
+    FATAL_ERROR = resourceBundle.getString("errors.fatal");
+    WRONG_ARGUMENTS_NUMBER_ERROR = resourceBundle.getString("errors.wrongArgumentsNumber");
   }
 
   public static void main(String[] args) {
     try {
-      LOGGER.info(() -> "Launching app...");
+      LOGGER.debug(() -> "Launching app...");
 
       if (args.length != 2) {
         LOGGER.fatal(() -> "Wrong arguments number. App was not started.");
-        System.err.println(WRONG_ARGUMENTS_NUMBER);
+        System.err.println(WRONG_ARGUMENTS_NUMBER_ERROR);
         System.exit(1);
       }
 
-      LOGGER.info(() -> "Creating Guice injector...");
+      LOGGER.debug(() -> "Creating Guice injector...");
       Injector injector = Guice.createInjector(new ServerModule(args));
-      LOGGER.info(() -> "Guice injector was created.");
+      LOGGER.debug(() -> "Guice injector was created.");
 
       Server server = injector.getInstance(Server.class);
-      LOGGER.info(() -> "Server was created.");
+      LOGGER.debug(() -> "Server was created.");
 
-      LOGGER.info(() -> "Server was started.");
+      LOGGER.debug(() -> "Server was started.");
       server.start();
     } catch (Throwable throwable) {
       LOGGER.fatal(() -> "Got a throwable during work of server.", throwable);

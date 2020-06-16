@@ -6,31 +6,32 @@ import ru.storage.client.view.userInterface.UserInterface;
 import ru.storage.client.view.userInterface.exceptions.UserInterfaceException;
 import ru.storage.common.transfer.request.Request;
 import ru.storage.common.transfer.response.Response;
-import ru.storage.server.app.connection.ConnectionProcessor;
+import ru.storage.server.app.concurrent.Executor;
+import ru.storage.server.app.concurrent.exceptions.ExecutorServicesException;
+import ru.storage.server.app.connection.Connection;
 import ru.storage.server.app.connection.ServerConnection;
 import ru.storage.server.app.connection.ServerProcessor;
-import ru.storage.server.app.connection.exceptions.ServerException;
-import ru.storage.server.app.multithreading.Executors;
-import ru.storage.server.app.multithreading.exceptions.ExecutorServicesException;
+import ru.storage.server.app.connection.selector.exceptions.ConnectionException;
+import ru.storage.server.app.exceptions.ServerException;
 import ru.storage.server.controller.Controller;
 
-public final class Server implements ConnectionProcessor {
+public final class Server implements ServerProcessor {
   private final Logger logger;
   private final UserInterface userInterface;
-  private final Executors executors;
+  private final Executor executor;
   private final Controller controller;
-  private final ServerProcessor serverProcessor;
+  private final ServerConnection serverConnection;
 
   public Server(
       UserInterface userInterface,
-      Executors executors,
+      Executor executor,
       Controller controller,
-      ServerProcessor serverProcessor) {
+      ServerConnection serverConnection) {
     this.logger = LogManager.getLogger(Server.class);
     this.userInterface = userInterface;
-    this.executors = executors;
+    this.executor = executor;
     this.controller = controller;
-    this.serverProcessor = serverProcessor;
+    this.serverConnection = serverConnection;
   }
 
   public void start() {
@@ -39,49 +40,56 @@ public final class Server implements ConnectionProcessor {
               try {
                 userInterface.start();
               } catch (UserInterfaceException e) {
-                logger.fatal(() -> "User interface fatal error, continuing server work.", e);
+                logger.error(() -> "User interface fatal error, continuing server work.", e);
               }
             })
         .start();
 
     try {
-      serverProcessor.start();
-    } catch (ServerException e) {
+      serverConnection.start();
+    } catch (ServerException | ConnectionException e) {
       logger.fatal(() -> "Server connection fatal error.", e);
     }
   }
 
   @Override
-  public void process(ServerConnection client) {
+  public void process(Connection client) throws ServerException {
     try {
-      executors.read(
+      executor.read(
           () -> {
-            Request request;
-
-            try {
-              request = client.read();
-            } catch (ServerException e) {
-              logger.error(() -> "Cannot read request.", e);
-              throw new ExecutorServicesException(e);
-            }
-
-            executors.handle(
+            Request request = read(client);
+            executor.handle(
                 () -> {
-                  Response response = controller.handle(request);
-
-                  executors.send(
-                      () -> {
-                        try {
-                          client.write(response);
-                        } catch (ServerException e) {
-                          logger.error(() -> "Cannot write response.", e);
-                          throw new ExecutorServicesException(e);
-                        }
-                      });
+                  Response response = handle(request);
+                  executor.send(() -> send(client, response));
                 });
           });
     } catch (ExecutorServicesException e) {
-      logger.error(() -> "Error while processing client.", e);
+      logger.error(() -> "Error while processing connection with client.", e);
+      throw new ServerException(e);
+    }
+  }
+
+  private Request read(Connection client) {
+    try {
+      return client.read();
+    } catch (ConnectionException e) {
+      logger.error(() -> "Cannot read request.", e);
+      throw new ExecutorServicesException(e);
+    }
+  }
+
+  private Response handle(Request request) {
+    logger.info("Request was handled by {}.", () -> controller.getClass().getSimpleName());
+    return controller.handle(request);
+  }
+
+  private void send(Connection client, Response response) {
+    try {
+      client.write(response);
+    } catch (ConnectionException e) {
+      logger.error(() -> "Cannot write response.", e);
+      throw new ExecutorServicesException(e);
     }
   }
 }

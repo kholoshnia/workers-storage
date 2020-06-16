@@ -34,6 +34,7 @@ public abstract class ViewCommand extends Command {
   private final String WORKER_START_DATE_PREFIX;
   private final String WORKER_END_DATE_PREFIX;
   private final String COORDINATES_PREFIX;
+  private final String COORDINATES_OWNER_ID_PREFIX;
   private final String COORDINATES_ID_PREFIX;
   private final String COORDINATES_X_PREFIX;
   private final String COORDINATES_Y_PREFIX;
@@ -78,6 +79,7 @@ public abstract class ViewCommand extends Command {
     WORKER_END_DATE_PREFIX = resourceBundle.getString("prefixes.worker.endDate");
     COORDINATES_PREFIX = resourceBundle.getString("prefixes.coordinates");
     COORDINATES_ID_PREFIX = resourceBundle.getString("prefixes.coordinates.ID");
+    COORDINATES_OWNER_ID_PREFIX = resourceBundle.getString("prefixes.coordinates.ownerID");
     COORDINATES_X_PREFIX = resourceBundle.getString("prefixes.coordinates.x");
     COORDINATES_Y_PREFIX = resourceBundle.getString("prefixes.coordinates.y");
     COORDINATES_Z_PREFIX = resourceBundle.getString("prefixes.coordinates.z");
@@ -96,7 +98,7 @@ public abstract class ViewCommand extends Command {
 
   protected final void appendWorker(StringBuilder stringBuilder, Worker worker) {
     stringBuilder
-        .append(WORKER_PREFIX)
+        .append(String.format("%s: ", WORKER_PREFIX))
         .append(System.lineSeparator())
         .append(String.format("\t%s: %d", WORKER_ID_PREFIX, worker.getID()))
         .append(System.lineSeparator())
@@ -123,9 +125,11 @@ public abstract class ViewCommand extends Command {
             String.format(
                 "\t%s: %s", WORKER_END_DATE_PREFIX, dateFormat.format(worker.getEndDate())))
         .append(System.lineSeparator())
-        .append(String.format("\t%s", COORDINATES_PREFIX))
+        .append(String.format("\t%s: ", COORDINATES_PREFIX))
         .append(System.lineSeparator())
         .append(String.format("\t\t%s: %d", COORDINATES_ID_PREFIX, worker.getCoordinates().getID()))
+        .append(System.lineSeparator())
+        .append(String.format("\t%s: %d", COORDINATES_OWNER_ID_PREFIX, worker.getOwnerID()))
         .append(System.lineSeparator())
         .append(
             String.format(
@@ -142,7 +146,7 @@ public abstract class ViewCommand extends Command {
                 "\t\t%s: %s",
                 COORDINATES_Z_PREFIX, numberFormat.format(worker.getCoordinates().getZ())))
         .append(System.lineSeparator())
-        .append(String.format("\t\t%s", PERSON_PREFIX))
+        .append(String.format("\t\t%s: ", PERSON_PREFIX))
         .append(System.lineSeparator())
         .append(String.format("\t\t\t%s: %d", PERSON_ID_PREFIX, worker.getPerson().getID()))
         .append(System.lineSeparator())
@@ -155,7 +159,7 @@ public abstract class ViewCommand extends Command {
             String.format(
                 "\t\t\t%s: %s", PERSON_PASSWORD_ID_PREFIX, worker.getPerson().getPassportID()))
         .append(System.lineSeparator())
-        .append(String.format("\t\t\t%s", LOCATION_PREFIX))
+        .append(String.format("\t\t\t%s: ", LOCATION_PREFIX))
         .append(System.lineSeparator())
         .append(
             String.format(

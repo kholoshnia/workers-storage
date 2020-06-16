@@ -1,5 +1,6 @@
 package ru.storage.common;
 
+import com.google.inject.Inject;
 import org.apache.commons.configuration2.Configuration;
 
 public final class ArgumentMediator {
@@ -20,6 +21,7 @@ public final class ArgumentMediator {
   public final String USER_LOGIN;
   public final String USER_PASSWORD;
 
+  @Inject
   public ArgumentMediator(Configuration configuration) {
     WORKER_ID = configuration.getString("arguments.worker.ID");
     WORKER_SALARY = configuration.getString("arguments.worker.salary");

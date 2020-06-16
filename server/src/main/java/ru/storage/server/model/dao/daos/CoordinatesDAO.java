@@ -1,5 +1,6 @@
 package ru.storage.server.model.dao.daos;
 
+import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
@@ -19,25 +20,25 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class CoordinatesDAO implements DAO<Long, Coordinates> {
-  private static final String CANNOT_GET_ALL_COORDINATES_EXCEPTION_MESSAGE;
-  private static final String CANNOT_GET_COORDINATES_BY_ID_EXCEPTION_MESSAGE;
-  private static final String CANNOT_INSERT_COORDINATES_EXCEPTION_MESSAGE;
-  private static final String CANNOT_UPDATE_COORDINATES_EXCEPTION_MESSAGE;
-  private static final String CANNOT_DELETE_COORDINATES_EXCEPTION_MESSAGE;
+  private static final String CANNOT_GET_ALL_COORDINATES_EXCEPTION;
+  private static final String CANNOT_GET_COORDINATES_BY_ID_EXCEPTION;
+  private static final String CANNOT_INSERT_COORDINATES_EXCEPTION;
+  private static final String CANNOT_UPDATE_COORDINATES_EXCEPTION;
+  private static final String CANNOT_DELETE_COORDINATES_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.CoordinatesDAO");
 
-    CANNOT_GET_ALL_COORDINATES_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotGetAllCoordinates");
-    CANNOT_GET_COORDINATES_BY_ID_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotGetCoordinatesById");
-    CANNOT_INSERT_COORDINATES_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotInsertCoordinates");
-    CANNOT_UPDATE_COORDINATES_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotUpdateCoordinates");
-    CANNOT_DELETE_COORDINATES_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotDeleteCoordinates");
+    CANNOT_GET_ALL_COORDINATES_EXCEPTION =
+        resourceBundle.getString("exceptions.cannotGetAllCoordinates");
+    CANNOT_GET_COORDINATES_BY_ID_EXCEPTION =
+        resourceBundle.getString("exceptions.cannotGetCoordinatesById");
+    CANNOT_INSERT_COORDINATES_EXCEPTION =
+        resourceBundle.getString("exceptions.cannotInsertCoordinates");
+    CANNOT_UPDATE_COORDINATES_EXCEPTION =
+        resourceBundle.getString("exceptions.cannotUpdateCoordinates");
+    CANNOT_DELETE_COORDINATES_EXCEPTION =
+        resourceBundle.getString("exceptions.cannotDeleteCoordinates");
   }
 
   private final String SELECT_ALL = "SELECT * FROM " + Coordinates.TABLE_NAME;
@@ -78,6 +79,7 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
   private final Logger logger;
   private final DataSource dataSource;
 
+  @Inject
   public CoordinatesDAO(DataSource dataSource) {
     this.logger = LogManager.getLogger(CoordinatesDAO.class);
     this.dataSource = dataSource;
@@ -104,7 +106,7 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
       }
     } catch (SQLException | ValidationException e) {
       logger.error(() -> "Cannot get all coordinates.", e);
-      throw new DAOException(CANNOT_GET_ALL_COORDINATES_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_GET_ALL_COORDINATES_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -132,7 +134,7 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
       }
     } catch (SQLException | ValidationException e) {
       logger.error(() -> "Cannot get coordinates by id.", e);
-      throw new DAOException(CANNOT_GET_COORDINATES_BY_ID_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_GET_COORDINATES_BY_ID_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -161,7 +163,7 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
       }
     } catch (SQLException | ValidationException e) {
       logger.error(() -> "Cannot insert coordinates.", e);
-      throw new DAOException(CANNOT_INSERT_COORDINATES_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_INSERT_COORDINATES_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -186,7 +188,7 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
       preparedStatement.execute();
     } catch (SQLException e) {
       logger.error(() -> "Cannot update coordinates.", e);
-      throw new DAOException(CANNOT_UPDATE_COORDINATES_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_UPDATE_COORDINATES_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -206,7 +208,7 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
       preparedStatement.execute();
     } catch (SQLException e) {
       logger.error(() -> "Cannot delete coordinates.", e);
-      throw new DAOException(CANNOT_DELETE_COORDINATES_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_DELETE_COORDINATES_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }

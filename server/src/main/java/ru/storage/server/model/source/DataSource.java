@@ -20,22 +20,19 @@ import java.util.ResourceBundle;
  * @see PreparedStatement
  */
 public abstract class DataSource implements ExitListener {
-  private static final String SETUP_CONNECTION_EXCEPTION_MESSAGE;
-  private static final String CLOSE_CONNECTION_EXCEPTION_MESSAGE;
-  private static final String GET_PREPARED_STATEMENT_EXCEPTION_MESSAGE;
-  private static final String CLOSE_PREPARED_STATEMENT_EXCEPTION_MESSAGE;
+  private static final String SETUP_CONNECTION_EXCEPTION;
+  private static final String GET_PREPARED_STATEMENT_EXCEPTION;
+  private static final String CLOSE_PREPARED_STATEMENT_EXCEPTION;
+  private static final String CLOSE_CONNECTION_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.DataSource");
 
-    SETUP_CONNECTION_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.setupConnection");
-    CLOSE_CONNECTION_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.closeConnection");
-    GET_PREPARED_STATEMENT_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.getPreparedStatement");
-    CLOSE_PREPARED_STATEMENT_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.closePreparedStatement");
+    SETUP_CONNECTION_EXCEPTION = resourceBundle.getString("exceptions.setupConnection");
+    GET_PREPARED_STATEMENT_EXCEPTION = resourceBundle.getString("exceptions.getPreparedStatement");
+    CLOSE_PREPARED_STATEMENT_EXCEPTION =
+        resourceBundle.getString("exceptions.closePreparedStatement");
+    CLOSE_CONNECTION_EXCEPTION = resourceBundle.getString("exceptions.closeConnection");
   }
 
   private final Logger logger;
@@ -70,7 +67,7 @@ public abstract class DataSource implements ExitListener {
       connection = DriverManager.getConnection(url, user, password);
     } catch (SQLException e) {
       logger.fatal(() -> "Cannot connect to database", e);
-      throw new DataSourceException(SETUP_CONNECTION_EXCEPTION_MESSAGE, e);
+      throw new DataSourceException(SETUP_CONNECTION_EXCEPTION, e);
     }
 
     logger.debug(() -> "Connection setup completed.");
@@ -94,10 +91,10 @@ public abstract class DataSource implements ExitListener {
     } catch (SQLException e) {
       logger.error(
           "Statement for request: \"{}\" was not prepared", (Supplier<?>) () -> statement, e);
-      throw new DataSourceException(GET_PREPARED_STATEMENT_EXCEPTION_MESSAGE, e);
+      throw new DataSourceException(GET_PREPARED_STATEMENT_EXCEPTION, e);
     }
 
-    logger.error("Statement for request: \"{}\" was not prepared", () -> statement);
+    logger.info("Statement for request: \"{}\" was prepared", () -> statement);
     return preparedStatement;
   }
 
@@ -117,7 +114,7 @@ public abstract class DataSource implements ExitListener {
         preparedStatement.close();
       } catch (SQLException e) {
         logger.error(() -> "Statement was not closed.", e);
-        throw new DataSourceException(CLOSE_PREPARED_STATEMENT_EXCEPTION_MESSAGE, e);
+        throw new DataSourceException(CLOSE_PREPARED_STATEMENT_EXCEPTION, e);
       }
     }
 
@@ -137,7 +134,7 @@ public abstract class DataSource implements ExitListener {
         connection.close();
       } catch (SQLException e) {
         logger.fatal(() -> "Cannot close connection.", e);
-        throw new DataSourceException(CLOSE_CONNECTION_EXCEPTION_MESSAGE, e);
+        throw new DataSourceException(CLOSE_CONNECTION_EXCEPTION, e);
       }
     }
 

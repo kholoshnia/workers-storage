@@ -1,5 +1,6 @@
 package ru.storage.common;
 
+import com.google.inject.Inject;
 import org.apache.commons.configuration2.Configuration;
 
 public final class CommandMediator {
@@ -16,6 +17,7 @@ public final class CommandMediator {
   public final String INFO;
   public final String SHOW;
 
+  @Inject
   public CommandMediator(Configuration configuration) {
     LOGIN = configuration.getString("commands.login");
     LOGOUT = configuration.getString("commands.logout");

@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
-import ru.storage.server.model.domain.dto.dtos.WorkerDTO;
+import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.repository.Repository;
@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class AddCommand extends ModificationCommand {
-  private final String WRONG_WORKER_FORMAT_ANSWER;
-  private final String WRONG_WORKER_DATA_ANSWER;
   private final String ADDED_SUCCESSFULLY_ANSWER;
 
   private final Logger logger;
@@ -34,14 +32,12 @@ public final class AddCommand extends ModificationCommand {
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.AddCommand");
 
-    WRONG_WORKER_FORMAT_ANSWER = resourceBundle.getString("answers.wrongWorkerFormat");
-    WRONG_WORKER_DATA_ANSWER = resourceBundle.getString("answers.wrongWorkerData");
-    ADDED_SUCCESSFULLY_ANSWER = resourceBundle.getString("answers.wrongWorkerData");
+    ADDED_SUCCESSFULLY_ANSWER = resourceBundle.getString("answers.addedSuccessfully");
   }
 
   @Override
   public Response executeCommand() {
-    WorkerDTO workerDTO;
+    DTO<Worker> workerDTO;
 
     try {
       workerDTO = createWorkerDTO(arguments);

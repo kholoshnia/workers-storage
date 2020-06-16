@@ -24,7 +24,7 @@ public final class App {
 
   public static void main(String[] args) {
     try {
-      LOGGER.info(() -> "Launching app...");
+      LOGGER.debug(() -> "Launching app...");
 
       if (args.length > 1) {
         LOGGER.fatal(() -> "Wrong arguments number. App was not started.");
@@ -32,14 +32,14 @@ public final class App {
         System.exit(1);
       }
 
-      LOGGER.info(() -> "Creating Guice injector...");
+      LOGGER.debug(() -> "Creating Guice injector...");
       Injector injector = Guice.createInjector(new ClientModule(args));
-      LOGGER.info(() -> "Guice injector was created.");
+      LOGGER.debug(() -> "Guice injector was created.");
 
       Client client = injector.getInstance(Client.class);
-      LOGGER.info(() -> "Client was created.");
+      LOGGER.debug(() -> "Client was created.");
 
-      LOGGER.info(() -> "Client was started.");
+      LOGGER.debug(() -> "Client was started.");
       client.start();
     } catch (Throwable throwable) {
       LOGGER.fatal(() -> "Got a throwable during work of server.", throwable);

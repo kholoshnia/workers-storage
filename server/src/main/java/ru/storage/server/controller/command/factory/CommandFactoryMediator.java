@@ -1,5 +1,6 @@
 package ru.storage.server.controller.command.factory;
 
+import com.google.inject.Inject;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +22,7 @@ public final class CommandFactoryMediator {
   private final Logger logger;
   private final Map<String, CommandFactory> commandFactories;
 
+  @Inject
   public CommandFactoryMediator(
       Configuration configuration,
       ArgumentMediator argumentMediator,

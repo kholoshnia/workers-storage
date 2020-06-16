@@ -1,10 +1,11 @@
 package ru.storage.server.model.dao.daos;
 
+import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.exceptions.DataSourceException;
@@ -19,26 +20,22 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class LocationDAO implements DAO<Long, Location> {
-  private static final String CANNOT_GET_ALL_LOCATION_EXCEPTION_MESSAGE;
-  private static final String CANNOT_GET_LOCATION_BY_ID_EXCEPTION_MESSAGE;
-  private static final String CANNOT_INSERT_LOCATION_EXCEPTION_MESSAGE;
-  private static final String CANNOT_UPDATE_LOCATION_EXCEPTION_MESSAGE;
-  private static final String CANNOT_DELETE_LOCATION_EXCEPTION_MESSAGE;
+  private static final String CANNOT_GET_ALL_LOCATION_EXCEPTION;
+  private static final String CANNOT_GET_LOCATION_BY_ID_EXCEPTION;
+  private static final String CANNOT_INSERT_LOCATION_EXCEPTION;
+  private static final String CANNOT_UPDATE_LOCATION_EXCEPTION;
+  private static final String CANNOT_DELETE_LOCATION_EXCEPTION;
 
   static {
-    ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("internal.LocationDAO");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.LocationDAO");
 
-    CANNOT_GET_ALL_LOCATION_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotGetAllLocations");
-    CANNOT_GET_LOCATION_BY_ID_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotGetLocationById");
-    CANNOT_INSERT_LOCATION_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotInsertLocation");
-    CANNOT_UPDATE_LOCATION_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotUpdateLocation");
-    CANNOT_DELETE_LOCATION_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.cannotDeleteLocation");
+    CANNOT_GET_ALL_LOCATION_EXCEPTION =
+        resourceBundle.getString("exceptions.cannotGetAllLocations");
+    CANNOT_GET_LOCATION_BY_ID_EXCEPTION =
+        resourceBundle.getString("exceptions.cannotGetLocationById");
+    CANNOT_INSERT_LOCATION_EXCEPTION = resourceBundle.getString("exceptions.cannotInsertLocation");
+    CANNOT_UPDATE_LOCATION_EXCEPTION = resourceBundle.getString("exceptions.cannotUpdateLocation");
+    CANNOT_DELETE_LOCATION_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteLocation");
   }
 
   private final String SELECT_ALL = "SELECT * FROM " + Location.TABLE_NAME;
@@ -79,6 +76,7 @@ public class LocationDAO implements DAO<Long, Location> {
   private final Logger logger;
   private final DataSource dataSource;
 
+  @Inject
   public LocationDAO(DataSource dataSource) {
     this.logger = LogManager.getLogger(LocationDAO.class);
     this.dataSource = dataSource;
@@ -105,7 +103,7 @@ public class LocationDAO implements DAO<Long, Location> {
       }
     } catch (SQLException | ValidationException e) {
       logger.error(() -> "Cannot get all locations.", e);
-      throw new DAOException(CANNOT_GET_ALL_LOCATION_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_GET_ALL_LOCATION_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -133,7 +131,7 @@ public class LocationDAO implements DAO<Long, Location> {
       }
     } catch (SQLException | ValidationException e) {
       logger.error(() -> "Cannot get location by id.", e);
-      throw new DAOException(CANNOT_GET_LOCATION_BY_ID_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_GET_LOCATION_BY_ID_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -161,7 +159,7 @@ public class LocationDAO implements DAO<Long, Location> {
       }
     } catch (SQLException | ValidationException e) {
       logger.error(() -> "Cannot insert location.", e);
-      throw new DAOException(CANNOT_INSERT_LOCATION_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_INSERT_LOCATION_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -185,7 +183,7 @@ public class LocationDAO implements DAO<Long, Location> {
       preparedStatement.execute();
     } catch (SQLException e) {
       logger.error(() -> "Cannot update location.", e);
-      throw new DAOException(CANNOT_UPDATE_LOCATION_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_UPDATE_LOCATION_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -205,7 +203,7 @@ public class LocationDAO implements DAO<Long, Location> {
       preparedStatement.execute();
     } catch (SQLException e) {
       logger.error(() -> "Cannot delete location.", e);
-      throw new DAOException(CANNOT_DELETE_LOCATION_EXCEPTION_MESSAGE, e);
+      throw new DAOException(CANNOT_DELETE_LOCATION_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }

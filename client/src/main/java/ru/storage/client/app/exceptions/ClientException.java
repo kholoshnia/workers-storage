@@ -1,6 +1,6 @@
-package ru.storage.client.app.connection.exceptions;
+package ru.storage.client.app.exceptions;
 
-public class ClientException extends Exception {
+public final class ClientException extends Exception {
   public ClientException() {
     super();
   }

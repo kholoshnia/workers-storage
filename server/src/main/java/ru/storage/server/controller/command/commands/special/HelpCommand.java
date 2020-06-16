@@ -3,10 +3,10 @@ package ru.storage.server.controller.command.commands.special;
 import org.apache.commons.configuration2.Configuration;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
+import ru.storage.common.exit.ExitManager;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.command.commands.view.ViewCommand;
-import ru.storage.common.exit.ExitManager;
 
 import java.util.Locale;
 import java.util.Map;
@@ -43,8 +43,8 @@ public class HelpCommand extends SpecialCommand {
     LOGIN_INFO = resourceBundle.getString("infos.login");
     LOGOUT_INFO = resourceBundle.getString("infos.logout");
     REGISTER_INFO = resourceBundle.getString("infos.register");
-    SHOW_HISTORY_INFO = resourceBundle.getString("infos.show");
-    CLEAR_HISTORY_INFO = resourceBundle.getString("infos.clear");
+    SHOW_HISTORY_INFO = resourceBundle.getString("infos.showHistory");
+    CLEAR_HISTORY_INFO = resourceBundle.getString("infos.clearHistory");
     ADD_INFO = resourceBundle.getString("infos.add");
     REMOVE_INFO = resourceBundle.getString("infos.remove");
     UPDATE_INFO = resourceBundle.getString("infos.update");
@@ -64,7 +64,7 @@ public class HelpCommand extends SpecialCommand {
             + ViewCommand.SEPARATOR
             + String.format("%s - %s", commandMediator.LOGIN, LOGIN_INFO)
             + System.lineSeparator()
-            + String.format("%s - %s", commandMediator.LOGOUT, LOGIN_INFO)
+            + String.format("%s - %s", commandMediator.LOGOUT, LOGOUT_INFO)
             + System.lineSeparator()
             + String.format("%s - %s", commandMediator.REGISTER, REGISTER_INFO)
             + System.lineSeparator()

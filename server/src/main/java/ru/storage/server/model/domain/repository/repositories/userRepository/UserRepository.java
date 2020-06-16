@@ -1,5 +1,6 @@
 package ru.storage.server.model.domain.repository.repositories.userRepository;
 
+import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
@@ -17,22 +18,23 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class UserRepository implements Repository<User> {
-  private static final String USER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE;
-  private static final String USER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE;
+  private static final String USER_NOT_FOUND_USING_DAO_EXCEPTION;
+  private static final String USER_NOT_FOUND_IN_COLLECTION_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.UserRepository");
 
-    USER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.userNotFoundInCollection");
-    USER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.userNotFoundInDAO");
+    USER_NOT_FOUND_USING_DAO_EXCEPTION =
+        resourceBundle.getString("exceptions.userNotFoundUsingDAO");
+    USER_NOT_FOUND_IN_COLLECTION_EXCEPTION =
+        resourceBundle.getString("exceptions.userNotFoundInCollection");
   }
 
   private final Logger logger;
   private final DAO<String, User> userDAO;
   private final List<User> users;
 
+  @Inject
   public UserRepository(@Nonnull DAO<String, User> userDAO) throws UserRepositoryException {
     this.logger = LogManager.getLogger(UserRepository.class);
     this.userDAO = userDAO;
@@ -40,10 +42,10 @@ public final class UserRepository implements Repository<User> {
   }
 
   /**
-   * Initializes list of users. Loads data from DAO. If there is no data in the DAO, creates an
+   * Initializes list of users. Loads data using DAO. If there is no data in the DAO, creates an
    * empty list.
    *
-   * @return list of users.
+   * @return list of users
    * @throws UserRepositoryException - in case of corrupted data or exceptions while loading data.
    */
   private List<User> initUsersList() throws UserRepositoryException {
@@ -53,7 +55,7 @@ public final class UserRepository implements Repository<User> {
       List<User> allUsers = userDAO.getAll();
 
       if (allUsers.isEmpty()) {
-        logger.warn(() -> "No users were found in DAO, the collection was not filled.");
+        logger.warn(() -> "No users were found using DAO, the collection was not filled.");
         return users;
       }
 
@@ -103,8 +105,8 @@ public final class UserRepository implements Repository<User> {
       User result = userDAO.getByKey(user.getLogin());
 
       if (result == null) {
-        logger.error(() -> "Cannot update user, no such user in DAO.");
-        throw new UserRepositoryException(USER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE);
+        logger.error(() -> "Cannot update user, no such user found using DAO.");
+        throw new UserRepositoryException(USER_NOT_FOUND_USING_DAO_EXCEPTION);
       }
 
       userDAO.update(user);
@@ -116,7 +118,7 @@ public final class UserRepository implements Repository<User> {
 
     if (users.remove(user)) {
       logger.error(() -> "Cannot delete user, no such user in the collection.");
-      throw new UserRepositoryException(USER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE);
+      throw new UserRepositoryException(USER_NOT_FOUND_IN_COLLECTION_EXCEPTION);
     }
 
     users.add(user);
@@ -130,8 +132,8 @@ public final class UserRepository implements Repository<User> {
       User result = userDAO.getByKey(user.getLogin());
 
       if (result == null) {
-        logger.error(() -> "Cannot delete worker, no such worker in DAO.");
-        throw new UserRepositoryException(USER_NOT_FOUND_IN_DAO_EXCEPTION_MESSAGE);
+        logger.error(() -> "Cannot delete worker, no such worker found using DAO.");
+        throw new UserRepositoryException(USER_NOT_FOUND_USING_DAO_EXCEPTION);
       }
 
       userDAO.delete(user);
@@ -143,7 +145,7 @@ public final class UserRepository implements Repository<User> {
 
     if (users.remove(user)) {
       logger.error(() -> "Cannot delete user, no such user in the collection.");
-      throw new UserRepositoryException(USER_NOT_FOUND_IN_COLLECTION_EXCEPTION_MESSAGE);
+      throw new UserRepositoryException(USER_NOT_FOUND_IN_COLLECTION_EXCEPTION);
     }
 
     logger.info(() -> "User was deleted from the collection.");

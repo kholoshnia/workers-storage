@@ -1,4 +1,4 @@
-package ru.storage.server.app.multithreading.exceptions;
+package ru.storage.server.app.concurrent.exceptions;
 
 public final class ExecutorServicesException extends RuntimeException {
   public ExecutorServicesException() {

@@ -7,6 +7,8 @@ import org.apache.logging.log4j.util.Supplier;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
+import ru.storage.server.model.domain.dto.DTO;
+import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.repository.Query;
 import ru.storage.server.model.domain.repository.Repository;
@@ -63,10 +65,20 @@ public final class UpdateCommand extends ModificationCommand {
       return new Response(Status.NOT_FOUND, WORKER_NOT_FOUND_ANSWER);
     }
 
+    DTO<Worker> workerDTO;
+
+    try {
+      workerDTO = createWorkerDTO(arguments);
+    } catch (ValidationException e) {
+      logger.warn(() -> "Cannot create workerDTO.", e);
+      return new Response(Status.BAD_REQUEST, WRONG_WORKER_FORMAT_ANSWER);
+    }
+
     for (Worker worker : equalIDWorkers) {
       try {
-        workerRepository.update(worker);
-      } catch (RepositoryException e) {
+        workerRepository.update(workerDTO.toEntity());
+        workerRepository.update(workerDTO.toEntity());
+      } catch (RepositoryException | ValidationException e) {
         logger.error("Cannot update worker which id is equal to {}.", (Supplier<?>) () -> id, e);
         return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
       }

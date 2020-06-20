@@ -2,10 +2,10 @@ package ru.storage.server.app.connection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.transfer.serizliser.Serializer;
+import ru.storage.common.serizliser.Serializer;
 import ru.storage.server.app.connection.selector.SelectorConnection;
-import ru.storage.server.app.connection.selector.exceptions.ConnectionException;
-import ru.storage.server.app.exceptions.ServerException;
+import ru.storage.server.app.connection.selector.exceptions.ServerConnectionException;
+import ru.storage.server.app.connection.exceptions.ServerException;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -23,7 +23,7 @@ public class ServerConnection extends SelectorConnection {
 
   public ServerConnection(
       InetAddress address, int port, ServerProcessor serverProcessor, Serializer serializer)
-      throws ConnectionException, ServerException {
+      throws ServerConnectionException, ServerException {
     this.logger = LogManager.getLogger(ServerConnection.class);
     this.serializer = serializer;
     this.serverProcessor = serverProcessor;
@@ -41,19 +41,19 @@ public class ServerConnection extends SelectorConnection {
   }
 
   @Override
-  protected void accept(Selector selector) throws ConnectionException {
+  protected void accept(Selector selector) throws ServerConnectionException {
     try {
       SocketChannel client = serverSocketChannel.accept();
       client.configureBlocking(false);
       client.register(selector, SelectionKey.OP_READ);
     } catch (IOException e) {
       logger.error(() -> "Cannot accept client.", e);
-      throw new ConnectionException(e);
+      throw new ServerConnectionException(e);
     }
   }
 
   @Override
-  protected void handle(SelectionKey selectionKey) throws ConnectionException, ServerException {
+  protected void handle(SelectionKey selectionKey) throws ServerConnectionException, ServerException {
     SocketChannel client = (SocketChannel) selectionKey.channel();
     Connection connection = new Connection(serializer, client);
     logger.info(() -> "Connection with client was created.");

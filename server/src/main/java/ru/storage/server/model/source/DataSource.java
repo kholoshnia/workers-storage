@@ -3,8 +3,8 @@ package ru.storage.server.model.source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Supplier;
-import ru.storage.common.exit.ExitListener;
-import ru.storage.common.exit.exceptions.ExitingException;
+import ru.storage.common.exitManager.ExitListener;
+import ru.storage.common.exitManager.exceptions.ExitingException;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import java.sql.Connection;

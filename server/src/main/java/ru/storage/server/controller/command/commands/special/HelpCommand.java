@@ -3,7 +3,7 @@ package ru.storage.server.controller.command.commands.special;
 import org.apache.commons.configuration2.Configuration;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
-import ru.storage.common.exit.ExitManager;
+import ru.storage.common.exitManager.ExitManager;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.command.commands.view.ViewCommand;

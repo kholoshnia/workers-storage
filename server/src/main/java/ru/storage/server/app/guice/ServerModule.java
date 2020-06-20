@@ -12,20 +12,23 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.app.connection.Connection;
-import ru.storage.client.view.userInterface.UserInterface;
-import ru.storage.client.view.userInterface.console.Console;
+import ru.storage.client.app.connection.exceptions.ClientConnectionException;
+import ru.storage.client.controller.requestBuilder.RequestBuilder;
+import ru.storage.client.controller.responseHandler.ResponseHandler;
+import ru.storage.client.view.console.Console;
+import ru.storage.client.view.console.exceptions.ConsoleException;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
-import ru.storage.common.exit.ExitListener;
-import ru.storage.common.exit.ExitManager;
-import ru.storage.common.transfer.serizliser.Serializer;
-import ru.storage.common.transfer.serizliser.serializers.JsonSerializer;
+import ru.storage.common.exitManager.ExitListener;
+import ru.storage.common.exitManager.ExitManager;
+import ru.storage.common.serizliser.Serializer;
+import ru.storage.common.serizliser.serializers.JsonSerializer;
 import ru.storage.server.app.Server;
 import ru.storage.server.app.concurrent.Executor;
 import ru.storage.server.app.connection.ServerConnection;
 import ru.storage.server.app.connection.ServerProcessor;
-import ru.storage.server.app.connection.selector.exceptions.ConnectionException;
-import ru.storage.server.app.exceptions.ServerException;
+import ru.storage.server.app.connection.exceptions.ServerException;
+import ru.storage.server.app.connection.selector.exceptions.ServerConnectionException;
 import ru.storage.server.app.guice.exceptions.ProvidingException;
 import ru.storage.server.controller.command.CommandController;
 import ru.storage.server.controller.command.factory.CommandFactoryMediator;
@@ -102,11 +105,11 @@ public final class ServerModule extends AbstractModule {
   @Provides
   @Singleton
   Server provideServer(
-      UserInterface userInterface,
+      Console console,
       Executor executor,
       CommandController commandController,
       ServerConnection serverConnection) {
-    Server server = new Server(userInterface, executor, commandController, serverConnection);
+    Server server = new Server(console, executor, commandController, serverConnection);
 
     logger.debug(() -> "Provided Server.");
     return server;
@@ -114,7 +117,12 @@ public final class ServerModule extends AbstractModule {
 
   @Provides
   @Singleton
-  UserInterface provideUserInterface(Serializer serializer, Configuration configuration)
+  Console provideConsole(
+      Serializer serializer,
+      Configuration configuration,
+      CommandMediator commandMediator,
+      RequestBuilder requestBuilder,
+      ResponseHandler responseHandler)
       throws ProvidingException {
     Connection connection;
 
@@ -122,16 +130,29 @@ public final class ServerModule extends AbstractModule {
       InetAddress address = InetAddress.getByName(configuration.getString("server.address"));
       int port = configuration.getInt("server.port");
       connection = new Connection(serializer, address, port);
-    } catch (UnknownHostException
-        | ru.storage.client.app.connection.exceptions.ConnectionException e) {
+    } catch (UnknownHostException | ClientConnectionException e) {
       logger.fatal(() -> "Cannot provide Server.", e);
       throw new ProvidingException(e);
     }
 
-    UserInterface userInterface = new Console(connection);
+    Console console;
 
-    logger.debug(() -> "Provided UserInterface: Console.");
-    return userInterface;
+    try {
+      console =
+          new Console(
+              configuration,
+              System.in,
+              System.out,
+              connection,
+              commandMediator,
+              requestBuilder,
+              responseHandler);
+    } catch (ConsoleException e) {
+      throw new ProvidingException(e);
+    }
+
+    logger.debug(() -> "Provided Console.");
+    return console;
   }
 
   @Provides
@@ -154,7 +175,7 @@ public final class ServerModule extends AbstractModule {
       InetAddress address = InetAddress.getByName(configuration.getString("server.localhost"));
       int port = configuration.getInt("server.port");
       serverConnection = new ServerConnection(address, port, serverProcessor, serializer);
-    } catch (ConnectionException | ServerException | UnknownHostException e) {
+    } catch (ServerConnectionException | ServerException | UnknownHostException e) {
       logger.fatal(() -> "Cannot provide Server.", e);
       throw new ProvidingException(e);
     }

@@ -1,6 +1,6 @@
 package ru.storage.client.controller.validator.validators;
 
-import ru.storage.client.controller.localeListener.LocaleListener;
+import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.controller.validator.exceptions.ValidationException;
 
 import java.time.LocalDateTime;

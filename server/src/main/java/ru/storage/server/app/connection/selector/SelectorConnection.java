@@ -2,9 +2,9 @@ package ru.storage.server.app.connection.selector;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.exit.ExitListener;
-import ru.storage.server.app.connection.selector.exceptions.ConnectionException;
-import ru.storage.server.app.exceptions.ServerException;
+import ru.storage.common.exitManager.ExitListener;
+import ru.storage.server.app.connection.selector.exceptions.ServerConnectionException;
+import ru.storage.server.app.connection.exceptions.ServerException;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
@@ -18,7 +18,7 @@ public abstract class SelectorConnection implements ExitListener {
   private final Logger logger;
   private boolean processing;
 
-  public SelectorConnection() throws ConnectionException {
+  public SelectorConnection() throws ServerConnectionException {
     this.logger = LogManager.getLogger(SelectorConnection.class);
     this.processing = true;
 
@@ -27,11 +27,11 @@ public abstract class SelectorConnection implements ExitListener {
       logger.debug(() -> "Selector was opened.");
     } catch (IOException e) {
       logger.error(() -> "Cannot open selector.", e);
-      throw new ConnectionException(e);
+      throw new ServerConnectionException(e);
     }
   }
 
-  public final void start() throws ConnectionException, ServerException {
+  public final void start() throws ServerConnectionException, ServerException {
     while (processing) {
       try {
         Thread.sleep(200);
@@ -42,18 +42,18 @@ public abstract class SelectorConnection implements ExitListener {
 
         process(iterator);
       } catch (IOException | InterruptedException e) {
-        throw new ConnectionException(e);
+        throw new ServerConnectionException(e);
       }
     }
   }
 
-  protected abstract void accept(Selector selector) throws ConnectionException;
+  protected abstract void accept(Selector selector) throws ServerConnectionException;
 
   protected abstract void handle(SelectionKey selectionKey)
-      throws ConnectionException, ServerException;
+      throws ServerConnectionException, ServerException;
 
   private void process(Iterator<SelectionKey> iterator)
-      throws ConnectionException, ServerException {
+      throws ServerConnectionException, ServerException {
     while (iterator.hasNext()) {
       SelectionKey key = iterator.next();
 

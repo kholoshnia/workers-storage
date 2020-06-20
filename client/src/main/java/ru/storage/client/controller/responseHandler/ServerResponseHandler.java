@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
 
 public final class ServerResponseHandler implements ResponseHandler {
   private final Logger logger;
-  private final Map<Status, String> statuses;
+  private final Map<Status, String> statusMap;
 
   private String serverAnswerPrefix;
   private String OKResponse;
@@ -28,7 +28,7 @@ public final class ServerResponseHandler implements ResponseHandler {
   public ServerResponseHandler() {
     this.logger = LogManager.getLogger(ServerResponseHandler.class);
     changeLocale();
-    this.statuses =
+    this.statusMap =
         new HashMap<Status, String>() {
           {
             put(Status.OK, OKResponse);
@@ -67,7 +67,7 @@ public final class ServerResponseHandler implements ResponseHandler {
   @Override
   public String handle(Response response) {
     String result =
-        statuses.get(response.getStatus())
+        statusMap.get(response.getStatus())
             + System.lineSeparator()
             + String.format("%s: %s", serverAnswerPrefix, response.getAnswer());
 

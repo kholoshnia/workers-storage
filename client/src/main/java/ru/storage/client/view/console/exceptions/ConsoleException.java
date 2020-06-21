@@ -1,8 +1,8 @@
 package ru.storage.client.view.console.exceptions;
 
-import ru.storage.client.view.exceptions.UserInterfaceException;
+import ru.storage.client.view.exceptions.ViewException;
 
-public class ConsoleException extends UserInterfaceException {
+public class ConsoleException extends ViewException {
   public ConsoleException() {
     super();
   }

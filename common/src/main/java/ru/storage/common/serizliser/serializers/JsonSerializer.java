@@ -2,6 +2,7 @@ package ru.storage.common.serizliser.serializers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.serizliser.Serializer;
@@ -13,6 +14,7 @@ public final class JsonSerializer implements Serializer {
   private final Logger logger;
   private final Gson gson;
 
+  @Inject
   public JsonSerializer(Gson gson) {
     this.logger = LogManager.getLogger(JsonSerializer.class);
     this.gson = gson;

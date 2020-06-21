@@ -1,5 +1,6 @@
 package ru.storage.client.controller.responseHandler;
 
+import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.transfer.response.Response;
@@ -25,6 +26,7 @@ public final class ServerResponseHandler implements ResponseHandler {
   private String conflictResponse;
   private String internalServerErrorResponse;
 
+  @Inject
   public ServerResponseHandler() {
     this.logger = LogManager.getLogger(ServerResponseHandler.class);
     changeLocale();

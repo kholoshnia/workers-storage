@@ -12,15 +12,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public final class NewWorkerFormer extends ArgumentFormer implements LocaleListener {
+public final class NewWorkerFormer implements ArgumentFormer, LocaleListener {
   private final Logger logger;
+  private final ArgumentMediator argumentMediator;
 
   private String wrongArgumentsNumberException;
 
   public NewWorkerFormer(ArgumentMediator argumentMediator) {
-    super(argumentMediator);
     this.logger = LogManager.getLogger(NewWorkerFormer.class);
     changeLocale();
+    this.argumentMediator = argumentMediator;
   }
 
   @Override
@@ -40,6 +41,7 @@ public final class NewWorkerFormer extends ArgumentFormer implements LocaleListe
 
   @Override
   public Map<String, String> form(List<String> arguments) {
+    logger.warn(() -> "No additional arguments required.");
     return new HashMap<>();
   }
 }

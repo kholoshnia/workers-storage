@@ -5,8 +5,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.Parser;
-import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import ru.storage.client.controller.localeManager.LocaleListener;
@@ -53,15 +51,11 @@ public final class JlineConsole implements LocaleListener {
     return terminal;
   }
 
-  public LineReader getLineReader() throws ConsoleException {
+  public LineReader getLineReader() {
     return LineReaderBuilder.builder().terminal(terminal).build();
   }
 
   public PrintWriter getPrintWriter() {
     return terminal.writer();
-  }
-
-  public Parser getParser() {
-    return new DefaultParser();
   }
 }

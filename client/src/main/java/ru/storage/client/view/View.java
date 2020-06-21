@@ -1,5 +1,5 @@
 package ru.storage.client.view;
 
-public interface UserInterface {
+public interface View {
   void start();
 }

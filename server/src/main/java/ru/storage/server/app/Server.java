@@ -2,7 +2,6 @@ package ru.storage.server.app;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.client.view.console.Console;
 import ru.storage.common.transfer.request.Request;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.server.app.concurrent.Executor;
@@ -13,16 +12,17 @@ import ru.storage.server.app.connection.ServerProcessor;
 import ru.storage.server.app.connection.exceptions.ServerException;
 import ru.storage.server.app.connection.selector.exceptions.ServerConnectionException;
 import ru.storage.server.controller.Controller;
+import ru.storage.server.view.ServerConsole;
 
 public final class Server implements ServerProcessor {
   private final Logger logger;
-  private final Console console;
+  private final ServerConsole console;
   private final Executor executor;
   private final Controller controller;
   private final ServerConnection serverConnection;
 
   public Server(
-      Console console,
+      ServerConsole console,
       Executor executor,
       Controller controller,
       ServerConnection serverConnection) {
@@ -34,15 +34,15 @@ public final class Server implements ServerProcessor {
   }
 
   public void start() {
-    new Thread(
-            () -> {
-              try {
-                console.start();
-              } catch (Throwable e) {
-                logger.error(() -> "User interface fatal error, continuing server work.", e);
-              }
-            })
-        .start();
+    /*new Thread(
+        () -> {
+          try {
+            console.start();
+          } catch (Throwable e) {
+            logger.error(() -> "User interface fatal error, continuing server work.", e);
+          }
+        })
+    .start();*/
 
     try {
       serverConnection.start();

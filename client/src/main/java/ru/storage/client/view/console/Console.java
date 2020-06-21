@@ -8,11 +8,12 @@ import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import ru.storage.client.app.connection.Connection;
 import ru.storage.client.app.connection.exceptions.ClientConnectionException;
+import ru.storage.client.controller.argumentFormer.FormerMediator;
 import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.controller.requestBuilder.RequestBuilder;
 import ru.storage.client.controller.requestBuilder.exceptions.BuildingException;
 import ru.storage.client.controller.responseHandler.ResponseHandler;
-import ru.storage.client.view.UserInterface;
+import ru.storage.client.view.View;
 import ru.storage.client.view.console.exceptions.ConsoleException;
 import ru.storage.common.CommandMediator;
 import ru.storage.common.exitManager.ExitListener;
@@ -30,18 +31,18 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class Console implements UserInterface, ExitListener, LocaleListener {
+public final class Console implements View, ExitListener, LocaleListener {
   private final Logger logger;
-
-  private final JlineConsole jlineConsole;
-  private final LineReader reader;
-  private final PrintWriter writer;
 
   private final Connection connection;
   private final CommandMediator commandMediator;
   private final Pattern regex;
   private final ResponseHandler responseHandler;
-  private final RequestBuilder requestBuilder;
+  private final FormerMediator formerMediator;
+  private final JlineConsole jlineConsole;
+
+  private LineReader reader;
+  private PrintWriter writer;
 
   private String prompt;
   private boolean processing;
@@ -59,7 +60,7 @@ public final class Console implements UserInterface, ExitListener, LocaleListene
       OutputStream outputStream,
       Connection connection,
       CommandMediator commandMediator,
-      RequestBuilder requestBuilder,
+      FormerMediator formerMediator,
       ResponseHandler responseHandler)
       throws ConsoleException {
     this.logger = LogManager.getLogger(Console.class);
@@ -68,7 +69,7 @@ public final class Console implements UserInterface, ExitListener, LocaleListene
     this.writer = jlineConsole.getPrintWriter();
     this.connection = connection;
     this.commandMediator = commandMediator;
-    this.requestBuilder = requestBuilder;
+    this.formerMediator = formerMediator;
     this.responseHandler = responseHandler;
     this.regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
     this.prompt = " $ ";
@@ -86,6 +87,10 @@ public final class Console implements UserInterface, ExitListener, LocaleListene
     connectionException = resourceBundle.getString("exceptions.connection");
     deserializationException = resourceBundle.getString("exceptions.deserialization");
     buildingException = resourceBundle.getString("exceptions.building");
+
+    jlineConsole.changeLocale();
+    reader = jlineConsole.getLineReader();
+    writer = jlineConsole.getPrintWriter();
   }
 
   /** Starts client console */
@@ -120,6 +125,7 @@ public final class Console implements UserInterface, ExitListener, LocaleListene
       try {
         connection.write(request);
       } catch (ClientConnectionException e) {
+        logger.info(() -> "Error in connection with server.", e);
         writeLine(connectionException);
         connect();
         continue;
@@ -128,10 +134,12 @@ public final class Console implements UserInterface, ExitListener, LocaleListene
       try {
         response = connection.read();
       } catch (ClientConnectionException e) {
+        logger.info(() -> "Error in connection with server.", e);
         writeLine(connectionException);
         connect();
         continue;
       } catch (DeserializationException e) {
+        logger.info(() -> "Got deserialization exception.", e);
         writeLine(deserializationException);
         continue;
       }
@@ -149,17 +157,15 @@ public final class Console implements UserInterface, ExitListener, LocaleListene
    * @return new request
    */
   private Request createRequest(List<String> words) {
-    String command = words.get(0);
-    List<String> arguments = words.subList(1, words.size() - 1);
-
     try {
-      return requestBuilder
-          .setCommand(command)
-          .setArguments(arguments)
+      return new RequestBuilder()
+          .setFormerMediator(formerMediator)
+          .setCommand(words.get(0))
+          .setArguments(words.subList(1, words.size() - 1))
           .setLocale(Locale.getDefault())
           .build();
     } catch (BuildingException e) {
-      logger.info("Request building exception");
+      logger.warn(() -> "Request building exception.", e);
       writeLine(buildingException);
       return null;
     }
@@ -171,7 +177,7 @@ public final class Console implements UserInterface, ExitListener, LocaleListene
       try {
         Thread.sleep(1000);
       } catch (InterruptedException e) {
-        logger.error(() -> "Cannot interrupt thread.");
+        logger.error(() -> "Cannot interrupt thread.", e);
       }
 
       writeLine(String.format("\r%s...", connectingMessage));

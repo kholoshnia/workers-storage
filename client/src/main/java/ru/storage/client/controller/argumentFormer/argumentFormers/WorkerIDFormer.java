@@ -12,16 +12,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public final class WorkerIDFormer extends ArgumentFormer implements LocaleListener {
+public final class WorkerIDFormer implements ArgumentFormer, LocaleListener {
   private final Logger logger;
+  private final ArgumentMediator argumentMediator;
 
   private String wrongArgumentsNumberException;
   private String wrongArgumentValueException;
 
   public WorkerIDFormer(ArgumentMediator argumentMediator) {
-    super(argumentMediator);
     this.logger = LogManager.getLogger(WorkerIDFormer.class);
     changeLocale();
+    this.argumentMediator = argumentMediator;
   }
 
   @Override

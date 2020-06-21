@@ -1,7 +1,5 @@
 package ru.storage.server.app.guice;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.inject.*;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
@@ -11,18 +9,10 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.client.app.connection.Connection;
-import ru.storage.client.app.connection.exceptions.ClientConnectionException;
-import ru.storage.client.controller.requestBuilder.RequestBuilder;
-import ru.storage.client.controller.responseHandler.ResponseHandler;
-import ru.storage.client.view.console.Console;
-import ru.storage.client.view.console.exceptions.ConsoleException;
-import ru.storage.common.ArgumentMediator;
-import ru.storage.common.CommandMediator;
 import ru.storage.common.exitManager.ExitListener;
 import ru.storage.common.exitManager.ExitManager;
+import ru.storage.common.guice.CommonModule;
 import ru.storage.common.serizliser.Serializer;
-import ru.storage.common.serizliser.serializers.JsonSerializer;
 import ru.storage.server.app.Server;
 import ru.storage.server.app.concurrent.Executor;
 import ru.storage.server.app.connection.ServerConnection;
@@ -46,6 +36,7 @@ import ru.storage.server.model.domain.repository.repositories.workerRepository.W
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.database.Database;
 import ru.storage.server.model.source.exceptions.DataSourceException;
+import ru.storage.server.view.ServerConsole;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -55,7 +46,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
 public final class ServerModule extends AbstractModule {
-  private static final String CONFIG_PATH = "server.properties";
+  private static final String SERVER_CONFIG_PATH = "server.properties";
 
   private final String USER;
   private final String PASSWORD;
@@ -71,14 +62,15 @@ public final class ServerModule extends AbstractModule {
 
   @Override
   public void configure() {
-    bind(History.class).in(Scopes.SINGLETON);
-    logger.debug(() -> "Configured Services.");
+    install(new CommonModule());
+    logger.debug("Common module was installed.");
 
-    bind(CommandMediator.class).in(Scopes.SINGLETON);
-    bind(ArgumentMediator.class).in(Scopes.SINGLETON);
+    bind(History.class).in(Scopes.SINGLETON);
+    logger.debug(() -> "Services were configured.");
+
     bind(CommandController.class).in(Scopes.SINGLETON);
     bind(CommandFactoryMediator.class).in(Scopes.SINGLETON);
-    logger.debug(() -> "Configured Mediators.");
+    logger.debug(() -> "Controller was configured.");
 
     bind(UserDAO.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<DAO<String, User>>() {}).to(UserDAO.class);
@@ -90,13 +82,13 @@ public final class ServerModule extends AbstractModule {
     bind(new TypeLiteral<DAO<Long, Person>>() {}).to(PersonDAO.class);
     bind(LocationDAO.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<DAO<Long, Location>>() {}).to(LocationDAO.class);
-    logger.debug(() -> "Configured DAOs.");
+    logger.debug(() -> "DAOs were configured.");
 
     bind(UserRepository.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<Repository<User>>() {}).to(UserRepository.class);
     bind(WorkerRepository.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<Repository<Worker>>() {}).to(WorkerRepository.class);
-    logger.debug(() -> "Configured Repositories.");
+    logger.debug(() -> "Repositories were configured.");
 
     bind(ServerProcessor.class).to(Server.class);
     logger.debug(() -> "Server module was configured.");
@@ -105,7 +97,7 @@ public final class ServerModule extends AbstractModule {
   @Provides
   @Singleton
   Server provideServer(
-      Console console,
+      ServerConsole console,
       Executor executor,
       CommandController commandController,
       ServerConnection serverConnection) {
@@ -113,55 +105,6 @@ public final class ServerModule extends AbstractModule {
 
     logger.debug(() -> "Provided Server.");
     return server;
-  }
-
-  @Provides
-  @Singleton
-  Console provideConsole(
-      Serializer serializer,
-      Configuration configuration,
-      CommandMediator commandMediator,
-      RequestBuilder requestBuilder,
-      ResponseHandler responseHandler)
-      throws ProvidingException {
-    Connection connection;
-
-    try {
-      InetAddress address = InetAddress.getByName(configuration.getString("server.address"));
-      int port = configuration.getInt("server.port");
-      connection = new Connection(serializer, address, port);
-    } catch (UnknownHostException | ClientConnectionException e) {
-      logger.fatal(() -> "Cannot provide Server.", e);
-      throw new ProvidingException(e);
-    }
-
-    Console console;
-
-    try {
-      console =
-          new Console(
-              configuration,
-              System.in,
-              System.out,
-              connection,
-              commandMediator,
-              requestBuilder,
-              responseHandler);
-    } catch (ConsoleException e) {
-      throw new ProvidingException(e);
-    }
-
-    logger.debug(() -> "Provided Console.");
-    return console;
-  }
-
-  @Provides
-  @Singleton
-  Serializer provideSerializer(Gson gson) {
-    Serializer serializer = new JsonSerializer(gson);
-
-    logger.debug(() -> "Provided Serializer: JsonSerializer");
-    return serializer;
   }
 
   @Provides
@@ -187,13 +130,13 @@ public final class ServerModule extends AbstractModule {
   @Provides
   @Singleton
   Configuration provideConfiguration() throws ProvidingException {
-    logger.debug("Providing configuration for file: {}.", () -> CONFIG_PATH);
+    logger.debug("Providing configuration for file: {}.", () -> SERVER_CONFIG_PATH);
 
     Parameters parameters = new Parameters();
 
     FileBasedConfigurationBuilder<FileBasedConfiguration> builder =
         new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-            .configure(parameters.properties().setFileName(CONFIG_PATH));
+            .configure(parameters.properties().setFileName(SERVER_CONFIG_PATH));
 
     Configuration configuration;
 
@@ -229,15 +172,6 @@ public final class ServerModule extends AbstractModule {
     ExitManager exitManager = new ExitManager(entities);
     logger.debug(() -> "Provided ExitingDirector.");
     return exitManager;
-  }
-
-  @Provides
-  @Singleton
-  Gson provideGson() {
-    Gson gson = new GsonBuilder().serializeNulls().create();
-
-    logger.debug(() -> "Provided Gson.");
-    return gson;
   }
 
   @Provides

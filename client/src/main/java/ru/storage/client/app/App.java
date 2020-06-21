@@ -11,15 +11,15 @@ import java.util.ResourceBundle;
 /** Main server application class. */
 public final class App {
   private static final String FATAL_ERROR;
-  private static final String WRONG_ARGUMENTS_NUMBER;
+  private static final String WRONG_ARGUMENTS_NUMBER_ERROR;
 
   private static final Logger LOGGER = LogManager.getLogger(App.class);
 
   static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.App");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.App");
 
-    FATAL_ERROR = resourceBundle.getString("exceptionMessages.fatalError");
-    WRONG_ARGUMENTS_NUMBER = resourceBundle.getString("exceptionMessages.wrongArgumentsNumber");
+    FATAL_ERROR = resourceBundle.getString("errors.fatal");
+    WRONG_ARGUMENTS_NUMBER_ERROR = resourceBundle.getString("errors.wrongArgumentsNumber");
   }
 
   public static void main(String[] args) {
@@ -28,7 +28,7 @@ public final class App {
 
       if (args.length > 1) {
         LOGGER.fatal(() -> "Wrong arguments number. App was not started.");
-        System.err.println(WRONG_ARGUMENTS_NUMBER);
+        System.err.println(WRONG_ARGUMENTS_NUMBER_ERROR);
         System.exit(1);
       }
 

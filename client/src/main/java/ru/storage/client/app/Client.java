@@ -1,22 +1,24 @@
 package ru.storage.client.app;
 
+import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.app.exceptions.ClientException;
-import ru.storage.client.view.UserInterface;
+import ru.storage.client.view.View;
 
 public final class Client {
   private final Logger logger;
-  private final UserInterface userInterface;
+  private final View view;
 
-  public Client(UserInterface userInterface) {
+  @Inject
+  public Client(View view) {
     this.logger = LogManager.getLogger(Client.class);
-    this.userInterface = userInterface;
+    this.view = view;
   }
 
   public void start() throws ClientException {
     try {
-      userInterface.start();
+      view.start();
     } catch (Throwable e) {
       logger.fatal("Error while work of user interface.");
       throw new ClientException(e);

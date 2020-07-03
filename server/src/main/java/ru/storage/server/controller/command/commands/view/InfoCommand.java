@@ -55,7 +55,7 @@ public final class InfoCommand extends ViewCommand {
             + System.lineSeparator()
             + SEPARATOR;
 
-    logger.info(() -> "Info was formed.");
+    logger.info(() -> "Information has been formed.");
     return new Response(Status.OK, result);
   }
 }

@@ -23,7 +23,7 @@ public class LocaleManager {
     listeners.remove(listener);
   }
 
-  public void exit() {
+  public void changeLocale() {
     for (LocaleListener listener : listeners) {
       listener.changeLocale();
       logger.debug("A " + listener.getClass().getSimpleName() + " was notified.");

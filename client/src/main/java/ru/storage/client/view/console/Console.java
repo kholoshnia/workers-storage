@@ -10,13 +10,14 @@ import ru.storage.client.app.connection.Connection;
 import ru.storage.client.app.connection.exceptions.ClientConnectionException;
 import ru.storage.client.controller.argumentFormer.FormerMediator;
 import ru.storage.client.controller.localeManager.LocaleListener;
+import ru.storage.client.controller.localeManager.LocaleManager;
 import ru.storage.client.controller.requestBuilder.RequestBuilder;
 import ru.storage.client.controller.requestBuilder.exceptions.BuildingException;
 import ru.storage.client.controller.responseHandler.ResponseHandler;
 import ru.storage.client.view.View;
 import ru.storage.client.view.console.exceptions.ConsoleException;
 import ru.storage.common.CommandMediator;
-import ru.storage.common.exitManager.ExitListener;
+import ru.storage.common.managers.exit.ExitListener;
 import ru.storage.common.serizliser.exceptions.DeserializationException;
 import ru.storage.common.transfer.request.Request;
 import ru.storage.common.transfer.response.Response;
@@ -33,17 +34,16 @@ import java.util.regex.Pattern;
 
 public final class Console implements View, ExitListener, LocaleListener {
   private final Logger logger;
-
   private final Connection connection;
   private final CommandMediator commandMediator;
   private final Pattern regex;
   private final ResponseHandler responseHandler;
+  private final LocaleManager localeManager;
   private final FormerMediator formerMediator;
   private final JlineConsole jlineConsole;
 
   private LineReader reader;
   private PrintWriter writer;
-
   private String prompt;
   private boolean processing;
 
@@ -53,6 +53,7 @@ public final class Console implements View, ExitListener, LocaleListener {
   private String connectionException;
   private String deserializationException;
   private String buildingException;
+  private String noSuchCommandMessage;
 
   public Console(
       Configuration configuration,
@@ -60,6 +61,7 @@ public final class Console implements View, ExitListener, LocaleListener {
       OutputStream outputStream,
       Connection connection,
       CommandMediator commandMediator,
+      LocaleManager localeManager,
       FormerMediator formerMediator,
       ResponseHandler responseHandler)
       throws ConsoleException {
@@ -69,6 +71,8 @@ public final class Console implements View, ExitListener, LocaleListener {
     this.writer = jlineConsole.getPrintWriter();
     this.connection = connection;
     this.commandMediator = commandMediator;
+    this.localeManager = localeManager;
+    this.localeManager.subscribe(this);
     this.formerMediator = formerMediator;
     this.responseHandler = responseHandler;
     this.regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
@@ -87,16 +91,27 @@ public final class Console implements View, ExitListener, LocaleListener {
     connectionException = resourceBundle.getString("exceptions.connection");
     deserializationException = resourceBundle.getString("exceptions.deserialization");
     buildingException = resourceBundle.getString("exceptions.building");
+    noSuchCommandMessage = resourceBundle.getString("exceptions.noSuchCommand");
 
     jlineConsole.changeLocale();
     reader = jlineConsole.getLineReader();
     writer = jlineConsole.getPrintWriter();
   }
 
-  /** Starts client console */
-  public void start() {
-    connect();
+  /** Processes client console */
+  public void process() {
+    localeManager.changeLocale();
     writeLine(greetingsMessage);
+
+    try {
+      connection.connect();
+    } catch (ClientConnectionException e) {
+      logger.fatal(() -> "Cannot connect to the server...");
+      writeLine(connectionException);
+      return;
+    }
+
+    waitConnection();
     writeLine();
 
     while (processing) {
@@ -115,6 +130,7 @@ public final class Console implements View, ExitListener, LocaleListener {
       logger.info("Request was created: {}.", () -> request);
 
       if (request == null) {
+        writeLine(noSuchCommandMessage);
         logger.info(() -> "Got null request, continuing.");
         continue;
       }
@@ -127,7 +143,7 @@ public final class Console implements View, ExitListener, LocaleListener {
       } catch (ClientConnectionException e) {
         logger.info(() -> "Error in connection with server.", e);
         writeLine(connectionException);
-        connect();
+        waitConnection();
         continue;
       }
 
@@ -136,7 +152,7 @@ public final class Console implements View, ExitListener, LocaleListener {
       } catch (ClientConnectionException e) {
         logger.info(() -> "Error in connection with server.", e);
         writeLine(connectionException);
-        connect();
+        waitConnection();
         continue;
       } catch (DeserializationException e) {
         logger.info(() -> "Got deserialization exception.", e);
@@ -157,11 +173,20 @@ public final class Console implements View, ExitListener, LocaleListener {
    * @return new request
    */
   private Request createRequest(List<String> words) {
+    String command = words.get(0);
+    List<String> arguments;
+
+    if (words.size() > 1) {
+      arguments = words.subList(1, words.size() - 1);
+    } else {
+      arguments = new ArrayList<>();
+    }
+
     try {
       return new RequestBuilder()
           .setFormerMediator(formerMediator)
-          .setCommand(words.get(0))
-          .setArguments(words.subList(1, words.size() - 1))
+          .setCommand(command)
+          .setArguments(arguments)
           .setLocale(Locale.getDefault())
           .build();
     } catch (BuildingException e) {
@@ -171,9 +196,9 @@ public final class Console implements View, ExitListener, LocaleListener {
     }
   }
 
-  /** Connects to the server. If cannot connect tries again every 1 second. */
-  private void connect() {
-    while (!connection.connect()) {
+  /** Waits connection to the server. Checks connection every 1 second. */
+  private void waitConnection() {
+    while (!connection.isConnected()) {
       try {
         Thread.sleep(1000);
       } catch (InterruptedException e) {

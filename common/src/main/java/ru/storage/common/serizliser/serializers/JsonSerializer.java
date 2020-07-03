@@ -9,6 +9,7 @@ import ru.storage.common.serizliser.Serializer;
 import ru.storage.common.serizliser.exceptions.DeserializationException;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 public final class JsonSerializer implements Serializer {
   private final Logger logger;
@@ -21,26 +22,28 @@ public final class JsonSerializer implements Serializer {
   }
 
   @Override
-  public String serialize(Serializable serializable) {
-    String result = gson.toJson(serializable);
+  public byte[] serialize(Serializable serializable) {
+    String json = gson.toJson(serializable);
+    byte[] result = json.getBytes(StandardCharsets.UTF_8);
 
-    logger.info("Object was serialized.");
+    logger.info("Object has been serialized.");
     return result;
   }
 
   @Override
-  public <T extends Serializable> T deserialize(String object, Class<T> clazz)
+  public <T extends Serializable> T deserialize(byte[] bytes, Class<T> clazz)
       throws DeserializationException {
+    String json = new String(bytes, StandardCharsets.UTF_8);
     T result;
 
     try {
-      result = gson.fromJson(object, clazz);
+      result = gson.fromJson(json, clazz);
     } catch (JsonSyntaxException e) {
       logger.error(() -> "Cannot deserialize object.", e);
       throw new DeserializationException(e);
     }
 
-    logger.info(() -> "Object was deserialized.");
+    logger.info(() -> "Object has been deserialized.");
     return result;
   }
 }

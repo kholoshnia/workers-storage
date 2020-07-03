@@ -1,14 +1,13 @@
 package ru.storage.server.model.domain.entity.entities.user;
 
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.Entity;
 import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.dto.dtos.UserDTO;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
-import ru.storage.server.model.domain.entity.Entity;
 
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-/** The User class contains all information about concrete user. */
 public final class User implements Entity {
   public static final long DEFAULT_ID = 0L;
 

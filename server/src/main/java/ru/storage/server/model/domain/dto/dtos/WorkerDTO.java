@@ -1,33 +1,23 @@
 package ru.storage.server.model.domain.dto.dtos;
 
-import ru.storage.server.model.domain.dto.DTO;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
-import ru.storage.server.model.domain.entity.entities.worker.Status;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
+import ru.storage.server.model.domain.dto.DTO;
+import ru.storage.server.model.domain.entity.entities.worker.Status;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 public final class WorkerDTO implements DTO<Worker> {
   public final long id;
-
   public final long ownerID;
-
   public final LocalDateTime creationDate;
-
   public final Double salary;
-
   public final Status status;
-
   public final LocalDateTime startDate;
-
   public final LocalDateTime endDate;
-
   public final DTO<Coordinates> coordinatesDTO;
-
   public final DTO<Person> personDTO;
 
   public WorkerDTO(
@@ -49,61 +39,6 @@ public final class WorkerDTO implements DTO<Worker> {
     this.endDate = endDate;
     this.coordinatesDTO = coordinatesDTO;
     this.personDTO = personDTO;
-  }
-
-  public WorkerDTO(
-      String salaryString,
-      String statusString,
-      String startDateString,
-      String endDateString,
-      DTO<Coordinates> coordinatesDTO,
-      DTO<Person> personDTO)
-      throws ValidationException {
-    this.id = Worker.DEFAULT_ID;
-    this.ownerID = Worker.DEFAULT_OWNER_ID;
-    this.creationDate = LocalDateTime.now();
-    this.salary = parseDouble(salaryString);
-    this.status = parseStatus(statusString);
-    this.startDate = parseLocalDateTime(startDateString);
-    this.endDate = parseLocalDateTime(endDateString);
-    this.coordinatesDTO = coordinatesDTO;
-    this.personDTO = personDTO;
-  }
-
-  private Double parseDouble(String value) throws ValidationException {
-    Double result;
-
-    try {
-      result = Double.parseDouble(value);
-    } catch (NumberFormatException | NullPointerException e) {
-      throw new ValidationException(e);
-    }
-
-    return result;
-  }
-
-  private Status parseStatus(String value) throws ValidationException {
-    Status status;
-
-    try {
-      status = Status.valueOf(value);
-    } catch (IllegalArgumentException | NullPointerException e) {
-      throw new ValidationException(e);
-    }
-
-    return status;
-  }
-
-  private LocalDateTime parseLocalDateTime(String value) throws ValidationException {
-    LocalDateTime result;
-
-    try {
-      result = LocalDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME);
-    } catch (DateTimeParseException | NullPointerException e) {
-      throw new ValidationException(e);
-    }
-
-    return result;
   }
 
   @Override

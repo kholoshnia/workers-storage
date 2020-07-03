@@ -18,7 +18,7 @@ public abstract class EntryCommand extends Command {
       Map<String, String> arguments,
       Locale locale,
       Repository<User> userRepository) {
-    super(configuration, argumentMediator, arguments, locale);
+    super(configuration, argumentMediator, arguments);
     this.userRepository = userRepository;
   }
 }

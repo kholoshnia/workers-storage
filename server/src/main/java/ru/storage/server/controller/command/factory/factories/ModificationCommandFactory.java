@@ -10,6 +10,7 @@ import ru.storage.server.controller.command.commands.modification.RemoveCommand;
 import ru.storage.server.controller.command.commands.modification.UpdateCommand;
 import ru.storage.server.controller.command.factory.CommandFactory;
 import ru.storage.server.controller.command.factory.exceptions.CommandFactoryException;
+import ru.storage.server.controller.services.parser.Parser;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.repository.Repository;
 
@@ -21,15 +22,18 @@ import java.util.Map;
 
 public final class ModificationCommandFactory extends CommandFactory {
   private final Repository<Worker> workerRepository;
+  private final Parser parser;
   private final Map<String, Class<? extends ModificationCommand>> commands;
 
   public ModificationCommandFactory(
       Configuration configuration,
       ArgumentMediator argumentMediator,
       CommandMediator commandMediator,
-      Repository<Worker> workerRepository) {
+      Repository<Worker> workerRepository,
+      Parser parser) {
     super(configuration, argumentMediator);
     this.workerRepository = workerRepository;
+    this.parser = parser;
     this.commands =
         new HashMap<String, Class<? extends ModificationCommand>>() {
           {
@@ -51,9 +55,10 @@ public final class ModificationCommandFactory extends CommandFactory {
               ArgumentMediator.class,
               Map.class,
               Locale.class,
-              Repository.class);
+              Repository.class,
+              Parser.class);
       return constructor.newInstance(
-          configuration, argumentMediator, arguments, locale, workerRepository);
+          configuration, argumentMediator, arguments, locale, workerRepository, parser);
     } catch (NoSuchMethodException
         | InstantiationException
         | IllegalAccessException

@@ -3,13 +3,13 @@ package ru.storage.server.model.dao.daos;
 import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
+import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
-import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.domain.entity.entities.worker.Status;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
-import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
@@ -95,7 +95,7 @@ public class WorkerDAO implements DAO<Long, Worker> {
 
   @Inject
   public WorkerDAO(
-      DataSource dataSource, DAO<Long, Coordinates> coordinatesDAO, DAO<Long, Person> personDAO) {
+          DataSource dataSource, DAO<Long, Coordinates> coordinatesDAO, DAO<Long, Person> personDAO) {
     this.logger = LogManager.getLogger(WorkerDAO.class);
     this.dataSource = dataSource;
     this.coordinatesDAO = coordinatesDAO;
@@ -212,7 +212,7 @@ public class WorkerDAO implements DAO<Long, Worker> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Worker was inserted.");
+    logger.info(() -> "Worker has been inserted.");
     return worker;
   }
 
@@ -247,7 +247,7 @@ public class WorkerDAO implements DAO<Long, Worker> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Worker was updated.");
+    logger.info(() -> "Worker has been updated.");
     return worker;
   }
 
@@ -270,6 +270,6 @@ public class WorkerDAO implements DAO<Long, Worker> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Worker was deleted.");
+    logger.info(() -> "Worker has been deleted.");
   }
 }

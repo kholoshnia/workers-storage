@@ -18,10 +18,6 @@ public final class WorkerValidator implements LocaleListener {
   private String wrongEndDateException;
   private List<String> statuses;
 
-  public WorkerValidator() {
-    changeLocale();
-  }
-
   @Override
   public void changeLocale() {
     ResourceBundle resourceBundle =
@@ -35,9 +31,9 @@ public final class WorkerValidator implements LocaleListener {
     statuses =
         new ArrayList<String>() {
           {
-            add(resourceBundle.getString("constantsNames.fired"));
-            add(resourceBundle.getString("constantsNames.hired"));
-            add(resourceBundle.getString("constantsNames.promotion"));
+            add(resourceBundle.getString("constants.fired"));
+            add(resourceBundle.getString("constants.hired"));
+            add(resourceBundle.getString("constants.promotion"));
           }
         };
   }

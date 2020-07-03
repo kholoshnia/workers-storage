@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.dao.exceptions.DAOException;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.user.Role;
 import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.source.DataSource;
@@ -170,7 +170,7 @@ public class UserDAO implements DAO<String, User> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "User was inserted.");
+    logger.info(() -> "User has been inserted.");
     return user;
   }
 
@@ -195,7 +195,7 @@ public class UserDAO implements DAO<String, User> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "User was updated.");
+    logger.info(() -> "User has been updated.");
     return user;
   }
 
@@ -215,6 +215,6 @@ public class UserDAO implements DAO<String, User> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "User was deleted.");
+    logger.info(() -> "User has been deleted.");
   }
 }

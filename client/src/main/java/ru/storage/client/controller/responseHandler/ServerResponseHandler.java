@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 
 public final class ServerResponseHandler implements ResponseHandler {
   private final Logger logger;
-  private final Map<Status, String> statusMap;
+  private final Map<Status, String> statuses;
 
   private String serverAnswerPrefix;
   private String OKResponse;
@@ -29,8 +29,8 @@ public final class ServerResponseHandler implements ResponseHandler {
   @Inject
   public ServerResponseHandler() {
     this.logger = LogManager.getLogger(ServerResponseHandler.class);
-    changeLocale();
-    this.statusMap =
+
+    this.statuses =
         new HashMap<Status, String>() {
           {
             put(Status.OK, OKResponse);
@@ -51,7 +51,7 @@ public final class ServerResponseHandler implements ResponseHandler {
 
   @Override
   public void changeLocale() {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ResponseHandler");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ServerResponseHandler");
 
     serverAnswerPrefix = resourceBundle.getString("prefixes.serverAnswer");
     OKResponse = resourceBundle.getString("responses.OK");
@@ -69,9 +69,9 @@ public final class ServerResponseHandler implements ResponseHandler {
   @Override
   public String handle(Response response) {
     String result =
-        statusMap.get(response.getStatus())
-            + System.lineSeparator()
-            + String.format("%s: %s", serverAnswerPrefix, response.getAnswer());
+        String.format(
+            "%s (%s): %s",
+            serverAnswerPrefix, statuses.get(response.getStatus()), response.getAnswer());
 
     logger.info("Got string: {}, for response: {}.", () -> response, () -> result);
     return result;

@@ -4,11 +4,11 @@ import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
-import ru.storage.server.controller.command.Command;
 import ru.storage.server.controller.services.format.currency.CurrencyFormat;
+import ru.storage.server.model.domain.repository.repositories.workerRepository.WorkerRepository;
+import ru.storage.server.controller.command.Command;
 import ru.storage.server.controller.services.format.status.StatusFormat;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
-import ru.storage.server.model.domain.repository.repositories.workerRepository.WorkerRepository;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -59,7 +59,7 @@ public abstract class ViewCommand extends Command {
       Map<String, String> arguments,
       Locale locale,
       WorkerRepository workerRepository) {
-    super(configuration, argumentMediator, arguments, locale);
+    super(configuration, argumentMediator, arguments);
     this.logger = LogManager.getLogger(ViewCommand.class);
     this.workerRepository = workerRepository;
     this.numberFormat = NumberFormat.getNumberInstance(locale);
@@ -187,6 +187,6 @@ public abstract class ViewCommand extends Command {
                 LOCATION_LONGITUDE_PREFIX,
                 numberFormat.format(worker.getPerson().getLocation().getLongitude())));
 
-    logger.info(() -> "Worker was appended.");
+    logger.info(() -> "Worker has been appended.");
   }
 }

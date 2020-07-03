@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /** Class is responsible for requests building. */
+// TODO: Refactor builder.
 public final class RequestBuilder {
   private FormerMediator formerMediator;
   private String command;
@@ -67,15 +68,20 @@ public final class RequestBuilder {
   /**
    * Builds request from set parameters.
    *
-   * @return request
+   * @return new request
    * @throws BuildingException - if parameters were not set or required were empty
    */
   public Request build() throws BuildingException {
     if (formerMediator == null || command == null || arguments == null || locale == null) {
-      throw new BuildingException();
+      return null;
     }
 
     ArgumentFormer argumentFormer = formerMediator.getArgumentFormer(command);
+
+    if (argumentFormer == null) {
+      return null;
+    }
+
     argumentFormer.check(arguments);
     Map<String, String> allArguments = argumentFormer.form(arguments);
 

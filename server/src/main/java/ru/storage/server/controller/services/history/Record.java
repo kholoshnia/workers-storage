@@ -9,7 +9,7 @@ public final class Record implements Cloneable {
   private final Map<String, String> arguments;
   private final Response response;
 
-  private Record(String command, Map<String, String> arguments, Response response) {
+  public Record(String command, Map<String, String> arguments, Response response) {
     this.command = command;
     this.arguments = arguments;
     this.response = response;

@@ -10,10 +10,6 @@ public final class PersonValidator implements LocaleListener {
   private String wrongNameException;
   private String wrongPassportIDException;
 
-  public PersonValidator() {
-    changeLocale();
-  }
-
   @Override
   public void changeLocale() {
     ResourceBundle resourceBundle =

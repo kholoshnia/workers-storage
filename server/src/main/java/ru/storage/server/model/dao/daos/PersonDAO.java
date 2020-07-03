@@ -4,11 +4,11 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
-import ru.storage.server.model.dao.exceptions.DAOException;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.source.DataSource;
+import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import javax.annotation.Nonnull;
@@ -168,7 +168,7 @@ public class PersonDAO implements DAO<Long, Person> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Person was inserted.");
+    logger.info(() -> "Person has been inserted.");
     return person;
   }
 
@@ -195,7 +195,7 @@ public class PersonDAO implements DAO<Long, Person> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Person was updated.");
+    logger.info(() -> "Person has been updated.");
     return person;
   }
 
@@ -217,6 +217,6 @@ public class PersonDAO implements DAO<Long, Person> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Person was deleted.");
+    logger.info(() -> "Person has been deleted.");
   }
 }

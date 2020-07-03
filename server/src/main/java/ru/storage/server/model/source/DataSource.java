@@ -3,8 +3,8 @@ package ru.storage.server.model.source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Supplier;
-import ru.storage.common.exitManager.ExitListener;
-import ru.storage.common.exitManager.exceptions.ExitingException;
+import ru.storage.common.managers.exit.ExitListener;
+import ru.storage.common.managers.exit.exceptions.ExitingException;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import java.sql.Connection;
@@ -90,11 +90,11 @@ public abstract class DataSource implements ExitListener {
       preparedStatement = connection.prepareStatement(statement, type);
     } catch (SQLException e) {
       logger.error(
-          "Statement for request: \"{}\" was not prepared", (Supplier<?>) () -> statement, e);
+          "Statement for request: \"{}\" has not been prepared", (Supplier<?>) () -> statement, e);
       throw new DataSourceException(GET_PREPARED_STATEMENT_EXCEPTION, e);
     }
 
-    logger.info("Statement for request: \"{}\" was prepared", () -> statement);
+    logger.info("Statement for request: \"{}\" has been prepared", () -> statement);
     return preparedStatement;
   }
 
@@ -113,12 +113,12 @@ public abstract class DataSource implements ExitListener {
       try {
         preparedStatement.close();
       } catch (SQLException e) {
-        logger.error(() -> "Statement was not closed.", e);
+        logger.error(() -> "Statement has not been closed.", e);
         throw new DataSourceException(CLOSE_PREPARED_STATEMENT_EXCEPTION, e);
       }
     }
 
-    logger.debug(() -> "Statement was closed.");
+    logger.debug(() -> "Statement has been closed.");
   }
 
   /**
@@ -138,7 +138,7 @@ public abstract class DataSource implements ExitListener {
       }
     }
 
-    logger.debug(() -> "Connection was closed.");
+    logger.debug(() -> "Connection has been closed.");
   }
 
   @Override
@@ -150,6 +150,6 @@ public abstract class DataSource implements ExitListener {
       throw new ExitingException(e);
     }
 
-    logger.debug(() -> "Connection with database was closed.");
+    logger.debug(() -> "Connection with database has been closed.");
   }
 }

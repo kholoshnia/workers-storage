@@ -6,9 +6,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
+import ru.storage.server.controller.command.factory.factories.ModificationCommandFactory;
 import ru.storage.server.controller.command.factory.factories.EntryCommandFactory;
 import ru.storage.server.controller.command.factory.factories.HistoryCommandFactory;
-import ru.storage.server.controller.command.factory.factories.ModificationCommandFactory;
 import ru.storage.server.controller.command.factory.factories.ViewCommandFactory;
 import ru.storage.server.controller.services.history.History;
 import ru.storage.server.model.domain.entity.entities.user.User;
@@ -58,7 +58,7 @@ public final class CommandFactoryMediator {
           }
         };
 
-    logger.debug(() -> "Command factory map was created.");
+    logger.debug(() -> "Command factory map has been created.");
   }
 
   public CommandFactory getCommandFactory(String command) {

@@ -17,17 +17,22 @@ import ru.storage.client.app.connection.Connection;
 import ru.storage.client.app.connection.exceptions.ClientConnectionException;
 import ru.storage.client.app.guice.exceptions.ProvidingException;
 import ru.storage.client.controller.argumentFormer.FormerMediator;
+import ru.storage.client.controller.localeManager.LocaleListener;
+import ru.storage.client.controller.localeManager.LocaleManager;
 import ru.storage.client.controller.responseHandler.ResponseHandler;
 import ru.storage.client.controller.responseHandler.ServerResponseHandler;
 import ru.storage.client.view.View;
 import ru.storage.client.view.console.Console;
 import ru.storage.client.view.console.exceptions.ConsoleException;
 import ru.storage.common.CommandMediator;
+import ru.storage.common.chunker.Chunker;
 import ru.storage.common.guice.CommonModule;
 import ru.storage.common.serizliser.Serializer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class ClientModule extends AbstractModule {
   private static final String CLIENT_CONFIG_PATH = "client.properties";
@@ -57,6 +62,7 @@ public final class ClientModule extends AbstractModule {
       Configuration configuration,
       Connection connection,
       CommandMediator commandMediator,
+      LocaleManager localeManager,
       FormerMediator formerMediator,
       ResponseHandler responseHandler)
       throws ProvidingException {
@@ -70,6 +76,7 @@ public final class ClientModule extends AbstractModule {
               System.out,
               connection,
               commandMediator,
+              localeManager,
               formerMediator,
               responseHandler);
     } catch (ConsoleException e) {
@@ -78,6 +85,23 @@ public final class ClientModule extends AbstractModule {
 
     logger.debug(() -> "Provided Console.");
     return console;
+  }
+
+  @Provides
+  @Singleton
+  LocaleManager provideLocaleManager(
+      FormerMediator formerMediator, ResponseHandler responseHandler) {
+    List<LocaleListener> entities =
+        new ArrayList<LocaleListener>() {
+          {
+            add(formerMediator);
+            add(responseHandler);
+          }
+        };
+
+    LocaleManager localeManager = new LocaleManager(entities);
+    logger.debug(() -> "Provided LocaleManager.");
+    return localeManager;
   }
 
   @Provides
@@ -105,14 +129,14 @@ public final class ClientModule extends AbstractModule {
 
   @Provides
   @Singleton
-  Connection provideConnection(Configuration configuration, Serializer serializer)
+  Connection provideConnection(Configuration configuration, Chunker chunker, Serializer serializer)
       throws ProvidingException {
     Connection connection;
 
     try {
       InetAddress address = InetAddress.getByName(configuration.getString("server.address"));
       int port = configuration.getInt("server.port");
-      connection = new Connection(serializer, address, port);
+      connection = new Connection(chunker, serializer, address, port);
     } catch (UnknownHostException | ClientConnectionException e) {
       logger.fatal(() -> "Cannot provide Server.", e);
       throw new ProvidingException(e);

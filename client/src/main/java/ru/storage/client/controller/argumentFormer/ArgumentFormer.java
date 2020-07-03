@@ -1,12 +1,13 @@
 package ru.storage.client.controller.argumentFormer;
 
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
+import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.controller.requestBuilder.exceptions.BuildingException;
 
 import java.util.List;
 import java.util.Map;
 
-public interface ArgumentFormer {
+public interface ArgumentFormer extends LocaleListener {
   /**
    * Checks number of arguments and its values.
    *

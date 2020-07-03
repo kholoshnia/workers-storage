@@ -9,16 +9,9 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.exitManager.ExitListener;
-import ru.storage.common.exitManager.ExitManager;
+import ru.storage.common.managers.exit.ExitListener;
+import ru.storage.common.managers.exit.ExitManager;
 import ru.storage.common.guice.CommonModule;
-import ru.storage.common.serizliser.Serializer;
-import ru.storage.server.app.Server;
-import ru.storage.server.app.concurrent.Executor;
-import ru.storage.server.app.connection.ServerConnection;
-import ru.storage.server.app.connection.ServerProcessor;
-import ru.storage.server.app.connection.exceptions.ServerException;
-import ru.storage.server.app.connection.selector.exceptions.ServerConnectionException;
 import ru.storage.server.app.guice.exceptions.ProvidingException;
 import ru.storage.server.controller.command.CommandController;
 import ru.storage.server.controller.command.factory.CommandFactoryMediator;
@@ -36,18 +29,14 @@ import ru.storage.server.model.domain.repository.repositories.workerRepository.W
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.database.Database;
 import ru.storage.server.model.source.exceptions.DataSourceException;
-import ru.storage.server.view.ServerConsole;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 
 public final class ServerModule extends AbstractModule {
   private static final String SERVER_CONFIG_PATH = "server.properties";
 
+  private final String URL;
   private final String USER;
   private final String PASSWORD;
 
@@ -56,21 +45,22 @@ public final class ServerModule extends AbstractModule {
   public ServerModule(String[] args) {
     this.logger = LogManager.getLogger(ServerModule.class);
 
-    USER = args[0];
-    PASSWORD = args[1];
+    URL = args[0];
+    USER = args[1];
+    PASSWORD = args[2];
   }
 
   @Override
   public void configure() {
     install(new CommonModule());
-    logger.debug("Common module was installed.");
+    logger.debug("Common module has been installed.");
 
     bind(History.class).in(Scopes.SINGLETON);
-    logger.debug(() -> "Services were configured.");
+    logger.debug(() -> "Services have been configured.");
 
     bind(CommandController.class).in(Scopes.SINGLETON);
     bind(CommandFactoryMediator.class).in(Scopes.SINGLETON);
-    logger.debug(() -> "Controller was configured.");
+    logger.debug(() -> "Controllers have been configured.");
 
     bind(UserDAO.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<DAO<String, User>>() {}).to(UserDAO.class);
@@ -82,49 +72,15 @@ public final class ServerModule extends AbstractModule {
     bind(new TypeLiteral<DAO<Long, Person>>() {}).to(PersonDAO.class);
     bind(LocationDAO.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<DAO<Long, Location>>() {}).to(LocationDAO.class);
-    logger.debug(() -> "DAOs were configured.");
+    logger.debug(() -> "DAOs have been configured.");
 
     bind(UserRepository.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<Repository<User>>() {}).to(UserRepository.class);
     bind(WorkerRepository.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<Repository<Worker>>() {}).to(WorkerRepository.class);
-    logger.debug(() -> "Repositories were configured.");
+    logger.debug(() -> "Repositories have been configured.");
 
-    bind(ServerProcessor.class).to(Server.class);
-    logger.debug(() -> "Server module was configured.");
-  }
-
-  @Provides
-  @Singleton
-  Server provideServer(
-      ServerConsole console,
-      Executor executor,
-      CommandController commandController,
-      ServerConnection serverConnection) {
-    Server server = new Server(console, executor, commandController, serverConnection);
-
-    logger.debug(() -> "Provided Server.");
-    return server;
-  }
-
-  @Provides
-  @Singleton
-  ServerConnection provideServerConnection(
-      Configuration configuration, ServerProcessor serverProcessor, Serializer serializer)
-      throws ProvidingException {
-    ServerConnection serverConnection;
-
-    try {
-      InetAddress address = InetAddress.getByName(configuration.getString("server.localhost"));
-      int port = configuration.getInt("server.port");
-      serverConnection = new ServerConnection(address, port, serverProcessor, serializer);
-    } catch (ServerConnectionException | ServerException | UnknownHostException e) {
-      logger.fatal(() -> "Cannot provide Server.", e);
-      throw new ProvidingException(e);
-    }
-
-    logger.debug(() -> "Provided Server.");
-    return serverConnection;
+    logger.debug(() -> "Server module has been configured.");
   }
 
   @Provides
@@ -152,42 +108,27 @@ public final class ServerModule extends AbstractModule {
 
   @Provides
   @Singleton
-  Executor provideExecutors() {
-    Executor executor =
-        new Executor(
-            ForkJoinPool.commonPool(),
-            Executors.newCachedThreadPool(),
-            Executors.newCachedThreadPool());
-
-    logger.debug(() -> "Provided Executor.");
-    return executor;
-  }
-
-  @Provides
-  @Singleton
   ExitManager provideExitManager(DataSource dataSource) {
     List<ExitListener> entities = new ArrayList<>();
     entities.add(dataSource);
 
     ExitManager exitManager = new ExitManager(entities);
-    logger.debug(() -> "Provided ExitingDirector.");
+    logger.debug(() -> "Provided ExitManager.");
     return exitManager;
   }
 
   @Provides
   @Singleton
-  DataSource provideDataSource(Configuration configuration) throws ProvidingException {
-    String url = configuration.getString("database.url");
-
+  DataSource provideDataSource() throws ProvidingException {
     DataSource dataSource;
 
     try {
-      dataSource = new Database(url, USER, PASSWORD);
+      dataSource = new Database(URL, USER, PASSWORD);
     } catch (DataSourceException e) {
       throw new ProvidingException(e);
     }
 
-    logger.debug(() -> "Provided DataSource: DataBase.");
+    logger.debug(() -> "Provided DataSource: Database.");
     return dataSource;
   }
 }

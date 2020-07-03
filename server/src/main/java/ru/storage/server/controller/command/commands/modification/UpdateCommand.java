@@ -7,9 +7,11 @@ import org.apache.logging.log4j.util.Supplier;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
+import ru.storage.server.controller.services.parser.Parser;
+import ru.storage.server.controller.services.parser.exceptions.ParserException;
 import ru.storage.server.model.domain.dto.DTO;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.repository.Query;
 import ru.storage.server.model.domain.repository.Repository;
 import ru.storage.server.model.domain.repository.exceptions.RepositoryException;
@@ -30,8 +32,9 @@ public final class UpdateCommand extends ModificationCommand {
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
       Locale locale,
-      Repository<Worker> workerRepository) {
-    super(configuration, argumentMediator, arguments, locale, workerRepository);
+      Repository<Worker> workerRepository,
+      Parser parser) {
+    super(configuration, argumentMediator, arguments, locale, workerRepository, parser);
     this.logger = LogManager.getLogger(UpdateCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.UpdateCommand");
@@ -69,7 +72,7 @@ public final class UpdateCommand extends ModificationCommand {
 
     try {
       workerDTO = createWorkerDTO(arguments);
-    } catch (ValidationException e) {
+    } catch (ParserException e) {
       logger.warn(() -> "Cannot create workerDTO.", e);
       return new Response(Status.BAD_REQUEST, WRONG_WORKER_FORMAT_ANSWER);
     }
@@ -84,7 +87,7 @@ public final class UpdateCommand extends ModificationCommand {
       }
     }
 
-    logger.info(() -> "Worker was updated.");
+    logger.info(() -> "Worker has been updated.");
     return new Response(Status.OK, UPDATED_SUCCESSFULLY_ANSWER);
   }
 }

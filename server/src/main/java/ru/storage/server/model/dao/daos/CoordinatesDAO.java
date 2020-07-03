@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.exceptions.DataSourceException;
@@ -168,7 +168,7 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Coordinates was inserted.");
+    logger.info(() -> "Coordinates have been inserted.");
     return coordinates;
   }
 
@@ -193,7 +193,7 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Coordinates was updated.");
+    logger.info(() -> "Coordinates have been updated.");
     return coordinates;
   }
 
@@ -213,6 +213,6 @@ public class CoordinatesDAO implements DAO<Long, Coordinates> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Coordinates was deleted.");
+    logger.info(() -> "Coordinates have been deleted.");
   }
 }

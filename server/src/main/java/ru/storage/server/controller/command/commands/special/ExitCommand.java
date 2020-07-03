@@ -5,8 +5,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
-import ru.storage.common.exitManager.ExitManager;
-import ru.storage.common.exitManager.exceptions.ExitingException;
+import ru.storage.common.managers.exit.ExitManager;
+import ru.storage.common.managers.exit.exceptions.ExitingException;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 

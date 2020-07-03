@@ -1,8 +1,8 @@
 package ru.storage.server.model.domain.entity.entities.worker;
 
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.dto.dtos.CoordinatesDTO;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.Entity;
 
 import java.util.Objects;

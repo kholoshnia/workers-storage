@@ -11,10 +11,6 @@ public final class UserValidator implements LocaleListener {
   private String wrongLoginException;
   private String wrongPasswordException;
 
-  public UserValidator() {
-    changeLocale();
-  }
-
   @Override
   public void changeLocale() {
     ResourceBundle resourceBundle =

@@ -1,21 +1,15 @@
 package ru.storage.server.model.domain.dto.dtos;
 
-import ru.storage.server.model.domain.dto.DTO;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
-
-import java.util.Objects;
+import ru.storage.server.model.domain.dto.DTO;
 
 public final class PersonDTO implements DTO<Person> {
   public final long id;
-
   public final long ownerID;
-
   public final String name;
-
   public final String passportID;
-
   public final DTO<Location> locationDTO;
 
   public PersonDTO(
@@ -27,22 +21,6 @@ public final class PersonDTO implements DTO<Person> {
     this.locationDTO = locationDTO;
   }
 
-  public PersonDTO(String nameString, String passportIDString, DTO<Location> locationDTO) {
-    this.id = Person.DEFAULT_ID;
-    this.ownerID = Person.DEFAULT_OWNER_ID;
-    this.name = parseString(nameString);
-    this.passportID = parseString(passportIDString);
-    this.locationDTO = locationDTO;
-  }
-
-  private String parseString(String value) {
-    if (value == null || value.trim().isEmpty()) {
-      return null;
-    }
-
-    return value;
-  }
-
   @Override
   public Person toEntity() throws ValidationException {
     return new Person(
@@ -50,17 +28,20 @@ public final class PersonDTO implements DTO<Person> {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    PersonDTO personDTO = (PersonDTO) o;
-    return Objects.equals(name, personDTO.name)
-        && Objects.equals(passportID, personDTO.passportID)
-        && Objects.equals(locationDTO, personDTO.locationDTO);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(name, passportID, locationDTO);
+  public String toString() {
+    return "PersonDTO{"
+        + "id="
+        + id
+        + ", ownerID="
+        + ownerID
+        + ", name='"
+        + name
+        + '\''
+        + ", passportID='"
+        + passportID
+        + '\''
+        + ", locationDTO="
+        + locationDTO
+        + '}';
   }
 }

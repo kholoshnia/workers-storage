@@ -11,10 +11,6 @@ public final class LocationValidator implements LocaleListener {
   private String wrongLatitudeException;
   private String wrongLongitudeException;
 
-  public LocationValidator() {
-    changeLocale();
-  }
-
   @Override
   public void changeLocale() {
     ResourceBundle resourceBundle =

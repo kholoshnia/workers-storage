@@ -4,9 +4,9 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
-import ru.storage.server.model.dao.exceptions.DAOException;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.person.Location;
+import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
@@ -164,7 +164,7 @@ public class LocationDAO implements DAO<Long, Location> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Location was inserted.");
+    logger.info(() -> "Location has been inserted.");
     return location;
   }
 
@@ -188,7 +188,7 @@ public class LocationDAO implements DAO<Long, Location> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Location was updated.");
+    logger.info(() -> "Location has been updated.");
     return location;
   }
 
@@ -208,6 +208,6 @@ public class LocationDAO implements DAO<Long, Location> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Location was deleted.");
+    logger.info(() -> "Location has been deleted.");
   }
 }

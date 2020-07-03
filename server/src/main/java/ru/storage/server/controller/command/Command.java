@@ -4,7 +4,6 @@ import org.apache.commons.configuration2.Configuration;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.transfer.response.Response;
 
-import java.util.Locale;
 import java.util.Map;
 
 /** Command abstract class */
@@ -19,13 +18,11 @@ public abstract class Command {
    * @param configuration concrete configuration
    * @param argumentMediator argument key mediator
    * @param arguments command arguments
-   * @param locale response locale
    */
   public Command(
       Configuration configuration,
       ArgumentMediator argumentMediator,
-      Map<String, String> arguments,
-      Locale locale) {
+      Map<String, String> arguments) {
     this.configuration = configuration;
     this.argumentMediator = argumentMediator;
     this.arguments = arguments;

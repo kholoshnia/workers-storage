@@ -21,7 +21,7 @@ public abstract class HistoryCommand extends Command {
       Map<String, String> arguments,
       Locale locale,
       History history) {
-    super(configuration, argumentMediator, arguments, locale);
+    super(configuration, argumentMediator, arguments);
     this.history = history;
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.HistoryCommand", locale);

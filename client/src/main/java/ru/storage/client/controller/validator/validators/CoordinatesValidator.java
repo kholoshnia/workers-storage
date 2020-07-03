@@ -11,10 +11,6 @@ public final class CoordinatesValidator implements LocaleListener {
   private String wrongYException;
   private String wrongZException;
 
-  public CoordinatesValidator() {
-    changeLocale();
-  }
-
   @Override
   public void changeLocale() {
     ResourceBundle resourceBundle =

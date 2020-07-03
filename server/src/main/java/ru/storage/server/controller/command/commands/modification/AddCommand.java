@@ -6,9 +6,11 @@ import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
+import ru.storage.server.controller.services.parser.Parser;
+import ru.storage.server.controller.services.parser.exceptions.ParserException;
 import ru.storage.server.model.domain.dto.DTO;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.repository.Repository;
 import ru.storage.server.model.domain.repository.exceptions.RepositoryException;
 
@@ -26,8 +28,9 @@ public final class AddCommand extends ModificationCommand {
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
       Locale locale,
-      Repository<Worker> workerRepository) {
-    super(configuration, argumentMediator, arguments, locale, workerRepository);
+      Repository<Worker> workerRepository,
+      Parser parser) {
+    super(configuration, argumentMediator, arguments, locale, workerRepository, parser);
     this.logger = LogManager.getLogger(AddCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.AddCommand");
@@ -41,7 +44,7 @@ public final class AddCommand extends ModificationCommand {
 
     try {
       workerDTO = createWorkerDTO(arguments);
-    } catch (ValidationException e) {
+    } catch (ParserException e) {
       logger.warn(() -> "Cannot create workerDTO.", e);
       return new Response(Status.BAD_REQUEST, WRONG_WORKER_FORMAT_ANSWER);
     }
@@ -56,7 +59,7 @@ public final class AddCommand extends ModificationCommand {
       return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
-    logger.info(() -> "Worker was added.");
+    logger.info(() -> "Worker has been added.");
     return new Response(Status.CREATED, ADDED_SUCCESSFULLY_ANSWER);
   }
 }

@@ -4,21 +4,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.controller.argumentFormer.ArgumentFormer;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
-import ru.storage.client.controller.localeManager.LocaleListener;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public final class NoArgumentsFormer implements ArgumentFormer, LocaleListener {
+public final class NoArgumentsFormer implements ArgumentFormer {
   private final Logger logger;
 
   private String wrongArgumentsNumberException;
 
   public NoArgumentsFormer() {
     this.logger = LogManager.getLogger(NoArgumentsFormer.class);
-    changeLocale();
   }
 
   @Override

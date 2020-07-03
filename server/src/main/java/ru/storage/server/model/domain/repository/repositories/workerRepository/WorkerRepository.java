@@ -3,10 +3,10 @@ package ru.storage.server.model.domain.repository.repositories.workerRepository;
 import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.storage.server.model.domain.repository.Query;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
-import ru.storage.server.model.domain.repository.Query;
 import ru.storage.server.model.domain.repository.Repository;
 import ru.storage.server.model.domain.repository.exceptions.RepositoryException;
 import ru.storage.server.model.domain.repository.repositories.workerRepository.exceptions.WorkerRepositoryException;
@@ -97,7 +97,7 @@ public final class WorkerRepository implements Repository<Worker> {
   public synchronized List<Worker> get(@Nonnull Query<Worker> query) throws RepositoryException {
     List<Worker> result = query.execute(workers);
 
-    logger.debug("WorkerQuery: {} was executed.", () -> query);
+    logger.debug("Worker query: {} has been executed.", () -> query);
     return result;
   }
 
@@ -107,7 +107,7 @@ public final class WorkerRepository implements Repository<Worker> {
 
     try {
       result = workerDAO.insert(worker);
-      logger.info("Got worker with id from DAO.");
+      logger.info(() -> "Got worker with id from DAO.");
     } catch (DAOException | DataSourceException e) {
       logger.error(() -> "Cannot add new worker to the collection.", e);
       throw new WorkerRepositoryException(e);
@@ -116,7 +116,7 @@ public final class WorkerRepository implements Repository<Worker> {
     workers.add(result);
 
     size = workers.size();
-    logger.info(() -> "Worker was added to the collection.");
+    logger.info(() -> "Worker has been added to the collection.");
   }
 
   @Override
@@ -132,7 +132,7 @@ public final class WorkerRepository implements Repository<Worker> {
       }
 
       workerDAO.update(result);
-      logger.info("Worker was updated in DAO.");
+      logger.info(() -> "Worker has been updated in DAO.");
     } catch (DAOException | DataSourceException e) {
       logger.error("Cannot update worker in DAO, target worker: %s." + worker, e);
       throw new WorkerRepositoryException(e);
@@ -147,7 +147,7 @@ public final class WorkerRepository implements Repository<Worker> {
 
     workers.add(worker);
 
-    logger.info(() -> "Worker was updated in the collection.");
+    logger.info(() -> "Worker has been updated in the collection.");
   }
 
   @Override
@@ -163,7 +163,7 @@ public final class WorkerRepository implements Repository<Worker> {
       }
 
       workerDAO.delete(worker);
-      logger.info("Worker was deleted from DAO.");
+      logger.info("Worker has been deleted from DAO.");
     } catch (DAOException | DataSourceException e) {
       logger.error(
           "Cannot delete worker using DAO, target worker: {}.", (Supplier<?>) () -> worker, e);
@@ -178,6 +178,6 @@ public final class WorkerRepository implements Repository<Worker> {
     }
 
     size = workers.size();
-    logger.info(() -> "Worker was deleted from the collection.");
+    logger.info(() -> "Worker has been deleted from the collection.");
   }
 }

@@ -10,6 +10,8 @@ import ru.storage.server.controller.Controller;
 import ru.storage.server.controller.command.factory.CommandFactory;
 import ru.storage.server.controller.command.factory.CommandFactoryMediator;
 import ru.storage.server.controller.command.factory.exceptions.CommandFactoryException;
+import ru.storage.server.controller.services.history.History;
+import ru.storage.server.controller.services.history.Record;
 
 import java.util.ResourceBundle;
 
@@ -28,11 +30,13 @@ public final class CommandController implements Controller {
 
   private final Logger logger;
   private final CommandFactoryMediator commandFactoryMediator;
+  private final History history;
 
   @Inject
-  public CommandController(CommandFactoryMediator commandFactoryMediator) {
+  public CommandController(CommandFactoryMediator commandFactoryMediator, History history) {
     this.logger = LogManager.getLogger(CommandController.class);
     this.commandFactoryMediator = commandFactoryMediator;
+    this.history = history;
   }
 
   @Override
@@ -59,6 +63,9 @@ public final class CommandController implements Controller {
       return new Response(Status.INTERNAL_SERVER_ERROR, GOT_NULL_COMMAND_ANSWER);
     }
 
-    return command.executeCommand();
+    Response response = command.executeCommand();
+
+    history.addRecord(new Record(request.getCommand(), request.getArguments(), response));
+    return response;
   }
 }

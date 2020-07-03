@@ -3,7 +3,7 @@ package ru.storage.server.controller.command.commands.special;
 import org.apache.commons.configuration2.Configuration;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
-import ru.storage.common.exitManager.ExitManager;
+import ru.storage.common.managers.exit.ExitManager;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.command.commands.view.ViewCommand;
@@ -13,8 +13,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class HelpCommand extends SpecialCommand {
-  private final String HELP_PREFIX;
+  private static final String PATTERN = "%s - %s";
 
+  private final String HELP_PREFIX;
   private final String LOGIN_INFO;
   private final String LOGOUT_INFO;
   private final String REGISTER_INFO;
@@ -62,29 +63,29 @@ public class HelpCommand extends SpecialCommand {
             + HELP_PREFIX
             + System.lineSeparator()
             + ViewCommand.SEPARATOR
-            + String.format("%s - %s", commandMediator.LOGIN, LOGIN_INFO)
+            + String.format(PATTERN, commandMediator.LOGIN, LOGIN_INFO)
             + System.lineSeparator()
-            + String.format("%s - %s", commandMediator.LOGOUT, LOGOUT_INFO)
+            + String.format(PATTERN, commandMediator.LOGOUT, LOGOUT_INFO)
             + System.lineSeparator()
-            + String.format("%s - %s", commandMediator.REGISTER, REGISTER_INFO)
+            + String.format(PATTERN, commandMediator.REGISTER, REGISTER_INFO)
             + System.lineSeparator()
-            + String.format("%s - %s", commandMediator.SHOW_HISTORY, SHOW_HISTORY_INFO)
+            + String.format(PATTERN, commandMediator.SHOW_HISTORY, SHOW_HISTORY_INFO)
             + System.lineSeparator()
-            + String.format("%s - %s", commandMediator.CLEAR_HISTORY, CLEAR_HISTORY_INFO)
+            + String.format(PATTERN, commandMediator.CLEAR_HISTORY, CLEAR_HISTORY_INFO)
             + System.lineSeparator()
-            + String.format("%s - %s", commandMediator.ADD, ADD_INFO)
+            + String.format(PATTERN, commandMediator.ADD, ADD_INFO)
             + System.lineSeparator()
-            + String.format("%s - %s", commandMediator.REMOVE, REMOVE_INFO)
+            + String.format(PATTERN, commandMediator.REMOVE, REMOVE_INFO)
             + System.lineSeparator()
-            + String.format("%s - %s", commandMediator.UPDATE, UPDATE_INFO)
+            + String.format(PATTERN, commandMediator.UPDATE, UPDATE_INFO)
             + System.lineSeparator()
-            + String.format("%s - %s", commandMediator.EXIT, EXIT_INFO)
+            + String.format(PATTERN, commandMediator.EXIT, EXIT_INFO)
             + System.lineSeparator()
-            + String.format("%s - %s", commandMediator.HELP, HELP_INFO)
+            + String.format(PATTERN, commandMediator.HELP, HELP_INFO)
             + System.lineSeparator()
-            + String.format("%s - %s", commandMediator.INFO, INFO_INFO)
+            + String.format(PATTERN, commandMediator.INFO, INFO_INFO)
             + System.lineSeparator()
-            + String.format("%s - %s", commandMediator.SHOW, SHOW_INFO)
+            + String.format(PATTERN, commandMediator.SHOW, SHOW_INFO)
             + System.lineSeparator()
             + ViewCommand.SEPARATOR;
 

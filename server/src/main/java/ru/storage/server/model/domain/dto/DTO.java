@@ -1,6 +1,6 @@
 package ru.storage.server.model.domain.dto;
 
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.Entity;
 
 /**

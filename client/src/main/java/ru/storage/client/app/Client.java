@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import ru.storage.client.app.exceptions.ClientException;
 import ru.storage.client.view.View;
 
+// TODO: Implement TCP connection with server.
 public final class Client {
   private final Logger logger;
   private final View view;
@@ -18,7 +19,7 @@ public final class Client {
 
   public void start() throws ClientException {
     try {
-      view.start();
+      view.process();
     } catch (Throwable e) {
       logger.fatal("Error while work of user interface.");
       throw new ClientException(e);

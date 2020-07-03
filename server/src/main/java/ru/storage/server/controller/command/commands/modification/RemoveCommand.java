@@ -7,6 +7,7 @@ import org.apache.logging.log4j.util.Supplier;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
+import ru.storage.server.controller.services.parser.Parser;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.repository.Query;
 import ru.storage.server.model.domain.repository.Repository;
@@ -28,8 +29,9 @@ public final class RemoveCommand extends ModificationCommand {
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
       Locale locale,
-      Repository<Worker> workerRepository) {
-    super(configuration, argumentMediator, arguments, locale, workerRepository);
+      Repository<Worker> workerRepository,
+      Parser parser) {
+    super(configuration, argumentMediator, arguments, locale, workerRepository, parser);
     this.logger = LogManager.getLogger(RemoveCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.RemoveCommand");
@@ -72,7 +74,7 @@ public final class RemoveCommand extends ModificationCommand {
       }
     }
 
-    logger.info(() -> "Worker was removed.");
+    logger.info(() -> "Worker has been removed.");
     return new Response(Status.OK, REMOVED_SUCCESSFULLY_ANSWER);
   }
 }

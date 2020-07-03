@@ -3,11 +3,11 @@ package ru.storage.server.model.source.database;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Supplier;
-import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
+import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.database.exceptions.DatabaseException;
 import ru.storage.server.model.source.exceptions.DataSourceException;
@@ -255,7 +255,7 @@ public final class Database extends DataSource {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug(() -> "Users table was initialized.");
+    logger.debug(() -> "Users table has been initialized.");
   }
 
   /**
@@ -279,7 +279,7 @@ public final class Database extends DataSource {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug(() -> "Coordinates table was initialized.");
+    logger.debug(() -> "Coordinates table has been initialized.");
   }
 
   /**
@@ -303,7 +303,7 @@ public final class Database extends DataSource {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug(() -> "Persons table was initialized.");
+    logger.debug(() -> "Persons table has been initialized.");
   }
 
   /**
@@ -327,7 +327,7 @@ public final class Database extends DataSource {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug(() -> "Locations table was initialized.");
+    logger.debug(() -> "Locations table has been initialized.");
   }
 
   /**
@@ -351,6 +351,6 @@ public final class Database extends DataSource {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug(() -> "Workers table was initialized.");
+    logger.debug(() -> "Workers table has been initialized.");
   }
 }

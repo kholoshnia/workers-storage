@@ -2,7 +2,7 @@ package ru.storage.server.model.domain.entity.entities.worker.person;
 
 import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.dto.dtos.PersonDTO;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.Entity;
 
 import java.util.Objects;

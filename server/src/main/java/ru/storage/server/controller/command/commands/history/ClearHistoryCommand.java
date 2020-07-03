@@ -4,9 +4,9 @@ import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
+import ru.storage.server.controller.services.history.History;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
-import ru.storage.server.controller.services.history.History;
 
 import java.util.Locale;
 import java.util.Map;
@@ -41,7 +41,7 @@ public final class ClearHistoryCommand extends HistoryCommand {
 
     history.clear();
 
-    logger.info(() -> "History was cleared.");
+    logger.info(() -> "History has been cleared.");
     return new Response(Status.OK, CLEARED_SUCCESSFULLY_ANSWER);
   }
 }

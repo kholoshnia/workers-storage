@@ -1,10 +1,10 @@
 package ru.storage.server.model.domain.entity.entities.worker;
 
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
+import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.dto.dtos.WorkerDTO;
-import ru.storage.server.model.domain.dto.exceptions.ValidationException;
 import ru.storage.server.model.domain.entity.Entity;
-import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

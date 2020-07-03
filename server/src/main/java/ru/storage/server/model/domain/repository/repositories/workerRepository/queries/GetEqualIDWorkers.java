@@ -1,7 +1,7 @@
 package ru.storage.server.model.domain.repository.repositories.workerRepository.queries;
 
-import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.repository.Query;
+import ru.storage.server.model.domain.entity.entities.worker.Worker;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

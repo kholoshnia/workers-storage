@@ -53,7 +53,7 @@ public final class Server implements ServerProcessor {
   }
 
   @Override
-  public void process(ClientWorker clientWorker) throws ServerException {
+  public void process(ClientWorker clientWorker) {
     try {
       executorService.read(
           () -> {
@@ -66,7 +66,6 @@ public final class Server implements ServerProcessor {
           });
     } catch (ExecutorServicesException e) {
       logger.error(() -> "Error while processing client.", e);
-      throw new ServerException(e);
     }
   }
 

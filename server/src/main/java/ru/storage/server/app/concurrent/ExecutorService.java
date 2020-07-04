@@ -4,36 +4,35 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.app.concurrent.exceptions.ExecutorServicesException;
 
-/** Executes tasks in accordance with concrete {@link java.util.concurrent.Executor}; */
+import java.util.concurrent.Executor;
+
+/** Executes tasks in accordance with concrete {@link Executor}; */
 public final class ExecutorService {
   private final Logger logger;
-  private final java.util.concurrent.Executor readExecutor;
-  private final java.util.concurrent.Executor handleExecutor;
-  private final java.util.concurrent.Executor sendExecutor;
+  private final Executor readExecutor;
+  private final Executor handleExecutor;
+  private final Executor sendExecutor;
 
-  public ExecutorService(
-      java.util.concurrent.Executor readExecutor,
-      java.util.concurrent.Executor handleExecutor,
-      java.util.concurrent.Executor sendExecutor) {
+  public ExecutorService(Executor readExecutor, Executor handleExecutor, Executor sendExecutor) {
     this.logger = LogManager.getLogger(ExecutorService.class);
     this.readExecutor = readExecutor;
     this.handleExecutor = handleExecutor;
     this.sendExecutor = sendExecutor;
   }
 
-  /** Executes read task using specified {@link java.util.concurrent.Executor}. */
+  /** Executes read task using specified {@link Executor}. */
   public void read(Runnable readTask) throws ExecutorServicesException {
     logger.info("Executing read task...");
     readExecutor.execute(readTask);
   }
 
-  /** Executes handle task using specified {@link java.util.concurrent.Executor}. */
+  /** Executes handle task using specified {@link Executor}. */
   public void handle(Runnable handleTask) throws ExecutorServicesException {
     logger.info("Executing handle task...");
     handleExecutor.execute(handleTask);
   }
 
-  /** Executes send task using specified {@link java.util.concurrent.Executor}. */
+  /** Executes send task using specified {@link Executor}. */
   public void send(Runnable sendTask) throws ExecutorServicesException {
     logger.info("Executing send task...");
     sendExecutor.execute(sendTask);

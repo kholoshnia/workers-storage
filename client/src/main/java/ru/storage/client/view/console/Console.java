@@ -220,10 +220,11 @@ public final class Console implements View, ExitListener, LocaleListener {
         logger.error(() -> "Cannot interrupt thread.", e);
       }
 
-      writeLine(String.format("\r%s...", connectingMessage));
+      write(String.format("\r%s...", connectingMessage));
     }
 
     logger.info(() -> "Connected to the server.");
+    writeLine();
     writeLine(connectedMessage);
   }
 
@@ -265,6 +266,7 @@ public final class Console implements View, ExitListener, LocaleListener {
    */
   public void write(String string) {
     writer.write(string);
+    writer.flush();
   }
 
   /**

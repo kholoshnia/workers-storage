@@ -45,8 +45,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public final class ServerModule extends AbstractModule {
   private static final String SERVER_CONFIG_PATH = "server.properties";
@@ -162,11 +162,42 @@ public final class ServerModule extends AbstractModule {
   @Provides
   @Singleton
   ExecutorService provideExecutorService() {
+    Executor readExecutor =
+        Executors.newCachedThreadPool(
+            new ThreadFactory() {
+              private final AtomicLong threadIndex = new AtomicLong(0);
+
+              @Override
+              public Thread newThread(Runnable runnable) {
+                return new Thread(runnable, "read-" + threadIndex.getAndIncrement());
+              }
+            });
+
+    Executor handleExecutor =
+        new ForkJoinPool(
+            Runtime.getRuntime().availableProcessors(),
+            pool -> {
+              ForkJoinWorkerThread worker =
+                  ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
+              worker.setName("handle-" + worker.getPoolIndex());
+              return worker;
+            },
+            null,
+            false);
+
+    Executor sendExecutor =
+        Executors.newCachedThreadPool(
+            new ThreadFactory() {
+              private final AtomicLong threadIndex = new AtomicLong(0);
+
+              @Override
+              public Thread newThread(Runnable runnable) {
+                return new Thread(runnable, "send-" + threadIndex.getAndIncrement());
+              }
+            });
+
     ExecutorService executorService =
-        new ExecutorService(
-            Executors.newCachedThreadPool(),
-            ForkJoinPool.commonPool(),
-            Executors.newCachedThreadPool());
+        new ExecutorService(readExecutor, handleExecutor, sendExecutor);
 
     logger.debug(() -> "Provided ExecutorService.");
     return executorService;

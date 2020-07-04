@@ -38,7 +38,7 @@ public final class JsonSerializer implements Serializer {
 
     try {
       result = gson.fromJson(json, clazz);
-    } catch (JsonSyntaxException e) {
+    } catch (JsonSyntaxException | IllegalStateException e) {
       logger.error(() -> "Cannot deserialize object.", e);
       throw new DeserializationException(e);
     }

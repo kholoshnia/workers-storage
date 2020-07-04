@@ -3,8 +3,8 @@ package ru.storage.server.model.source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Supplier;
-import ru.storage.common.managers.exit.ExitListener;
-import ru.storage.common.managers.exit.exceptions.ExitingException;
+import ru.storage.common.exitManager.ExitListener;
+import ru.storage.common.exitManager.exceptions.ExitingException;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import java.sql.Connection;
@@ -14,7 +14,8 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 /**
- * Abstract class that encapsulates all methods to work with statements of a specific sql database.
+ * Abstract class that encapsulates all methods for working with statements of a specific SQL
+ * database.
  *
  * @see Connection
  * @see PreparedStatement
@@ -70,7 +71,7 @@ public abstract class DataSource implements ExitListener {
       throw new DataSourceException(SETUP_CONNECTION_EXCEPTION, e);
     }
 
-    logger.debug(() -> "Connection setup completed.");
+    logger.debug(() -> "ClientWorker setup completed.");
     return connection;
   }
 
@@ -138,7 +139,7 @@ public abstract class DataSource implements ExitListener {
       }
     }
 
-    logger.debug(() -> "Connection has been closed.");
+    logger.debug(() -> "ClientWorker has been closed.");
   }
 
   @Override
@@ -150,6 +151,6 @@ public abstract class DataSource implements ExitListener {
       throw new ExitingException(e);
     }
 
-    logger.debug(() -> "Connection with database has been closed.");
+    logger.debug(() -> "ClientWorker with database has been closed.");
   }
 }

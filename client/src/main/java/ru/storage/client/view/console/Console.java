@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
-import ru.storage.client.app.connection.Connection;
+import ru.storage.client.app.connection.ServerWorker;
 import ru.storage.client.app.connection.exceptions.ClientConnectionException;
 import ru.storage.client.controller.argumentFormer.FormerMediator;
 import ru.storage.client.controller.localeManager.LocaleListener;
@@ -17,7 +17,7 @@ import ru.storage.client.controller.responseHandler.ResponseHandler;
 import ru.storage.client.view.View;
 import ru.storage.client.view.console.exceptions.ConsoleException;
 import ru.storage.common.CommandMediator;
-import ru.storage.common.managers.exit.ExitListener;
+import ru.storage.common.exitManager.ExitListener;
 import ru.storage.common.serizliser.exceptions.DeserializationException;
 import ru.storage.common.transfer.request.Request;
 import ru.storage.common.transfer.response.Response;
@@ -25,6 +25,7 @@ import ru.storage.common.transfer.response.Response;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.channels.NotYetConnectedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -34,7 +35,7 @@ import java.util.regex.Pattern;
 
 public final class Console implements View, ExitListener, LocaleListener {
   private final Logger logger;
-  private final Connection connection;
+  private final ServerWorker serverWorker;
   private final CommandMediator commandMediator;
   private final Pattern regex;
   private final ResponseHandler responseHandler;
@@ -50,16 +51,18 @@ public final class Console implements View, ExitListener, LocaleListener {
   private String connectedMessage;
   private String connectingMessage;
   private String greetingsMessage;
+  private String noSuchCommandMessage;
+
+  private String notYetConnectedException;
   private String connectionException;
   private String deserializationException;
   private String buildingException;
-  private String noSuchCommandMessage;
 
   public Console(
       Configuration configuration,
       InputStream inputStream,
       OutputStream outputStream,
-      Connection connection,
+      ServerWorker serverWorker,
       CommandMediator commandMediator,
       LocaleManager localeManager,
       FormerMediator formerMediator,
@@ -69,7 +72,7 @@ public final class Console implements View, ExitListener, LocaleListener {
     this.jlineConsole = new JlineConsole(configuration, inputStream, outputStream);
     this.reader = jlineConsole.getLineReader();
     this.writer = jlineConsole.getPrintWriter();
-    this.connection = connection;
+    this.serverWorker = serverWorker;
     this.commandMediator = commandMediator;
     this.localeManager = localeManager;
     this.localeManager.subscribe(this);
@@ -88,10 +91,12 @@ public final class Console implements View, ExitListener, LocaleListener {
     connectedMessage = resourceBundle.getString("messages.connected");
     connectingMessage = resourceBundle.getString("messages.connecting");
     greetingsMessage = resourceBundle.getString("messages.greetings");
-    connectionException = resourceBundle.getString("exceptions.connection");
+    noSuchCommandMessage = resourceBundle.getString("exceptions.noSuchCommand");
+
+    notYetConnectedException = resourceBundle.getString("exceptions.notYetConnected");
+    connectionException = resourceBundle.getString("exceptions.Connection");
     deserializationException = resourceBundle.getString("exceptions.deserialization");
     buildingException = resourceBundle.getString("exceptions.building");
-    noSuchCommandMessage = resourceBundle.getString("exceptions.noSuchCommand");
 
     jlineConsole.changeLocale();
     reader = jlineConsole.getLineReader();
@@ -104,7 +109,7 @@ public final class Console implements View, ExitListener, LocaleListener {
     writeLine(greetingsMessage);
 
     try {
-      connection.connect();
+      serverWorker.connect();
     } catch (ClientConnectionException e) {
       logger.fatal(() -> "Cannot connect to the server...");
       writeLine(connectionException);
@@ -139,18 +144,28 @@ public final class Console implements View, ExitListener, LocaleListener {
       Response response;
 
       try {
-        connection.write(request);
+        serverWorker.write(request);
+      } catch (NotYetConnectedException e) {
+        logger.info(() -> "Client not yet connected to the server.", e);
+        writeLine(notYetConnectedException);
+        waitConnection();
+        continue;
       } catch (ClientConnectionException e) {
-        logger.info(() -> "Error in connection with server.", e);
+        logger.info(() -> "Error in connection server.", e);
         writeLine(connectionException);
         waitConnection();
         continue;
       }
 
       try {
-        response = connection.read();
+        response = serverWorker.read();
+      } catch (NotYetConnectedException e) {
+        logger.info(() -> "Client not yet connected to the server.", e);
+        writeLine(notYetConnectedException);
+        waitConnection();
+        continue;
       } catch (ClientConnectionException e) {
-        logger.info(() -> "Error in connection with server.", e);
+        logger.info(() -> "Error in serverWorker with server.", e);
         writeLine(connectionException);
         waitConnection();
         continue;
@@ -196,9 +211,9 @@ public final class Console implements View, ExitListener, LocaleListener {
     }
   }
 
-  /** Waits connection to the server. Checks connection every 1 second. */
+  /** Waits serverWorker to the server. Checks serverWorker every 1 second. */
   private void waitConnection() {
-    while (!connection.isConnected()) {
+    while (!serverWorker.isConnected()) {
       try {
         Thread.sleep(1000);
       } catch (InterruptedException e) {

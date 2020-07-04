@@ -13,7 +13,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.app.Client;
-import ru.storage.client.app.connection.Connection;
+import ru.storage.client.app.connection.ServerWorker;
 import ru.storage.client.app.connection.exceptions.ClientConnectionException;
 import ru.storage.client.app.guice.exceptions.ProvidingException;
 import ru.storage.client.controller.argumentFormer.FormerMediator;
@@ -25,7 +25,6 @@ import ru.storage.client.view.View;
 import ru.storage.client.view.console.Console;
 import ru.storage.client.view.console.exceptions.ConsoleException;
 import ru.storage.common.CommandMediator;
-import ru.storage.common.chunker.Chunker;
 import ru.storage.common.guice.CommonModule;
 import ru.storage.common.serizliser.Serializer;
 
@@ -46,21 +45,22 @@ public final class ClientModule extends AbstractModule {
   @Override
   protected void configure() {
     install(new CommonModule());
-    logger.debug(() -> "Common module was installed.");
+    logger.debug(() -> "Common module has been installed.");
 
     bind(ServerResponseHandler.class).in(Scopes.SINGLETON);
     bind(ResponseHandler.class).to(ServerResponseHandler.class);
-
     bind(FormerMediator.class).in(Scopes.SINGLETON);
+    logger.debug(() -> "Controller has been configured.");
+
     bind(Client.class).in(Scopes.SINGLETON);
-    logger.debug(() -> "Client was configured.");
+    logger.debug(() -> "Client has been configured.");
   }
 
   @Provides
   @Singleton
   View provideView(
       Configuration configuration,
-      Connection connection,
+      ServerWorker serverWorker,
       CommandMediator commandMediator,
       LocaleManager localeManager,
       FormerMediator formerMediator,
@@ -74,7 +74,7 @@ public final class ClientModule extends AbstractModule {
               configuration,
               System.in,
               System.out,
-              connection,
+              serverWorker,
               commandMediator,
               localeManager,
               formerMediator,
@@ -129,20 +129,21 @@ public final class ClientModule extends AbstractModule {
 
   @Provides
   @Singleton
-  Connection provideConnection(Configuration configuration, Chunker chunker, Serializer serializer)
+  ServerWorker provideConnection(Configuration configuration, Serializer serializer)
       throws ProvidingException {
-    Connection connection;
+    ServerWorker serverWorker;
 
     try {
       InetAddress address = InetAddress.getByName(configuration.getString("server.address"));
+      int bufferSize = configuration.getInt("server.bufferSize");
       int port = configuration.getInt("server.port");
-      connection = new Connection(chunker, serializer, address, port);
+      serverWorker = new ServerWorker(bufferSize, serializer, address, port);
     } catch (UnknownHostException | ClientConnectionException e) {
       logger.fatal(() -> "Cannot provide Server.", e);
       throw new ProvidingException(e);
     }
 
-    logger.debug(() -> "Provided Connection.");
-    return connection;
+    logger.debug(() -> "Provided ServerWorker.");
+    return serverWorker;
   }
 }

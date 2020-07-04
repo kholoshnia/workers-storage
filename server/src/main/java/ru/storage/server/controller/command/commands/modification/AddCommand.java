@@ -8,7 +8,7 @@ import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.services.parser.Parser;
 import ru.storage.server.controller.services.parser.exceptions.ParserException;
-import ru.storage.server.model.domain.dto.DTO;
+import ru.storage.server.model.domain.dto.dtos.WorkerDTO;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.repository.Repository;
@@ -40,7 +40,7 @@ public final class AddCommand extends ModificationCommand {
 
   @Override
   public Response executeCommand() {
-    DTO<Worker> workerDTO;
+    WorkerDTO workerDTO;
 
     try {
       workerDTO = createWorkerDTO(arguments);

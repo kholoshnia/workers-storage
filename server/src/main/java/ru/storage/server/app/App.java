@@ -26,7 +26,7 @@ public final class App {
     try {
       LOGGER.debug(() -> "Launching application...");
 
-      if (args.length != 2) {
+      if (args.length != 3) {
         LOGGER.fatal(() -> "Wrong arguments number. App has not been started.");
         System.err.println(WRONG_ARGUMENTS_NUMBER_ERROR);
         System.exit(1);

@@ -10,8 +10,8 @@ public abstract class HashGenerator {
   protected final String pepper;
 
   protected HashGenerator(@Nonnull Configuration configuration) {
-    salt = configuration.getString("hashGenerator.salt");
-    pepper = configuration.getString("hashGenerator.pepper");
+    salt = configuration.getString("hash.salt");
+    pepper = configuration.getString("hash.pepper");
   }
 
   /**
@@ -21,7 +21,7 @@ public abstract class HashGenerator {
    * @return hashed string
    * @throws HashGeneratorException - if the algorithm is not found
    */
-  protected abstract String generateHash(@Nonnull String string) throws HashGeneratorException;
+  protected abstract String hash(@Nonnull String string) throws HashGeneratorException;
 
   /**
    * Generates hash with salt
@@ -30,9 +30,9 @@ public abstract class HashGenerator {
    * @return hashed string
    * @throws HashGeneratorException - if the algorithm is not found.
    */
-  public final String generateHashWithSalt(@Nonnull String string) throws HashGeneratorException {
+  public final String hashSalt(@Nonnull String string) throws HashGeneratorException {
     String stringWithSalt = string + salt;
-    return generateHash(stringWithSalt);
+    return hash(stringWithSalt);
   }
 
   /**
@@ -42,9 +42,8 @@ public abstract class HashGenerator {
    * @return hashed string
    * @throws HashGeneratorException - if the algorithm is not found
    */
-  public final String generateHashWithPepperAndSalt(@Nonnull String string)
-      throws HashGeneratorException {
+  public final String hashPepperSalt(@Nonnull String string) throws HashGeneratorException {
     String stringWithPepperAndSalt = pepper + string + salt;
-    return generateHash(stringWithPepperAndSalt);
+    return hash(stringWithPepperAndSalt);
   }
 }

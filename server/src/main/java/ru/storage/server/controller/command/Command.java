@@ -18,6 +18,7 @@ public abstract class Command {
    * @param configuration concrete configuration
    * @param argumentMediator argument key mediator
    * @param arguments command arguments
+   * @see ArgumentMediator
    */
   public Command(
       Configuration configuration,
@@ -32,6 +33,7 @@ public abstract class Command {
    * Executes command using given parameters in constructor.
    *
    * @return command execution response
+   * @see Response
    */
   public abstract Response executeCommand();
 }

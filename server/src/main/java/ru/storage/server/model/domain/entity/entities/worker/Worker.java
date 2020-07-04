@@ -1,10 +1,9 @@
 package ru.storage.server.model.domain.entity.entities.worker;
 
-import ru.storage.server.model.domain.entity.exceptions.ValidationException;
-import ru.storage.server.model.domain.entity.entities.worker.person.Person;
-import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.dto.dtos.WorkerDTO;
 import ru.storage.server.model.domain.entity.Entity;
+import ru.storage.server.model.domain.entity.entities.worker.person.Person;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -14,42 +13,28 @@ public final class Worker implements Cloneable, Entity {
   public static final long DEFAULT_ID = 0L;
   public static final long DEFAULT_OWNER_ID = 0L;
 
-  public static final String ID_COLUMN = "id";
-  public static final String OWNER_ID_COLUMN = "owner_id";
-  public static final String TABLE_NAME = "workers";
-  public static final String CREATION_DATE_COLUMN = "creation_date";
-  public static final String SALARY_COLUMN = "salary";
-  public static final String STATUS_COLUMN = "status";
-  public static final String START_DATE_COLUMN = "start_date";
-  public static final String END_DATE_COLUMN = "end_date";
-  public static final String COORDINATES_COLUMN = "coordinates";
-  public static final String PERSON_COLUMN = "person";
-
-  private static final String WRONG_ID_EXCEPTION_MESSAGE;
-  private static final String WRONG_OWNER_ID_EXCEPTION_MESSAGE;
-  private static final String WRONG_CREATION_DATE_EXCEPTION_MESSAGE;
-  private static final String WRONG_SALARY_EXCEPTION_MESSAGE;
-  private static final String WRONG_STATUS_EXCEPTION_MESSAGE;
-  private static final String WRONG_START_DATE_EXCEPTION_MESSAGE;
-  private static final String WRONG_END_DATE_EXCEPTION_MESSAGE;
-  private static final String WRONG_COORDINATES_EXCEPTION_MESSAGE;
-  private static final String WRONG_PERSON_EXCEPTION_MESSAGE;
+  private static final String WRONG_ID_EXCEPTION;
+  private static final String WRONG_OWNER_ID_EXCEPTION;
+  private static final String WRONG_CREATION_DATE_EXCEPTION;
+  private static final String WRONG_SALARY_EXCEPTION;
+  private static final String WRONG_STATUS_EXCEPTION;
+  private static final String WRONG_START_DATE_EXCEPTION;
+  private static final String WRONG_END_DATE_EXCEPTION;
+  private static final String WRONG_COORDINATES_EXCEPTION;
+  private static final String WRONG_PERSON_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Worker");
 
-    WRONG_ID_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongId");
-    WRONG_OWNER_ID_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongOwnerId");
-    WRONG_CREATION_DATE_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.wrongCreationDate");
-    WRONG_SALARY_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongSalary");
-    WRONG_STATUS_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongStatus");
-    WRONG_START_DATE_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.wrongStartDate");
-    WRONG_END_DATE_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongEndDate");
-    WRONG_COORDINATES_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.wrongCoordinates");
-    WRONG_PERSON_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongPerson");
+    WRONG_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongId");
+    WRONG_OWNER_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongOwnerId");
+    WRONG_CREATION_DATE_EXCEPTION = resourceBundle.getString("exceptions.wrongCreationDate");
+    WRONG_SALARY_EXCEPTION = resourceBundle.getString("exceptions.wrongSalary");
+    WRONG_STATUS_EXCEPTION = resourceBundle.getString("exceptions.wrongStatus");
+    WRONG_START_DATE_EXCEPTION = resourceBundle.getString("exceptions.wrongStartDate");
+    WRONG_END_DATE_EXCEPTION = resourceBundle.getString("exceptions.wrongEndDate");
+    WRONG_COORDINATES_EXCEPTION = resourceBundle.getString("exceptions.wrongCoordinates");
+    WRONG_PERSON_EXCEPTION = resourceBundle.getString("exceptions.wrongPerson");
   }
 
   private long id;
@@ -102,7 +87,7 @@ public final class Worker implements Cloneable, Entity {
   }
 
   @Override
-  public DTO<Worker> toDTO() {
+  public WorkerDTO toDTO() {
     return new WorkerDTO(
         this.id,
         this.ownerID,
@@ -129,7 +114,7 @@ public final class Worker implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_ID_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_ID_EXCEPTION);
   }
 
   public final long getOwnerID() {
@@ -146,7 +131,7 @@ public final class Worker implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_OWNER_ID_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_OWNER_ID_EXCEPTION);
   }
 
   public LocalDateTime getCreationDate() {
@@ -163,7 +148,7 @@ public final class Worker implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_CREATION_DATE_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_CREATION_DATE_EXCEPTION);
   }
 
   public Double getSalary() {
@@ -180,7 +165,7 @@ public final class Worker implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_SALARY_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_SALARY_EXCEPTION);
   }
 
   public Status getStatus() {
@@ -197,7 +182,7 @@ public final class Worker implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_STATUS_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_STATUS_EXCEPTION);
   }
 
   public LocalDateTime getStartDate() {
@@ -214,7 +199,7 @@ public final class Worker implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_START_DATE_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_START_DATE_EXCEPTION);
   }
 
   public LocalDateTime getEndDate() {
@@ -231,7 +216,7 @@ public final class Worker implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_END_DATE_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_END_DATE_EXCEPTION);
   }
 
   public Coordinates getCoordinates() {
@@ -248,7 +233,7 @@ public final class Worker implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_COORDINATES_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_COORDINATES_EXCEPTION);
   }
 
   public Person getPerson() {
@@ -265,7 +250,7 @@ public final class Worker implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_PERSON_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_PERSON_EXCEPTION);
   }
 
   @Override

@@ -1,6 +1,8 @@
 package ru.storage.server.app.guice;
 
 import com.google.inject.*;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -9,20 +11,29 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.managers.exit.ExitListener;
-import ru.storage.common.managers.exit.ExitManager;
+import ru.storage.common.exitManager.ExitListener;
+import ru.storage.common.exitManager.ExitManager;
 import ru.storage.common.guice.CommonModule;
+import ru.storage.common.serizliser.Serializer;
+import ru.storage.server.app.Server;
+import ru.storage.server.app.concurrent.ExecutorService;
+import ru.storage.server.app.connection.ServerConnection;
+import ru.storage.server.app.connection.ServerProcessor;
+import ru.storage.server.app.connection.exceptions.ServerException;
+import ru.storage.server.app.connection.selector.exceptions.SelectorException;
 import ru.storage.server.app.guice.exceptions.ProvidingException;
+import ru.storage.server.controller.Controller;
+import ru.storage.server.controller.auth.AuthController;
 import ru.storage.server.controller.command.CommandController;
 import ru.storage.server.controller.command.factory.CommandFactoryMediator;
+import ru.storage.server.controller.services.hash.HashGenerator;
+import ru.storage.server.controller.services.hash.SHA256Generator;
 import ru.storage.server.controller.services.history.History;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.daos.*;
+import ru.storage.server.model.domain.dto.dtos.*;
 import ru.storage.server.model.domain.entity.entities.user.User;
-import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
-import ru.storage.server.model.domain.entity.entities.worker.person.Location;
-import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.domain.repository.Repository;
 import ru.storage.server.model.domain.repository.repositories.userRepository.UserRepository;
 import ru.storage.server.model.domain.repository.repositories.workerRepository.WorkerRepository;
@@ -30,8 +41,12 @@ import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.database.Database;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 
 public final class ServerModule extends AbstractModule {
   private static final String SERVER_CONFIG_PATH = "server.properties";
@@ -55,23 +70,26 @@ public final class ServerModule extends AbstractModule {
     install(new CommonModule());
     logger.debug("Common module has been installed.");
 
+    bind(SHA256Generator.class).in(Scopes.SINGLETON);
+    bind(HashGenerator.class).to(SHA256Generator.class);
     bind(History.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Services have been configured.");
 
+    bind(AuthController.class).in(Scopes.SINGLETON);
     bind(CommandController.class).in(Scopes.SINGLETON);
     bind(CommandFactoryMediator.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Controllers have been configured.");
 
     bind(UserDAO.class).in(Scopes.SINGLETON);
-    bind(new TypeLiteral<DAO<String, User>>() {}).to(UserDAO.class);
+    bind(new TypeLiteral<DAO<String, UserDTO>>() {}).to(UserDAO.class);
     bind(WorkerDAO.class).in(Scopes.SINGLETON);
-    bind(new TypeLiteral<DAO<Long, Worker>>() {}).to(WorkerDAO.class);
+    bind(new TypeLiteral<DAO<Long, WorkerDTO>>() {}).to(WorkerDAO.class);
     bind(CoordinatesDAO.class).in(Scopes.SINGLETON);
-    bind(new TypeLiteral<DAO<Long, Coordinates>>() {}).to(CoordinatesDAO.class);
+    bind(new TypeLiteral<DAO<Long, CoordinatesDTO>>() {}).to(CoordinatesDAO.class);
     bind(PersonDAO.class).in(Scopes.SINGLETON);
-    bind(new TypeLiteral<DAO<Long, Person>>() {}).to(PersonDAO.class);
+    bind(new TypeLiteral<DAO<Long, PersonDTO>>() {}).to(PersonDAO.class);
     bind(LocationDAO.class).in(Scopes.SINGLETON);
-    bind(new TypeLiteral<DAO<Long, Location>>() {}).to(LocationDAO.class);
+    bind(new TypeLiteral<DAO<Long, LocationDTO>>() {}).to(LocationDAO.class);
     logger.debug(() -> "DAOs have been configured.");
 
     bind(UserRepository.class).in(Scopes.SINGLETON);
@@ -80,7 +98,42 @@ public final class ServerModule extends AbstractModule {
     bind(new TypeLiteral<Repository<Worker>>() {}).to(WorkerRepository.class);
     logger.debug(() -> "Repositories have been configured.");
 
+    bind(ServerProcessor.class).to(Server.class);
     logger.debug(() -> "Server module has been configured.");
+  }
+
+  @Provides
+  @Singleton
+  Server provideServer(
+      ExecutorService executorService,
+      List<Controller> controllers,
+      ServerConnection serverConnection) {
+    Server server = new Server(executorService, controllers, serverConnection);
+
+    logger.debug(() -> "Provided Server.");
+    return server;
+  }
+
+  @Provides
+  @Singleton
+  ServerConnection provideServerConnection(
+      Configuration configuration, ServerProcessor serverProcessor, Serializer serializer)
+      throws ProvidingException {
+    ServerConnection serverConnection;
+
+    try {
+      InetAddress address = InetAddress.getByName(configuration.getString("server.localhost"));
+      int bufferSize = configuration.getInt("server.bufferSize");
+      int port = configuration.getInt("server.port");
+      serverConnection =
+          new ServerConnection(bufferSize, address, port, serverProcessor, serializer);
+    } catch (SelectorException | ServerException | UnknownHostException e) {
+      logger.fatal(() -> "Cannot provide Server.", e);
+      throw new ProvidingException(e);
+    }
+
+    logger.debug(() -> "Provided ServerConnection.");
+    return serverConnection;
   }
 
   @Provides
@@ -104,6 +157,44 @@ public final class ServerModule extends AbstractModule {
 
     logger.debug(() -> "Provided Configuration: FileBasedConfiguration.");
     return configuration;
+  }
+
+  @Provides
+  @Singleton
+  ExecutorService provideExecutorService() {
+    ExecutorService executorService =
+        new ExecutorService(
+            Executors.newCachedThreadPool(),
+            ForkJoinPool.commonPool(),
+            Executors.newCachedThreadPool());
+
+    logger.debug(() -> "Provided ExecutorService.");
+    return executorService;
+  }
+
+  @Provides
+  @Singleton
+  java.security.Key provideKey() {
+    java.security.Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    logger.debug(() -> "Provided Key.");
+    return key;
+  }
+
+  @Provides
+  @Singleton
+  List<Controller> provideControllers(
+      AuthController authController, CommandController commandController) {
+    List<Controller> controllers =
+        new ArrayList<Controller>() {
+          {
+            add(authController);
+            add(commandController);
+          }
+        };
+
+    logger.debug(() -> "Provided Controllers list.");
+    return controllers;
   }
 
   @Provides

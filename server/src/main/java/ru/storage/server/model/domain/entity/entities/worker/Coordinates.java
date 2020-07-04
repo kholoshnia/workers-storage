@@ -1,9 +1,8 @@
 package ru.storage.server.model.domain.entity.entities.worker;
 
-import ru.storage.server.model.domain.entity.exceptions.ValidationException;
-import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.dto.dtos.CoordinatesDTO;
 import ru.storage.server.model.domain.entity.Entity;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -12,27 +11,20 @@ public final class Coordinates implements Cloneable, Entity {
   public static final long DEFAULT_ID = 0L;
   public static final long DEFAULT_OWNER_ID = 0L;
 
-  public static final String ID_COLUMN = "id";
-  public static final String OWNER_ID_COLUMN = "owner_id";
-  public static final String TABLE_NAME = "coordinates";
-  public static final String X_COLUMN = "x";
-  public static final String Y_COLUMN = "y";
-  public static final String Z_COLUMN = "z";
-
-  private static final String WRONG_ID_EXCEPTION_MESSAGE;
-  private static final String WRONG_OWNER_ID_EXCEPTION_MESSAGE;
-  private static final String WRONG_X_EXCEPTION_MESSAGE;
-  private static final String WRONG_Y_EXCEPTION_MESSAGE;
-  private static final String WRONG_Z_EXCEPTION_MESSAGE;
+  private static final String WRONG_ID_EXCEPTION;
+  private static final String WRONG_OWNER_ID_EXCEPTION;
+  private static final String WRONG_X_EXCEPTION;
+  private static final String WRONG_Y_EXCEPTION;
+  private static final String WRONG_Z_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.CoordinatesDAO");
 
-    WRONG_ID_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongId");
-    WRONG_OWNER_ID_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongOwnerId");
-    WRONG_X_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongX");
-    WRONG_Y_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongY");
-    WRONG_Z_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongZ");
+    WRONG_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongId");
+    WRONG_OWNER_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongOwnerId");
+    WRONG_X_EXCEPTION = resourceBundle.getString("exceptions.wrongX");
+    WRONG_Y_EXCEPTION = resourceBundle.getString("exceptions.wrongY");
+    WRONG_Z_EXCEPTION = resourceBundle.getString("exceptions.wrongZ");
   }
 
   private long id;
@@ -60,7 +52,7 @@ public final class Coordinates implements Cloneable, Entity {
   }
 
   @Override
-  public DTO<Coordinates> toDTO() {
+  public CoordinatesDTO toDTO() {
     return new CoordinatesDTO(this.id, this.ownerID, this.x, this.y, this.z);
   }
 
@@ -78,7 +70,7 @@ public final class Coordinates implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_ID_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_ID_EXCEPTION);
   }
 
   public final long getOwnerID() {
@@ -95,7 +87,7 @@ public final class Coordinates implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_OWNER_ID_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_OWNER_ID_EXCEPTION);
   }
 
   public Double getX() {
@@ -112,7 +104,7 @@ public final class Coordinates implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_X_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_X_EXCEPTION);
   }
 
   public Double getY() {
@@ -129,7 +121,7 @@ public final class Coordinates implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_Y_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_Y_EXCEPTION);
   }
 
   public Double getZ() {
@@ -146,7 +138,7 @@ public final class Coordinates implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_Z_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_Z_EXCEPTION);
   }
 
   @Override

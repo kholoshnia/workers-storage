@@ -7,7 +7,6 @@ import ru.storage.common.ArgumentMediator;
 import ru.storage.server.controller.command.Command;
 import ru.storage.server.controller.services.parser.Parser;
 import ru.storage.server.controller.services.parser.exceptions.ParserException;
-import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.dto.dtos.CoordinatesDTO;
 import ru.storage.server.model.domain.dto.dtos.LocationDTO;
 import ru.storage.server.model.domain.dto.dtos.PersonDTO;
@@ -68,43 +67,41 @@ public abstract class ModificationCommand extends Command {
     return coordinatesDTO;
   }
 
-  protected final DTO<Location> createLocationDTO(Map<String, String> arguments)
+  protected final LocationDTO createLocationDTO(Map<String, String> arguments)
       throws ParserException {
     String address = parser.parseString(arguments.get(argumentMediator.LOCATION_ADDRESS));
     Double latitude = parser.parseDouble(arguments.get(argumentMediator.LOCATION_LONGITUDE));
     Double longitude = parser.parseDouble(arguments.get(argumentMediator.LOCATION_LATITUDE));
 
-    DTO<Location> locationDTO =
+    LocationDTO locationDTO =
         new LocationDTO(
             Location.DEFAULT_ID, Location.DEFAULT_OWNER_ID, address, latitude, longitude);
     logger.info(() -> "LocationDTO has been created.");
     return locationDTO;
   }
 
-  protected final DTO<Person> createPersonDTO(Map<String, String> arguments)
-      throws ParserException {
+  protected final PersonDTO createPersonDTO(Map<String, String> arguments) throws ParserException {
     String name = parser.parseString(arguments.get(argumentMediator.PERSON_NAME));
     String passportID = parser.parseString(arguments.get(argumentMediator.PERSON_PASSPORT_ID));
-    DTO<Location> locationDTO = createLocationDTO(arguments);
+    LocationDTO locationDTO = createLocationDTO(arguments);
 
-    DTO<Person> personDTO =
+    PersonDTO personDTO =
         new PersonDTO(Person.DEFAULT_ID, Person.DEFAULT_OWNER_ID, name, passportID, locationDTO);
     logger.info(() -> "PersonDTO has been created.");
     return personDTO;
   }
 
-  protected final DTO<Worker> createWorkerDTO(Map<String, String> arguments)
-      throws ParserException {
+  protected final WorkerDTO createWorkerDTO(Map<String, String> arguments) throws ParserException {
     Double salary = parser.parseDouble(arguments.get(argumentMediator.WORKER_SALARY));
     Status status = parser.parseStatus(arguments.get(argumentMediator.WORKER_STATUS));
     LocalDateTime startDate =
         parser.parseLocalDateTime(arguments.get(argumentMediator.WORKER_START_DATE));
     LocalDateTime endDate =
         parser.parseLocalDateTime(arguments.get(argumentMediator.WORKER_END_DATE));
-    DTO<Coordinates> coordinatesDTO = createCoordinatesDTO(arguments);
-    DTO<Person> personDTO = createPersonDTO(arguments);
+    CoordinatesDTO coordinatesDTO = createCoordinatesDTO(arguments);
+    PersonDTO personDTO = createPersonDTO(arguments);
 
-    DTO<Worker> workerDTO =
+    WorkerDTO workerDTO =
         new WorkerDTO(
             Worker.DEFAULT_ID,
             Worker.DEFAULT_OWNER_ID,

@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
-import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.dao.exceptions.DAOException;
+import ru.storage.server.model.domain.dto.dtos.UserDTO;
 import ru.storage.server.model.domain.entity.entities.user.Role;
 import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.source.DataSource;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class UserDAO implements DAO<String, User> {
+public class UserDAO implements DAO<String, UserDTO> {
   private static final String CANNOT_GET_ALL_USER_EXCEPTION;
   private static final String CANNOT_GET_USER_BY_ID_EXCEPTION;
   private static final String CANNOT_INSERT_USER_EXCEPTION;
@@ -37,44 +37,40 @@ public class UserDAO implements DAO<String, User> {
     CANNOT_DELETE_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteUser");
   }
 
-  private final String SELECT_ALL = "SELECT * FROM " + User.TABLE_NAME;
+  private final String SELECT_ALL = "SELECT * FROM " + UserDTO.TABLE_NAME;
 
-  private final String SELECT_BY_ID = SELECT_ALL + " WHERE " + User.ID_COLUMN + " = ?";
+  private final String SELECT_BY_ID = SELECT_ALL + " WHERE " + UserDTO.ID_COLUMN + " = ?";
 
   private final String INSERT =
       "INSERT INTO "
-          + User.TABLE_NAME
+          + UserDTO.TABLE_NAME
           + " ("
-          + User.NAME_COLUMN
+          + UserDTO.NAME_COLUMN
           + ", "
-          + User.LOGIN_COLUMN
+          + UserDTO.LOGIN_COLUMN
           + ", "
-          + User.PASSWORD_COLUMN
+          + UserDTO.PASSWORD_COLUMN
           + ", "
-          + User.ROLE_COLUMN
-          + ", "
-          + User.STATE_COLUMN
-          + ") VALUES (?, ?, ?, ?, ?)";
+          + UserDTO.ROLE_COLUMN
+          + ") VALUES (?, ?, ?, ?)";
 
   private final String UPDATE =
       "UPDATE "
-          + User.TABLE_NAME
+          + UserDTO.TABLE_NAME
           + " SET "
-          + User.NAME_COLUMN
+          + UserDTO.NAME_COLUMN
           + " = ?, "
-          + User.LOGIN_COLUMN
+          + UserDTO.LOGIN_COLUMN
           + " = ?, "
-          + User.PASSWORD_COLUMN
+          + UserDTO.PASSWORD_COLUMN
           + " = ?, "
-          + User.ROLE_COLUMN
-          + " = ?, "
-          + User.STATE_COLUMN
-          + " = ? WHERE "
-          + User.ID_COLUMN
+          + UserDTO.ROLE_COLUMN
+          + " = ?, WHERE "
+          + UserDTO.ID_COLUMN
           + " = ?";
 
   private final String DELETE =
-      "DELETE FROM " + User.TABLE_NAME + " WHERE " + User.ID_COLUMN + " = ?";
+      "DELETE FROM " + UserDTO.TABLE_NAME + " WHERE " + UserDTO.ID_COLUMN + " = ?";
 
   private final Logger logger;
   private final DataSource dataSource;
@@ -86,8 +82,8 @@ public class UserDAO implements DAO<String, User> {
   }
 
   @Override
-  public List<User> getAll() throws DAOException, DataSourceException {
-    List<User> allUsers = new ArrayList<>();
+  public List<UserDTO> getAll() throws DAOException, DataSourceException {
+    List<UserDTO> allUserDTOs = new ArrayList<>();
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(SELECT_ALL, Statement.NO_GENERATED_KEYS);
 
@@ -95,17 +91,16 @@ public class UserDAO implements DAO<String, User> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long id = resultSet.getLong(User.ID_COLUMN);
-        String name = resultSet.getString(User.NAME_COLUMN);
-        String login = resultSet.getString(User.LOGIN_COLUMN);
-        String password = resultSet.getString(User.PASSWORD_COLUMN);
-        Role role = Role.getRole(resultSet.getString(User.ROLE_COLUMN));
-        Boolean state = resultSet.getBoolean(User.STATE_COLUMN);
+        Long id = resultSet.getObject(UserDTO.ID_COLUMN, Long.class);
+        String name = resultSet.getObject(UserDTO.NAME_COLUMN, String.class);
+        String login = resultSet.getObject(UserDTO.LOGIN_COLUMN, String.class);
+        String password = resultSet.getObject(UserDTO.PASSWORD_COLUMN, String.class);
+        Role role = Role.getRole(resultSet.getObject(UserDTO.ROLE_COLUMN, String.class));
 
-        User user = new User(id, name, login, password, role, state);
-        allUsers.add(user);
+        UserDTO userDTO = new UserDTO(id, name, login, password, role);
+        allUserDTOs.add(userDTO);
       }
-    } catch (SQLException | ValidationException e) {
+    } catch (SQLException e) {
       logger.error(() -> "Cannot get all users.", e);
       throw new DAOException(CANNOT_GET_ALL_USER_EXCEPTION, e);
     } finally {
@@ -113,12 +108,12 @@ public class UserDAO implements DAO<String, User> {
     }
 
     logger.info(() -> "Got all users.");
-    return allUsers;
+    return allUserDTOs;
   }
 
   @Override
-  public User getByKey(@Nonnull String login) throws DAOException, DataSourceException {
-    User user = null;
+  public UserDTO getByKey(@Nonnull String login) throws DAOException, DataSourceException {
+    UserDTO userDTO = null;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(SELECT_BY_ID, Statement.NO_GENERATED_KEYS);
 
@@ -126,15 +121,14 @@ public class UserDAO implements DAO<String, User> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long id = resultSet.getLong(User.ID_COLUMN);
-        String name = resultSet.getString(User.NAME_COLUMN);
-        String password = resultSet.getString(User.PASSWORD_COLUMN);
-        Role role = Role.getRole(resultSet.getString(User.ROLE_COLUMN));
-        Boolean state = resultSet.getBoolean(User.STATE_COLUMN);
+        Long id = resultSet.getObject(UserDTO.ID_COLUMN, Long.class);
+        String name = resultSet.getObject(UserDTO.NAME_COLUMN, String.class);
+        String password = resultSet.getObject(UserDTO.PASSWORD_COLUMN, String.class);
+        Role role = Role.getRole(resultSet.getObject(UserDTO.ROLE_COLUMN, String.class));
 
-        user = new User(id, name, login, password, role, state);
+        userDTO = new UserDTO(id, name, login, password, role);
       }
-    } catch (SQLException | ValidationException e) {
+    } catch (SQLException e) {
       logger.error(() -> "Cannot get user by id.", e);
       throw new DAOException(CANNOT_GET_USER_BY_ID_EXCEPTION, e);
     } finally {
@@ -142,28 +136,39 @@ public class UserDAO implements DAO<String, User> {
     }
 
     logger.info(() -> "Got user by id.");
-    return user;
+    return userDTO;
   }
 
   @Override
-  public User insert(@Nonnull User user) throws DAOException, DataSourceException {
+  public UserDTO insert(@Nonnull UserDTO userDTO) throws DAOException, DataSourceException {
+    UserDTO result;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 
     try {
-      preparedStatement.setString(1, user.getName());
-      preparedStatement.setString(2, user.getLogin());
-      preparedStatement.setString(3, user.getPassword());
-      preparedStatement.setString(4, user.getRole().toString());
-      preparedStatement.setBoolean(5, user.getState());
+      preparedStatement.setString(1, userDTO.name);
+      preparedStatement.setString(2, userDTO.login);
+      preparedStatement.setString(3, userDTO.password);
+      preparedStatement.setString(4, userDTO.role.toString());
 
       preparedStatement.execute();
 
       ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
       if (generatedKeys.next()) {
-        user.setID(generatedKeys.getLong(1));
+        result =
+            new UserDTO(
+                generatedKeys.getLong(1),
+                userDTO.name,
+                userDTO.login,
+                userDTO.password,
+                userDTO.role);
+
+      } else {
+        result =
+            new UserDTO(
+                User.DEFAULT_ID, userDTO.name, userDTO.login, userDTO.password, userDTO.role);
       }
-    } catch (SQLException | ValidationException e) {
+    } catch (SQLException e) {
       logger.error(() -> "Cannot insert user.", e);
       throw new DAOException(CANNOT_INSERT_USER_EXCEPTION, e);
     } finally {
@@ -171,21 +176,21 @@ public class UserDAO implements DAO<String, User> {
     }
 
     logger.info(() -> "User has been inserted.");
-    return user;
+    return result;
   }
 
   @Override
-  public User update(@Nonnull User user) throws DAOException, DataSourceException {
+  public UserDTO update(@Nonnull UserDTO userDTO) throws DAOException, DataSourceException {
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(UPDATE, Statement.NO_GENERATED_KEYS);
 
     try {
-      preparedStatement.setString(1, user.getName());
-      preparedStatement.setString(2, user.getLogin());
-      preparedStatement.setString(3, user.getPassword());
-      preparedStatement.setString(4, user.getRole().toString());
-      preparedStatement.setBoolean(5, user.getState());
-      preparedStatement.setLong(6, user.getID());
+      preparedStatement.setString(1, userDTO.name);
+      preparedStatement.setString(2, userDTO.login);
+      preparedStatement.setString(3, userDTO.password);
+      preparedStatement.setString(4, userDTO.role.toString());
+
+      preparedStatement.setLong(6, userDTO.id);
 
       preparedStatement.execute();
     } catch (SQLException e) {
@@ -196,16 +201,16 @@ public class UserDAO implements DAO<String, User> {
     }
 
     logger.info(() -> "User has been updated.");
-    return user;
+    return userDTO;
   }
 
   @Override
-  public void delete(@Nonnull User user) throws DAOException, DataSourceException {
+  public void delete(@Nonnull UserDTO userDTO) throws DAOException, DataSourceException {
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(DELETE, Statement.NO_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, user.getID());
+      preparedStatement.setLong(1, userDTO.id);
 
       preparedStatement.execute();
     } catch (SQLException e) {

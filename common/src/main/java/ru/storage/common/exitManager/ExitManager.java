@@ -1,8 +1,8 @@
-package ru.storage.common.managers.exit;
+package ru.storage.common.exitManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.managers.exit.exceptions.ExitingException;
+import ru.storage.common.exitManager.exceptions.ExitingException;
 
 import java.util.List;
 

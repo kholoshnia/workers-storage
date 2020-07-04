@@ -5,7 +5,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
+import ru.storage.server.model.domain.dto.dtos.UserDTO;
 import ru.storage.server.model.domain.entity.entities.user.User;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.repository.Query;
 import ru.storage.server.model.domain.repository.Repository;
 import ru.storage.server.model.domain.repository.exceptions.RepositoryException;
@@ -17,6 +19,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * User repository class contains users from the database. Can be used to update data in the
+ * database if necessary. All main methods are synchronized in case of concurrent use.
+ *
+ * @see Repository
+ */
 public final class UserRepository implements Repository<User> {
   private static final String USER_NOT_FOUND_USING_DAO_EXCEPTION;
   private static final String USER_NOT_FOUND_IN_COLLECTION_EXCEPTION;
@@ -31,11 +39,11 @@ public final class UserRepository implements Repository<User> {
   }
 
   private final Logger logger;
-  private final DAO<String, User> userDAO;
+  private final DAO<String, UserDTO> userDAO;
   private final List<User> users;
 
   @Inject
-  public UserRepository(@Nonnull DAO<String, User> userDAO) throws UserRepositoryException {
+  public UserRepository(@Nonnull DAO<String, UserDTO> userDAO) throws UserRepositoryException {
     this.logger = LogManager.getLogger(UserRepository.class);
     this.userDAO = userDAO;
     this.users = initUsersList();
@@ -46,28 +54,35 @@ public final class UserRepository implements Repository<User> {
    * empty list.
    *
    * @return list of users
-   * @throws UserRepositoryException - in case of corrupted data or exceptions while loading data.
+   * @throws UserRepositoryException - in case of data loading or validation exceptions.
    */
   private List<User> initUsersList() throws UserRepositoryException {
     List<User> users = new CopyOnWriteArrayList<>();
 
+    List<UserDTO> allUserDTOs;
+
     try {
-      List<User> allUsers = userDAO.getAll();
-
-      if (allUsers.isEmpty()) {
-        logger.warn(() -> "No users were found using DAO, the collection was not filled.");
-        return users;
-      }
-
-      for (User user : allUsers) {
-        users.add(user);
-        logger.debug(() -> "Added user from DAO.");
-      }
-
-      return users;
-    } catch (DAOException | DataSourceException exception) {
-      throw new UserRepositoryException(exception);
+      allUserDTOs = userDAO.getAll();
+    } catch (DAOException | DataSourceException e) {
+      throw new UserRepositoryException(e);
     }
+
+    if (allUserDTOs.isEmpty()) {
+      logger.warn(() -> "No users were found using DAO, the collection was not filled.");
+      return users;
+    }
+
+    try {
+      for (UserDTO userDTO : allUserDTOs) {
+        users.add(userDTO.toEntity());
+        logger.debug("Added user from DAO: {}.", () -> userDTO);
+      }
+    } catch (ValidationException e) {
+      logger.error(() -> "Validation error was caught during creating user entity.", e);
+      throw new UserRepositoryException(e);
+    }
+
+    return users;
   }
 
   @Override
@@ -84,17 +99,22 @@ public final class UserRepository implements Repository<User> {
 
   @Override
   public synchronized void insert(@Nonnull User user) throws UserRepositoryException {
-    User result;
+    UserDTO result;
 
     try {
-      result = userDAO.insert(user);
+      result = userDAO.insert(user.toDTO());
       logger.info(() -> "Got user with id from DAO.");
     } catch (DAOException | DataSourceException e) {
       logger.error(() -> "Cannot add new user to the collection.", e);
       throw new UserRepositoryException(e);
     }
 
-    users.add(result);
+    try {
+      users.add(result.toEntity());
+    } catch (ValidationException e) {
+      logger.error(() -> "Validation error was caught during creating user entity.", e);
+      throw new UserRepositoryException(e);
+    }
 
     logger.info(() -> "User has been added to the collection.");
   }
@@ -102,14 +122,14 @@ public final class UserRepository implements Repository<User> {
   @Override
   public synchronized void update(@Nonnull User user) throws UserRepositoryException {
     try {
-      User result = userDAO.getByKey(user.getLogin());
+      UserDTO result = userDAO.getByKey(user.getLogin());
 
       if (result == null) {
         logger.error(() -> "Cannot update user, no such user found using DAO.");
         throw new UserRepositoryException(USER_NOT_FOUND_USING_DAO_EXCEPTION);
       }
 
-      userDAO.update(user);
+      userDAO.update(user.toDTO());
       logger.info(() -> "User has been updated in DAO.");
     } catch (DAOException | DataSourceException e) {
       logger.error(() -> "Cannot update user in DAO.", e);
@@ -129,14 +149,14 @@ public final class UserRepository implements Repository<User> {
   @Override
   public synchronized void delete(@Nonnull User user) throws UserRepositoryException {
     try {
-      User result = userDAO.getByKey(user.getLogin());
+      UserDTO result = userDAO.getByKey(user.getLogin());
 
       if (result == null) {
         logger.error(() -> "Cannot delete worker, no such worker found using DAO.");
         throw new UserRepositoryException(USER_NOT_FOUND_USING_DAO_EXCEPTION);
       }
 
-      userDAO.delete(user);
+      userDAO.delete(user.toDTO());
       logger.info(() -> "User has been deleted from DAO.");
     } catch (DAOException | DataSourceException e) {
       logger.error(() -> "Cannot delete user using DAO.");

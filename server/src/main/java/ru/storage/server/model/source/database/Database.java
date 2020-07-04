@@ -3,11 +3,7 @@ package ru.storage.server.model.source.database;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Supplier;
-import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
-import ru.storage.server.model.domain.entity.entities.worker.Worker;
-import ru.storage.server.model.domain.entity.entities.worker.person.Location;
-import ru.storage.server.model.domain.entity.entities.worker.person.Person;
-import ru.storage.server.model.domain.entity.entities.user.User;
+import ru.storage.server.model.domain.dto.dtos.*;
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.database.exceptions.DatabaseException;
 import ru.storage.server.model.source.exceptions.DataSourceException;
@@ -18,7 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ResourceBundle;
 
-/** Database class that initialize tables. */
+/** Database class that is used to initialize tables. */
 public final class Database extends DataSource {
   private static final String INIT_USERS_TABLE_EXCEPTION;
   private static final String INIT_WORKERS_TABLE_EXCEPTION;
@@ -38,175 +34,173 @@ public final class Database extends DataSource {
 
   private final String CREATE_IF_NOT_EXISTS_USERS_TABLE =
       "CREATE TABLE IF NOT EXISTS "
-          + User.TABLE_NAME
+          + UserDTO.TABLE_NAME
           + " ("
-          + User.ID_COLUMN
+          + UserDTO.ID_COLUMN
           + " SERIAL NOT NULL PRIMARY KEY, "
-          + User.NAME_COLUMN
+          + UserDTO.NAME_COLUMN
           + " VARCHAR NOT NULL CHECK(LENGTH("
-          + User.NAME_COLUMN
+          + UserDTO.NAME_COLUMN
           + ")>=2) CHECK(LENGTH("
-          + User.NAME_COLUMN
+          + UserDTO.NAME_COLUMN
           + ")<=100), "
-          + User.LOGIN_COLUMN
+          + UserDTO.LOGIN_COLUMN
           + " VARCHAR NOT NULL UNIQUE CHECK(LENGTH("
-          + User.LOGIN_COLUMN
+          + UserDTO.LOGIN_COLUMN
           + ")>=2) CHECK(LENGTH("
-          + User.LOGIN_COLUMN
+          + UserDTO.LOGIN_COLUMN
           + ")<=100), "
-          + User.PASSWORD_COLUMN
+          + UserDTO.PASSWORD_COLUMN
           + " VARCHAR NOT NULL CHECK(LENGTH("
-          + User.PASSWORD_COLUMN
+          + UserDTO.PASSWORD_COLUMN
           + ")>=8) CHECK(LENGTH("
-          + User.PASSWORD_COLUMN
+          + UserDTO.PASSWORD_COLUMN
           + ")<=100), "
-          + User.ROLE_COLUMN
-          + " VARCHAR NOT NULL, "
-          + User.STATE_COLUMN
-          + " BOOL NOT NULL)";
+          + UserDTO.ROLE_COLUMN
+          + " VARCHAR NOT NULL)";
 
   private final String CREATE_IF_NOT_EXISTS_COORDINATES_TABLE =
       "CREATE TABLE IF NOT EXISTS "
-          + Coordinates.TABLE_NAME
+          + CoordinatesDTO.TABLE_NAME
           + " ("
-          + Coordinates.ID_COLUMN
+          + CoordinatesDTO.ID_COLUMN
           + " SERIAL NOT NULL PRIMARY KEY, "
-          + Coordinates.OWNER_ID_COLUMN
+          + CoordinatesDTO.OWNER_ID_COLUMN
           + " SERIAL NOT NULL, "
-          + Coordinates.X_COLUMN
+          + CoordinatesDTO.X_COLUMN
           + " REAL NOT NULL CHECK("
-          + Coordinates.X_COLUMN
+          + CoordinatesDTO.X_COLUMN
           + ">=-500) CHECK("
-          + Coordinates.X_COLUMN
+          + CoordinatesDTO.X_COLUMN
           + "<=500), "
-          + Coordinates.Y_COLUMN
+          + CoordinatesDTO.Y_COLUMN
           + " REAL NOT NULL CHECK("
-          + Coordinates.Y_COLUMN
+          + CoordinatesDTO.Y_COLUMN
           + ">=-500) CHECK("
-          + Coordinates.Y_COLUMN
+          + CoordinatesDTO.Y_COLUMN
           + "<=500), "
-          + Coordinates.Z_COLUMN
+          + CoordinatesDTO.Z_COLUMN
           + " REAL NOT NULL CHECK("
-          + Coordinates.Z_COLUMN
+          + CoordinatesDTO.Z_COLUMN
           + ">=-500) CHECK("
-          + Coordinates.Z_COLUMN
+          + CoordinatesDTO.Z_COLUMN
           + "<=500), FOREIGN KEY ("
-          + Coordinates.OWNER_ID_COLUMN
+          + CoordinatesDTO.OWNER_ID_COLUMN
           + ") REFERENCES "
-          + User.TABLE_NAME
+          + UserDTO.TABLE_NAME
           + "("
-          + User.ID_COLUMN
+          + UserDTO.ID_COLUMN
           + "))";
 
   private final String CREATE_IF_NOT_EXISTS_LOCATIONS_TABLE =
       "CREATE TABLE IF NOT EXISTS "
-          + Location.TABLE_NAME
+          + LocationDTO.TABLE_NAME
           + " ("
-          + Location.ID_COLUMN
+          + LocationDTO.ID_COLUMN
           + " SERIAL NOT NULL PRIMARY KEY, "
-          + Location.OWNER_ID_COLUMN
+          + LocationDTO.OWNER_ID_COLUMN
           + " SERIAL NOT NULL , "
-          + Location.ADDRESS_COLUMN
+          + LocationDTO.ADDRESS_COLUMN
           + " VARCHAR NOT NULL CHECK(LENGTH("
-          + Location.ADDRESS_COLUMN
+          + LocationDTO.ADDRESS_COLUMN
           + ")>=10) CHECK(LENGTH("
-          + Location.ADDRESS_COLUMN
+          + LocationDTO.ADDRESS_COLUMN
           + ")<=100), "
-          + Location.LATITUDE_COLUMN
+          + LocationDTO.LATITUDE_COLUMN
           + " REAL NOT NULL CHECK("
-          + Location.LATITUDE_COLUMN
+          + LocationDTO.LATITUDE_COLUMN
           + ">=-85) CHECK("
-          + Location.LATITUDE_COLUMN
+          + LocationDTO.LATITUDE_COLUMN
           + "<=85), "
-          + Location.LONGITUDE_COLUMN
+          + LocationDTO.LONGITUDE_COLUMN
           + " REAL NOT NULL CHECK("
-          + Location.LONGITUDE_COLUMN
+          + LocationDTO.LONGITUDE_COLUMN
           + ">=-180) CHECK("
-          + Location.LONGITUDE_COLUMN
+          + LocationDTO.LONGITUDE_COLUMN
           + "<=180), FOREIGN KEY ("
-          + Location.OWNER_ID_COLUMN
+          + LocationDTO.OWNER_ID_COLUMN
           + ") REFERENCES "
-          + User.TABLE_NAME
+          + UserDTO.TABLE_NAME
           + "("
-          + User.ID_COLUMN
+          + UserDTO.ID_COLUMN
           + "))";
 
   private final String CREATE_IF_NOT_EXISTS_PERSONS_TABLE =
       "CREATE TABLE IF NOT EXISTS "
-          + Person.TABLE_NAME
+          + PersonDTO.TABLE_NAME
           + " ("
-          + Person.ID_COLUMN
+          + PersonDTO.ID_COLUMN
           + " SERIAL NOT NULL PRIMARY KEY, "
-          + Person.OWNER_ID_COLUMN
+          + PersonDTO.OWNER_ID_COLUMN
           + " SERIAL NOT NULL, "
-          + Person.NAME_COLUMN
+          + PersonDTO.NAME_COLUMN
           + " VARCHAR NOT NULL CHECK(LENGTH("
-          + Person.NAME_COLUMN
+          + PersonDTO.NAME_COLUMN
           + ")>=10) CHECK(LENGTH("
-          + Person.NAME_COLUMN
+          + PersonDTO.NAME_COLUMN
           + ")<=100), "
-          + Person.PASSPORT_ID_COLUMN
+          + PersonDTO.PASSPORT_ID_COLUMN
           + " VARCHAR NOT NULL CHECK(LENGTH("
-          + Person.PASSPORT_ID_COLUMN
+          + PersonDTO.PASSPORT_ID_COLUMN
           + ")>=10) CHECK(LENGTH("
-          + Person.PASSPORT_ID_COLUMN
+          + PersonDTO.PASSPORT_ID_COLUMN
           + ")<=40), "
-          + Person.LOCATION_COLUMN
+          + PersonDTO.LOCATION_COLUMN
           + " SERIAL NOT NULL, FOREIGN KEY ("
-          + Person.LOCATION_COLUMN
+          + PersonDTO.LOCATION_COLUMN
           + ") REFERENCES "
-          + Location.TABLE_NAME
+          + LocationDTO.TABLE_NAME
           + "("
-          + Location.ID_COLUMN
+          + LocationDTO.ID_COLUMN
           + "), FOREIGN KEY ("
-          + Person.OWNER_ID_COLUMN
+          + PersonDTO.OWNER_ID_COLUMN
           + ") REFERENCES "
-          + User.TABLE_NAME
+          + UserDTO.TABLE_NAME
           + "("
-          + User.ID_COLUMN
+          + UserDTO.ID_COLUMN
           + "))";
 
   private final String CREATE_IF_NOT_EXISTS_WORKERS_TABLE =
       "CREATE TABLE IF NOT EXISTS "
-          + Worker.TABLE_NAME
+          + WorkerDTO.TABLE_NAME
           + " ("
-          + Worker.ID_COLUMN
+          + WorkerDTO.ID_COLUMN
           + " SERIAL NOT NULL PRIMARY KEY, "
-          + Worker.OWNER_ID_COLUMN
+          + WorkerDTO.OWNER_ID_COLUMN
           + " SERIAL NOT NULL, "
-          + Worker.CREATION_DATE_COLUMN
+          + WorkerDTO.CREATION_DATE_COLUMN
           + " DATE NOT NULL, "
-          + Worker.SALARY_COLUMN
+          + WorkerDTO.SALARY_COLUMN
           + " REAL NOT NULL CHECK("
-          + Worker.SALARY_COLUMN
+          + WorkerDTO.SALARY_COLUMN
           + ">0), "
-          + Worker.STATUS_COLUMN
+          + WorkerDTO.STATUS_COLUMN
           + " VARCHAR NOT NULL, "
-          + Worker.START_DATE_COLUMN
+          + WorkerDTO.START_DATE_COLUMN
           + " DATE NOT NULL, "
-          + Worker.END_DATE_COLUMN
+          + WorkerDTO.END_DATE_COLUMN
           + " DATE NOT NULL, "
-          + Worker.COORDINATES_COLUMN
+          + WorkerDTO.COORDINATES_COLUMN
           + " SERIAL NOT NULL, "
-          + Worker.PERSON_COLUMN
+          + WorkerDTO.PERSON_COLUMN
           + " SERIAL NOT NULL, FOREIGN KEY ("
-          + Worker.COORDINATES_COLUMN
+          + WorkerDTO.COORDINATES_COLUMN
           + ") REFERENCES "
-          + Coordinates.TABLE_NAME
+          + CoordinatesDTO.TABLE_NAME
           + "("
-          + Coordinates.ID_COLUMN
+          + CoordinatesDTO.ID_COLUMN
           + "), FOREIGN KEY ("
-          + Worker.PERSON_COLUMN
+          + WorkerDTO.PERSON_COLUMN
           + ") REFERENCES "
-          + Person.TABLE_NAME
+          + PersonDTO.TABLE_NAME
           + "("
-          + Person.ID_COLUMN
+          + PersonDTO.ID_COLUMN
           + "), FOREIGN KEY ("
-          + Worker.OWNER_ID_COLUMN
+          + WorkerDTO.OWNER_ID_COLUMN
           + ") REFERENCES "
-          + User.TABLE_NAME
+          + UserDTO.TABLE_NAME
           + "("
-          + User.ID_COLUMN
+          + UserDTO.ID_COLUMN
           + "))";
 
   private final Logger logger;
@@ -279,7 +273,7 @@ public final class Database extends DataSource {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug(() -> "Coordinates table has been initialized.");
+    logger.debug(() -> "CoordinatesDTO table has been initialized.");
   }
 
   /**

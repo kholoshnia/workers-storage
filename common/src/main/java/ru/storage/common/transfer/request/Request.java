@@ -8,11 +8,13 @@ public final class Request implements Serializable {
   private final String command;
   private final Map<String, String> arguments;
   private final Locale locale;
+  private final String token;
 
-  public Request(String command, Map<String, String> arguments, Locale locale) {
+  public Request(String command, Map<String, String> arguments, Locale locale, String token) {
     this.command = command;
     this.arguments = arguments;
     this.locale = locale;
+    this.token = token;
   }
 
   public String getCommand() {
@@ -25,6 +27,10 @@ public final class Request implements Serializable {
 
   public Locale getLocale() {
     return locale;
+  }
+
+  public String getToken() {
+    return token;
   }
 
   @Override

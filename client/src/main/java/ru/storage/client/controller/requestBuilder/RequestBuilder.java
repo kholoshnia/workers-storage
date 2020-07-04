@@ -10,12 +10,12 @@ import java.util.Locale;
 import java.util.Map;
 
 /** Class is responsible for requests building. */
-// TODO: Refactor builder.
 public final class RequestBuilder {
   private FormerMediator formerMediator;
   private String command;
   private List<String> arguments;
   private Locale locale;
+  private String token;
 
   /**
    * Sets argument former mediator. NOTE: if not set on {@link RequestBuilder#build()} it throws
@@ -66,6 +66,17 @@ public final class RequestBuilder {
   }
 
   /**
+   * Sets java web token.
+   *
+   * @param token concrete token
+   * @return this request builder
+   */
+  public RequestBuilder setToken(String token) {
+    this.token = token;
+    return this;
+  }
+
+  /**
    * Builds request from set parameters.
    *
    * @return new request
@@ -85,6 +96,6 @@ public final class RequestBuilder {
     argumentFormer.check(arguments);
     Map<String, String> allArguments = argumentFormer.form(arguments);
 
-    return new Request(command, allArguments, locale);
+    return new Request(command, allArguments, locale, token);
   }
 }

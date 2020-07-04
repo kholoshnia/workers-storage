@@ -1,9 +1,8 @@
 package ru.storage.server.model.domain.entity.entities.user;
 
-import ru.storage.server.model.domain.entity.exceptions.ValidationException;
-import ru.storage.server.model.domain.entity.Entity;
-import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.dto.dtos.UserDTO;
+import ru.storage.server.model.domain.entity.Entity;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -11,28 +10,20 @@ import java.util.ResourceBundle;
 public final class User implements Entity {
   public static final long DEFAULT_ID = 0L;
 
-  public static final String ID_COLUMN = "id";
-  public static final String TABLE_NAME = "users";
-  public static final String NAME_COLUMN = "name";
-  public static final String LOGIN_COLUMN = "login";
-  public static final String PASSWORD_COLUMN = "password";
-  public static final String ROLE_COLUMN = "role";
-  public static final String STATE_COLUMN = "state";
-
-  private static final String WRONG_ID_EXCEPTION_MESSAGE;
-  private static final String WRONG_NAME_EXCEPTION_MESSAGE;
-  private static final String WRONG_LOGIN_EXCEPTION_MESSAGE;
-  private static final String WRONG_PASSWORD_EXCEPTION_MESSAGE;
-  private static final String WRONG_ROLE_EXCEPTION_MESSAGE;
+  private static final String WRONG_ID_EXCEPTION;
+  private static final String WRONG_NAME_EXCEPTION;
+  private static final String WRONG_LOGIN_EXCEPTION;
+  private static final String WRONG_PASSWORD_EXCEPTION;
+  private static final String WRONG_ROLE_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.User");
 
-    WRONG_ID_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongId");
-    WRONG_NAME_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongName");
-    WRONG_LOGIN_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongLogin");
-    WRONG_PASSWORD_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongPassword");
-    WRONG_ROLE_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongRole");
+    WRONG_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongId");
+    WRONG_NAME_EXCEPTION = resourceBundle.getString("exceptions.wrongName");
+    WRONG_LOGIN_EXCEPTION = resourceBundle.getString("exceptions.wrongLogin");
+    WRONG_PASSWORD_EXCEPTION = resourceBundle.getString("exceptions.wrongPassword");
+    WRONG_ROLE_EXCEPTION = resourceBundle.getString("exceptions.wrongRole");
   }
 
   private long id;
@@ -40,9 +31,8 @@ public final class User implements Entity {
   private String login;
   private String password;
   private Role role;
-  private boolean state;
 
-  public User(long id, String name, String login, String password, Role role, boolean state)
+  public User(long id, String name, String login, String password, Role role)
       throws ValidationException {
     checkId(id);
     this.id = id;
@@ -58,13 +48,11 @@ public final class User implements Entity {
 
     checkRole(role);
     this.role = role;
-
-    this.state = state;
   }
 
   @Override
-  public DTO<User> toDTO() {
-    return new UserDTO(this.id, this.name, this.login, this.password, this.role, this.state);
+  public UserDTO toDTO() {
+    return new UserDTO(this.id, this.name, this.login, this.password, this.role);
   }
 
   public final long getID() {
@@ -81,7 +69,7 @@ public final class User implements Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_ID_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_ID_EXCEPTION);
   }
 
   public String getName() {
@@ -98,7 +86,7 @@ public final class User implements Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_NAME_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_NAME_EXCEPTION);
   }
 
   public String getLogin() {
@@ -115,7 +103,7 @@ public final class User implements Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_LOGIN_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_LOGIN_EXCEPTION);
   }
 
   public String getPassword() {
@@ -132,7 +120,7 @@ public final class User implements Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_PASSWORD_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_PASSWORD_EXCEPTION);
   }
 
   public Role getRole() {
@@ -149,15 +137,7 @@ public final class User implements Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_ROLE_EXCEPTION_MESSAGE);
-  }
-
-  public boolean getState() {
-    return state;
-  }
-
-  public void setState(boolean state) {
-    this.state = state;
+    throw new ValidationException(WRONG_ROLE_EXCEPTION);
   }
 
   @Override
@@ -165,7 +145,7 @@ public final class User implements Entity {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     User user = (User) o;
-    return state == user.state
+    return id == user.id
         && Objects.equals(name, user.name)
         && Objects.equals(login, user.login)
         && Objects.equals(password, user.password)
@@ -174,13 +154,15 @@ public final class User implements Entity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, login, password, role, state);
+    return Objects.hash(id, name, login, password, role);
   }
 
   @Override
   public String toString() {
     return "User{"
-        + "name='"
+        + "id="
+        + id
+        + ", name='"
         + name
         + '\''
         + ", login='"
@@ -191,8 +173,6 @@ public final class User implements Entity {
         + '\''
         + ", role="
         + role
-        + ", loggedIn="
-        + state
         + '}';
   }
 }

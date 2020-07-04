@@ -16,14 +16,12 @@ import ru.storage.server.controller.services.history.Record;
 import java.util.ResourceBundle;
 
 public final class CommandController implements Controller {
-  private static final String NO_SUCH_COMMAND_ANSWER;
   private static final String COMMAND_CREATION_ERROR_ANSWER;
   private static final String GOT_NULL_COMMAND_ANSWER;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.CommandController");
 
-    NO_SUCH_COMMAND_ANSWER = resourceBundle.getString("answers.noSuchCommand");
     COMMAND_CREATION_ERROR_ANSWER = resourceBundle.getString("answers.commandCreationError");
     GOT_NULL_COMMAND_ANSWER = resourceBundle.getString("answers.gotNullCommand");
   }
@@ -31,6 +29,8 @@ public final class CommandController implements Controller {
   private final Logger logger;
   private final CommandFactoryMediator commandFactoryMediator;
   private final History history;
+
+  private String noSuchCommandAnswer;
 
   @Inject
   public CommandController(CommandFactoryMediator commandFactoryMediator, History history) {
@@ -41,11 +41,15 @@ public final class CommandController implements Controller {
 
   @Override
   public Response handle(Request request) {
+    ResourceBundle resourceBundle =
+        ResourceBundle.getBundle("localized.CommandController", request.getLocale());
+    noSuchCommandAnswer = resourceBundle.getString("answers.noSuchCommand");
+
     CommandFactory commandFactory = commandFactoryMediator.getCommandFactory(request.getCommand());
 
     if (commandFactory == null) {
       logger.error(() -> "There is no such command, factory was not created.");
-      return new Response(Status.BAD_REQUEST, NO_SUCH_COMMAND_ANSWER);
+      return new Response(Status.BAD_REQUEST, noSuchCommandAnswer);
     }
 
     Command command;

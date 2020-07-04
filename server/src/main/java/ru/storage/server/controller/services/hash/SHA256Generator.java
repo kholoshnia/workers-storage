@@ -1,5 +1,6 @@
 package ru.storage.server.controller.services.hash;
 
+import com.google.inject.Inject;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,13 +15,14 @@ import java.security.NoSuchAlgorithmException;
 public final class SHA256Generator extends HashGenerator {
   private final Logger logger;
 
+  @Inject
   public SHA256Generator(@Nonnull Configuration configuration) {
     super(configuration);
     this.logger = LogManager.getLogger(SHA256Generator.class);
   }
 
   @Override
-  protected String generateHash(@Nonnull String string) throws HashGeneratorException {
+  protected String hash(@Nonnull String string) throws HashGeneratorException {
     String sha256;
 
     try {

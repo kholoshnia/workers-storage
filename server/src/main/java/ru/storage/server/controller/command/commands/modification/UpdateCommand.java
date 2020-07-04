@@ -9,7 +9,7 @@ import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.services.parser.Parser;
 import ru.storage.server.controller.services.parser.exceptions.ParserException;
-import ru.storage.server.model.domain.dto.DTO;
+import ru.storage.server.model.domain.dto.dtos.WorkerDTO;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.repository.Query;
@@ -59,16 +59,16 @@ public final class UpdateCommand extends ModificationCommand {
     try {
       equalIDWorkers = workerRepository.get(query);
     } catch (RepositoryException e) {
-      logger.error("Cannot get workers which ids are equal to {}.", (Supplier<?>) () -> id, e);
+      logger.error("Cannot get workers with id equal to {}.", (Supplier<?>) () -> id, e);
       return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
     if (equalIDWorkers.isEmpty()) {
-      logger.info(() -> "Worker with specified id: " + id + " was not found.");
+      logger.info("Worker with specified id: {} was not found.", () -> id);
       return new Response(Status.NOT_FOUND, WORKER_NOT_FOUND_ANSWER);
     }
 
-    DTO<Worker> workerDTO;
+    WorkerDTO workerDTO;
 
     try {
       workerDTO = createWorkerDTO(arguments);
@@ -79,8 +79,9 @@ public final class UpdateCommand extends ModificationCommand {
 
     for (Worker worker : equalIDWorkers) {
       try {
-        workerRepository.update(workerDTO.toEntity());
-        workerRepository.update(workerDTO.toEntity());
+        Worker newWorker = workerDTO.toEntity();
+        newWorker.setID(worker.getID());
+        workerRepository.update(newWorker);
       } catch (RepositoryException | ValidationException e) {
         logger.error("Cannot update worker which id is equal to {}.", (Supplier<?>) () -> id, e);
         return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());

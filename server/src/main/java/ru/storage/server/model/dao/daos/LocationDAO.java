@@ -4,9 +4,9 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
-import ru.storage.server.model.domain.entity.exceptions.ValidationException;
-import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.dao.exceptions.DAOException;
+import ru.storage.server.model.domain.dto.dtos.LocationDTO;
+import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class LocationDAO implements DAO<Long, Location> {
+public class LocationDAO implements DAO<Long, LocationDTO> {
   private static final String CANNOT_GET_ALL_LOCATION_EXCEPTION;
   private static final String CANNOT_GET_LOCATION_BY_ID_EXCEPTION;
   private static final String CANNOT_INSERT_LOCATION_EXCEPTION;
@@ -38,40 +38,40 @@ public class LocationDAO implements DAO<Long, Location> {
     CANNOT_DELETE_LOCATION_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteLocation");
   }
 
-  private final String SELECT_ALL = "SELECT * FROM " + Location.TABLE_NAME;
+  private final String SELECT_ALL = "SELECT * FROM " + LocationDTO.TABLE_NAME;
 
-  private final String SELECT_BY_ID = SELECT_ALL + " WHERE " + Location.ID_COLUMN + " = ?";
+  private final String SELECT_BY_ID = SELECT_ALL + " WHERE " + LocationDTO.ID_COLUMN + " = ?";
 
   private final String INSERT =
       "INSERT INTO "
-          + Location.TABLE_NAME
+          + LocationDTO.TABLE_NAME
           + " ("
-          + Location.OWNER_ID_COLUMN
+          + LocationDTO.OWNER_ID_COLUMN
           + ", "
-          + Location.ADDRESS_COLUMN
+          + LocationDTO.ADDRESS_COLUMN
           + ", "
-          + Location.LATITUDE_COLUMN
+          + LocationDTO.LATITUDE_COLUMN
           + ", "
-          + Location.LONGITUDE_COLUMN
+          + LocationDTO.LONGITUDE_COLUMN
           + ") VALUES (?, ?, ?, ?)";
 
   private final String UPDATE =
       "UPDATE "
-          + Location.TABLE_NAME
+          + LocationDTO.TABLE_NAME
           + " SET "
-          + Location.OWNER_ID_COLUMN
+          + LocationDTO.OWNER_ID_COLUMN
           + " = ?, "
-          + Location.ADDRESS_COLUMN
+          + LocationDTO.ADDRESS_COLUMN
           + " = ?, "
-          + Location.LATITUDE_COLUMN
+          + LocationDTO.LATITUDE_COLUMN
           + " = ?, "
-          + Location.LONGITUDE_COLUMN
+          + LocationDTO.LONGITUDE_COLUMN
           + " = ? WHERE "
-          + Location.ID_COLUMN
+          + LocationDTO.ID_COLUMN
           + " = ?";
 
   private final String DELETE =
-      "DELETE FROM " + Location.TABLE_NAME + " WHERE " + Location.ID_COLUMN + " = ?";
+      "DELETE FROM " + LocationDTO.TABLE_NAME + " WHERE " + LocationDTO.ID_COLUMN + " = ?";
 
   private final Logger logger;
   private final DataSource dataSource;
@@ -83,8 +83,8 @@ public class LocationDAO implements DAO<Long, Location> {
   }
 
   @Override
-  public List<Location> getAll() throws DAOException, DataSourceException {
-    List<Location> allLocations = new ArrayList<>();
+  public List<LocationDTO> getAll() throws DAOException, DataSourceException {
+    List<LocationDTO> allLocationDTOs = new ArrayList<>();
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(SELECT_ALL, Statement.NO_GENERATED_KEYS);
 
@@ -92,16 +92,16 @@ public class LocationDAO implements DAO<Long, Location> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long id = resultSet.getLong(Location.ID_COLUMN);
-        Long ownerId = resultSet.getLong(Location.OWNER_ID_COLUMN);
-        String address = resultSet.getString(Location.ADDRESS_COLUMN);
-        Double latitude = resultSet.getDouble(Location.LATITUDE_COLUMN);
-        Double longitude = resultSet.getDouble(Location.LONGITUDE_COLUMN);
+        Long id = resultSet.getObject(LocationDTO.ID_COLUMN, Long.class);
+        Long ownerId = resultSet.getObject(LocationDTO.OWNER_ID_COLUMN, Long.class);
+        String address = resultSet.getObject(LocationDTO.ADDRESS_COLUMN, String.class);
+        Double latitude = resultSet.getObject(LocationDTO.LATITUDE_COLUMN, Double.class);
+        Double longitude = resultSet.getObject(LocationDTO.LONGITUDE_COLUMN, Double.class);
 
-        Location location = new Location(id, ownerId, address, latitude, longitude);
-        allLocations.add(location);
+        LocationDTO location = new LocationDTO(id, ownerId, address, latitude, longitude);
+        allLocationDTOs.add(location);
       }
-    } catch (SQLException | ValidationException e) {
+    } catch (SQLException e) {
       logger.error(() -> "Cannot get all locations.", e);
       throw new DAOException(CANNOT_GET_ALL_LOCATION_EXCEPTION, e);
     } finally {
@@ -109,12 +109,12 @@ public class LocationDAO implements DAO<Long, Location> {
     }
 
     logger.info(() -> "Got all locations.");
-    return allLocations;
+    return allLocationDTOs;
   }
 
   @Override
-  public Location getByKey(@Nonnull Long id) throws DAOException, DataSourceException {
-    Location location = null;
+  public LocationDTO getByKey(@Nonnull Long id) throws DAOException, DataSourceException {
+    LocationDTO locationDTO = null;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(SELECT_BY_ID, Statement.NO_GENERATED_KEYS);
 
@@ -122,14 +122,14 @@ public class LocationDAO implements DAO<Long, Location> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long ownerId = resultSet.getLong(Location.OWNER_ID_COLUMN);
-        String address = resultSet.getString(Location.ADDRESS_COLUMN);
-        Double latitude = resultSet.getDouble(Location.LATITUDE_COLUMN);
-        Double longitude = resultSet.getDouble(Location.LONGITUDE_COLUMN);
+        Long ownerId = resultSet.getObject(LocationDTO.OWNER_ID_COLUMN, Long.class);
+        String address = resultSet.getObject(LocationDTO.ADDRESS_COLUMN, String.class);
+        Double latitude = resultSet.getObject(LocationDTO.LATITUDE_COLUMN, Double.class);
+        Double longitude = resultSet.getObject(LocationDTO.LONGITUDE_COLUMN, Double.class);
 
-        location = new Location(id, ownerId, address, latitude, longitude);
+        locationDTO = new LocationDTO(id, ownerId, address, latitude, longitude);
       }
-    } catch (SQLException | ValidationException e) {
+    } catch (SQLException e) {
       logger.error(() -> "Cannot get location by id.", e);
       throw new DAOException(CANNOT_GET_LOCATION_BY_ID_EXCEPTION, e);
     } finally {
@@ -137,27 +137,43 @@ public class LocationDAO implements DAO<Long, Location> {
     }
 
     logger.info(() -> "Got location by id.");
-    return location;
+    return locationDTO;
   }
 
   @Override
-  public Location insert(@Nonnull Location location) throws DAOException, DataSourceException {
+  public LocationDTO insert(@Nonnull LocationDTO locationDTO)
+      throws DAOException, DataSourceException {
+    LocationDTO result;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, location.getOwnerID());
-      preparedStatement.setString(2, location.getAddress());
-      preparedStatement.setDouble(3, location.getLatitude());
-      preparedStatement.setDouble(4, location.getLongitude());
+      preparedStatement.setLong(1, locationDTO.ownerID);
+      preparedStatement.setString(2, locationDTO.address);
+      preparedStatement.setDouble(3, locationDTO.latitude);
+      preparedStatement.setDouble(4, locationDTO.longitude);
 
       preparedStatement.execute();
 
       ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
       if (generatedKeys.next()) {
-        location.setID(generatedKeys.getLong(1));
+        result =
+            new LocationDTO(
+                generatedKeys.getLong(1),
+                locationDTO.ownerID,
+                locationDTO.address,
+                locationDTO.latitude,
+                locationDTO.longitude);
+      } else {
+        result =
+            new LocationDTO(
+                Location.DEFAULT_ID,
+                Location.DEFAULT_OWNER_ID,
+                locationDTO.address,
+                locationDTO.latitude,
+                locationDTO.longitude);
       }
-    } catch (SQLException | ValidationException e) {
+    } catch (SQLException e) {
       logger.error(() -> "Cannot insert location.", e);
       throw new DAOException(CANNOT_INSERT_LOCATION_EXCEPTION, e);
     } finally {
@@ -165,20 +181,22 @@ public class LocationDAO implements DAO<Long, Location> {
     }
 
     logger.info(() -> "Location has been inserted.");
-    return location;
+    return result;
   }
 
   @Override
-  public Location update(@Nonnull Location location) throws DAOException, DataSourceException {
+  public LocationDTO update(@Nonnull LocationDTO locationDTO)
+      throws DAOException, DataSourceException {
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(UPDATE, Statement.NO_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, location.getOwnerID());
-      preparedStatement.setString(2, location.getAddress());
-      preparedStatement.setDouble(3, location.getLatitude());
-      preparedStatement.setDouble(4, location.getLongitude());
-      preparedStatement.setLong(5, location.getID());
+      preparedStatement.setLong(1, locationDTO.ownerID);
+      preparedStatement.setString(2, locationDTO.address);
+      preparedStatement.setDouble(3, locationDTO.latitude);
+      preparedStatement.setDouble(4, locationDTO.longitude);
+
+      preparedStatement.setLong(5, locationDTO.id);
 
       preparedStatement.execute();
     } catch (SQLException e) {
@@ -189,16 +207,16 @@ public class LocationDAO implements DAO<Long, Location> {
     }
 
     logger.info(() -> "Location has been updated.");
-    return location;
+    return locationDTO;
   }
 
   @Override
-  public void delete(@Nonnull Location location) throws DAOException, DataSourceException {
+  public void delete(@Nonnull LocationDTO locationDTO) throws DAOException, DataSourceException {
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(DELETE, Statement.NO_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, location.getID());
+      preparedStatement.setLong(1, locationDTO.id);
 
       preparedStatement.execute();
     } catch (SQLException e) {

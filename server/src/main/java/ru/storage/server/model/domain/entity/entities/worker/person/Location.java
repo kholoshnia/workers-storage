@@ -1,9 +1,8 @@
 package ru.storage.server.model.domain.entity.entities.worker.person;
 
 import ru.storage.server.model.domain.dto.dtos.LocationDTO;
-import ru.storage.server.model.domain.entity.exceptions.ValidationException;
-import ru.storage.server.model.domain.dto.DTO;
 import ru.storage.server.model.domain.entity.Entity;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -12,28 +11,20 @@ public final class Location implements Cloneable, Entity {
   public static final long DEFAULT_ID = 0L;
   public static final long DEFAULT_OWNER_ID = 0L;
 
-  public static final String ID_COLUMN = "id";
-  public static final String OWNER_ID_COLUMN = "owner_id";
-  public static final String TABLE_NAME = "locations";
-  public static final String ADDRESS_COLUMN = "address";
-  public static final String LATITUDE_COLUMN = "latitude";
-  public static final String LONGITUDE_COLUMN = "longitude";
-
-  private static final String WRONG_ID_EXCEPTION_MESSAGE;
-  private static final String WRONG_OWNER_ID_EXCEPTION_MESSAGE;
-  private static final String WRONG_ADDRESS_EXCEPTION_MESSAGE;
-  private static final String WRONG_LATITUDE_EXCEPTION_MESSAGE;
-  private static final String WRONG_LONGITUDE_EXCEPTION_MESSAGE;
+  private static final String WRONG_ID_EXCEPTION;
+  private static final String WRONG_OWNER_ID_EXCEPTION;
+  private static final String WRONG_ADDRESS_EXCEPTION;
+  private static final String WRONG_LATITUDE_EXCEPTION;
+  private static final String WRONG_LONGITUDE_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Location");
 
-    WRONG_ID_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongId");
-    WRONG_OWNER_ID_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongOwnerId");
-    WRONG_ADDRESS_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongAddress");
-    WRONG_LATITUDE_EXCEPTION_MESSAGE = resourceBundle.getString("exceptionMessages.wrongLatitude");
-    WRONG_LONGITUDE_EXCEPTION_MESSAGE =
-        resourceBundle.getString("exceptionMessages.wrongLongitude");
+    WRONG_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongId");
+    WRONG_OWNER_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongOwnerId");
+    WRONG_ADDRESS_EXCEPTION = resourceBundle.getString("exceptions.wrongAddress");
+    WRONG_LATITUDE_EXCEPTION = resourceBundle.getString("exceptions.wrongLatitude");
+    WRONG_LONGITUDE_EXCEPTION = resourceBundle.getString("exceptions.wrongLongitude");
   }
 
   private long id;
@@ -61,7 +52,7 @@ public final class Location implements Cloneable, Entity {
   }
 
   @Override
-  public DTO<Location> toDTO() {
+  public LocationDTO toDTO() {
     return new LocationDTO(this.id, this.ownerID, this.address, this.latitude, this.longitude);
   }
 
@@ -79,7 +70,7 @@ public final class Location implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_ID_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_ID_EXCEPTION);
   }
 
   public final long getOwnerID() {
@@ -96,7 +87,7 @@ public final class Location implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_OWNER_ID_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_OWNER_ID_EXCEPTION);
   }
 
   public String getAddress() {
@@ -113,7 +104,7 @@ public final class Location implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_ADDRESS_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_ADDRESS_EXCEPTION);
   }
 
   public Double getLatitude() {
@@ -130,7 +121,7 @@ public final class Location implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_LATITUDE_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_LATITUDE_EXCEPTION);
   }
 
   public Double getLongitude() {
@@ -147,7 +138,7 @@ public final class Location implements Cloneable, Entity {
       return;
     }
 
-    throw new ValidationException(WRONG_LONGITUDE_EXCEPTION_MESSAGE);
+    throw new ValidationException(WRONG_LONGITUDE_EXCEPTION);
   }
 
   @Override

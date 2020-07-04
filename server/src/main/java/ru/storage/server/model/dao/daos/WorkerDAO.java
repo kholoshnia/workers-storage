@@ -3,11 +3,11 @@ package ru.storage.server.model.dao.daos;
 import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.server.model.domain.entity.exceptions.ValidationException;
-import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
-import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
+import ru.storage.server.model.domain.dto.dtos.CoordinatesDTO;
+import ru.storage.server.model.domain.dto.dtos.PersonDTO;
+import ru.storage.server.model.domain.dto.dtos.WorkerDTO;
 import ru.storage.server.model.domain.entity.entities.worker.Status;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.source.DataSource;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class WorkerDAO implements DAO<Long, Worker> {
+public class WorkerDAO implements DAO<Long, WorkerDTO> {
   private static final String CANNOT_GET_ALL_WORKER_EXCEPTION;
   private static final String CANNOT_GET_WORKER_BY_ID_EXCEPTION;
   private static final String CANNOT_INSERT_WORKER_EXCEPTION;
@@ -37,65 +37,67 @@ public class WorkerDAO implements DAO<Long, Worker> {
     CANNOT_DELETE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteWorker");
   }
 
-  private final String SELECT_ALL = "SELECT * FROM " + Worker.TABLE_NAME;
+  private final String SELECT_ALL = "SELECT * FROM " + WorkerDTO.TABLE_NAME;
 
-  private final String SELECT_BY_ID = SELECT_ALL + " WHERE " + Worker.ID_COLUMN + " = ?";
+  private final String SELECT_BY_ID = SELECT_ALL + " WHERE " + WorkerDTO.ID_COLUMN + " = ?";
 
   private final String INSERT =
       "INSERT INTO "
-          + Worker.TABLE_NAME
+          + WorkerDTO.TABLE_NAME
           + " ("
-          + Worker.OWNER_ID_COLUMN
+          + WorkerDTO.OWNER_ID_COLUMN
           + ", "
-          + Worker.CREATION_DATE_COLUMN
+          + WorkerDTO.CREATION_DATE_COLUMN
           + ", "
-          + Worker.SALARY_COLUMN
+          + WorkerDTO.SALARY_COLUMN
           + ", "
-          + Worker.STATUS_COLUMN
+          + WorkerDTO.STATUS_COLUMN
           + ", "
-          + Worker.START_DATE_COLUMN
+          + WorkerDTO.START_DATE_COLUMN
           + ", "
-          + Worker.END_DATE_COLUMN
+          + WorkerDTO.END_DATE_COLUMN
           + ", "
-          + Worker.COORDINATES_COLUMN
+          + WorkerDTO.COORDINATES_COLUMN
           + ", "
-          + Worker.PERSON_COLUMN
+          + WorkerDTO.PERSON_COLUMN
           + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
   private final String UPDATE =
       "UPDATE "
-          + Worker.TABLE_NAME
+          + WorkerDTO.TABLE_NAME
           + " SET "
-          + Worker.OWNER_ID_COLUMN
+          + WorkerDTO.OWNER_ID_COLUMN
           + " = ?, "
-          + Worker.CREATION_DATE_COLUMN
+          + WorkerDTO.CREATION_DATE_COLUMN
           + " = ?, "
-          + Worker.SALARY_COLUMN
+          + WorkerDTO.SALARY_COLUMN
           + " = ?, "
-          + Worker.STATUS_COLUMN
+          + WorkerDTO.STATUS_COLUMN
           + " = ?, "
-          + Worker.START_DATE_COLUMN
+          + WorkerDTO.START_DATE_COLUMN
           + " = ?, "
-          + Worker.END_DATE_COLUMN
+          + WorkerDTO.END_DATE_COLUMN
           + " = ?, "
-          + Worker.COORDINATES_COLUMN
+          + WorkerDTO.COORDINATES_COLUMN
           + " = ?, "
-          + Worker.PERSON_COLUMN
+          + WorkerDTO.PERSON_COLUMN
           + " = ? WHERE "
-          + Worker.ID_COLUMN
+          + WorkerDTO.ID_COLUMN
           + " = ?";
 
   private final String DELETE =
-      "DELETE FROM " + Worker.TABLE_NAME + " WHERE " + Worker.ID_COLUMN + " = ?";
+      "DELETE FROM " + WorkerDTO.TABLE_NAME + " WHERE " + WorkerDTO.ID_COLUMN + " = ?";
 
   private final Logger logger;
   private final DataSource dataSource;
-  private final DAO<Long, Coordinates> coordinatesDAO;
-  private final DAO<Long, Person> personDAO;
+  private final DAO<Long, CoordinatesDTO> coordinatesDAO;
+  private final DAO<Long, PersonDTO> personDAO;
 
   @Inject
   public WorkerDAO(
-          DataSource dataSource, DAO<Long, Coordinates> coordinatesDAO, DAO<Long, Person> personDAO) {
+      DataSource dataSource,
+      DAO<Long, CoordinatesDTO> coordinatesDAO,
+      DAO<Long, PersonDTO> personDAO) {
     this.logger = LogManager.getLogger(WorkerDAO.class);
     this.dataSource = dataSource;
     this.coordinatesDAO = coordinatesDAO;
@@ -103,8 +105,8 @@ public class WorkerDAO implements DAO<Long, Worker> {
   }
 
   @Override
-  public List<Worker> getAll() throws DAOException, DataSourceException {
-    List<Worker> allWorkers = new ArrayList<>();
+  public List<WorkerDTO> getAll() throws DAOException, DataSourceException {
+    List<WorkerDTO> allWorkerDTOs = new ArrayList<>();
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(SELECT_ALL, Statement.NO_GENERATED_KEYS);
 
@@ -112,25 +114,37 @@ public class WorkerDAO implements DAO<Long, Worker> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long id = resultSet.getLong(Worker.ID_COLUMN);
-        Long ownerId = resultSet.getLong(Worker.OWNER_ID_COLUMN);
+        Long id = resultSet.getObject(WorkerDTO.ID_COLUMN, Long.class);
+        Long ownerId = resultSet.getObject(WorkerDTO.OWNER_ID_COLUMN, Long.class);
         LocalDateTime creationDate =
-            resultSet.getTimestamp(Worker.CREATION_DATE_COLUMN).toLocalDateTime();
-        Double salary = resultSet.getDouble(Worker.SALARY_COLUMN);
-        Status status = Status.getStatus(resultSet.getString(Worker.STATUS_COLUMN));
+            resultSet.getTimestamp(WorkerDTO.CREATION_DATE_COLUMN).toLocalDateTime();
+        Double salary = resultSet.getObject(WorkerDTO.SALARY_COLUMN, Double.class);
+        Status status =
+            Status.getStatus(resultSet.getObject(WorkerDTO.STATUS_COLUMN, String.class));
         LocalDateTime startDate =
-            resultSet.getTimestamp(Worker.START_DATE_COLUMN).toLocalDateTime();
-        LocalDateTime endDate = resultSet.getTimestamp(Worker.END_DATE_COLUMN).toLocalDateTime();
-        Coordinates coordinates =
-            coordinatesDAO.getByKey(resultSet.getLong(Worker.COORDINATES_COLUMN));
-        Person person = personDAO.getByKey(resultSet.getLong(Worker.PERSON_COLUMN));
+            resultSet.getTimestamp(WorkerDTO.START_DATE_COLUMN).toLocalDateTime();
+        LocalDateTime endDate = resultSet.getTimestamp(WorkerDTO.END_DATE_COLUMN).toLocalDateTime();
 
-        Worker worker =
-            new Worker(
-                id, ownerId, creationDate, salary, status, startDate, endDate, coordinates, person);
-        allWorkers.add(worker);
+        Long coordinatesID = resultSet.getObject(WorkerDTO.COORDINATES_COLUMN, Long.class);
+        CoordinatesDTO coordinatesDTO = coordinatesDAO.getByKey(coordinatesID);
+
+        Long personID = resultSet.getObject(WorkerDTO.PERSON_COLUMN, Long.class);
+        PersonDTO personDTO = personDAO.getByKey(personID);
+
+        WorkerDTO workerDTO =
+            new WorkerDTO(
+                id,
+                ownerId,
+                creationDate,
+                salary,
+                status,
+                startDate,
+                endDate,
+                coordinatesDTO,
+                personDTO);
+        allWorkerDTOs.add(workerDTO);
       }
-    } catch (SQLException | ValidationException e) {
+    } catch (SQLException e) {
       logger.error(() -> "Cannot get all workers.", e);
       throw new DAOException(CANNOT_GET_ALL_WORKER_EXCEPTION, e);
     } finally {
@@ -138,12 +152,12 @@ public class WorkerDAO implements DAO<Long, Worker> {
     }
 
     logger.info(() -> "Got all workers.");
-    return allWorkers;
+    return allWorkerDTOs;
   }
 
   @Override
-  public Worker getByKey(@Nonnull Long id) throws DAOException, DataSourceException {
-    Worker worker = null;
+  public WorkerDTO getByKey(@Nonnull Long id) throws DAOException, DataSourceException {
+    WorkerDTO workerDTO = null;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(SELECT_BY_ID, Statement.NO_GENERATED_KEYS);
 
@@ -151,23 +165,35 @@ public class WorkerDAO implements DAO<Long, Worker> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long ownerId = resultSet.getLong(Worker.OWNER_ID_COLUMN);
+        Long ownerId = resultSet.getObject(WorkerDTO.OWNER_ID_COLUMN, Long.class);
         LocalDateTime creationDate =
-            resultSet.getTimestamp(Worker.CREATION_DATE_COLUMN).toLocalDateTime();
-        Double salary = resultSet.getDouble(Worker.SALARY_COLUMN);
-        Status status = Status.getStatus(resultSet.getString(Worker.STATUS_COLUMN));
+            resultSet.getTimestamp(WorkerDTO.CREATION_DATE_COLUMN).toLocalDateTime();
+        Double salary = resultSet.getObject(WorkerDTO.SALARY_COLUMN, Double.class);
+        Status status =
+            Status.getStatus(resultSet.getObject(WorkerDTO.STATUS_COLUMN, String.class));
         LocalDateTime startDate =
-            resultSet.getTimestamp(Worker.START_DATE_COLUMN).toLocalDateTime();
-        LocalDateTime endDate = resultSet.getTimestamp(Worker.END_DATE_COLUMN).toLocalDateTime();
-        Coordinates coordinates =
-            coordinatesDAO.getByKey(resultSet.getLong(Worker.COORDINATES_COLUMN));
-        Person person = personDAO.getByKey(resultSet.getLong(Worker.PERSON_COLUMN));
+            resultSet.getTimestamp(WorkerDTO.START_DATE_COLUMN).toLocalDateTime();
+        LocalDateTime endDate = resultSet.getTimestamp(WorkerDTO.END_DATE_COLUMN).toLocalDateTime();
 
-        worker =
-            new Worker(
-                id, ownerId, creationDate, salary, status, startDate, endDate, coordinates, person);
+        Long coordinatesID = resultSet.getObject(WorkerDTO.COORDINATES_COLUMN, Long.class);
+        CoordinatesDTO coordinatesDTO = coordinatesDAO.getByKey(coordinatesID);
+
+        Long personID = resultSet.getObject(WorkerDTO.PERSON_COLUMN, Long.class);
+        PersonDTO personDTO = personDAO.getByKey(personID);
+
+        workerDTO =
+            new WorkerDTO(
+                id,
+                ownerId,
+                creationDate,
+                salary,
+                status,
+                startDate,
+                endDate,
+                coordinatesDTO,
+                personDTO);
       }
-    } catch (SQLException | ValidationException e) {
+    } catch (SQLException e) {
       logger.error(() -> "Cannot get worker by id.", e);
       throw new DAOException(CANNOT_GET_WORKER_BY_ID_EXCEPTION, e);
     } finally {
@@ -175,37 +201,58 @@ public class WorkerDAO implements DAO<Long, Worker> {
     }
 
     logger.info(() -> "Got worker by id.");
-    return worker;
+    return workerDTO;
   }
 
   @Override
-  public Worker insert(@Nonnull Worker worker) throws DAOException, DataSourceException {
+  public WorkerDTO insert(@Nonnull WorkerDTO workerDTO) throws DAOException, DataSourceException {
+    WorkerDTO result;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, worker.getOwnerID());
-      preparedStatement.setTimestamp(2, Timestamp.valueOf(worker.getCreationDate()));
-      preparedStatement.setDouble(3, worker.getSalary());
-      preparedStatement.setString(4, worker.getStatus().toString());
-      preparedStatement.setTimestamp(5, Timestamp.valueOf(worker.getStartDate()));
-      preparedStatement.setTimestamp(6, Timestamp.valueOf(worker.getEndDate()));
+      preparedStatement.setLong(1, workerDTO.ownerID);
+      preparedStatement.setTimestamp(2, Timestamp.valueOf(workerDTO.creationDate));
+      preparedStatement.setDouble(3, workerDTO.salary);
+      preparedStatement.setString(4, workerDTO.status.toString());
+      preparedStatement.setTimestamp(5, Timestamp.valueOf(workerDTO.startDate));
+      preparedStatement.setTimestamp(6, Timestamp.valueOf(workerDTO.endDate));
 
-      Coordinates coordinates = coordinatesDAO.insert(worker.getCoordinates());
-      worker.setCoordinates(coordinates);
-      preparedStatement.setLong(6, worker.getCoordinates().getID());
+      CoordinatesDTO coordinatesDTO = coordinatesDAO.insert(workerDTO.coordinatesDTO);
+      preparedStatement.setLong(6, coordinatesDTO.id);
 
-      Person person = personDAO.insert(worker.getPerson());
-      worker.setPerson(person);
-      preparedStatement.setLong(6, worker.getPerson().getID());
+      PersonDTO personDTO = personDAO.insert(workerDTO.personDTO);
+      preparedStatement.setLong(6, personDTO.id);
 
       preparedStatement.execute();
 
       ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
       if (generatedKeys.next()) {
-        worker.setID(generatedKeys.getLong(1));
+        result =
+            new WorkerDTO(
+                generatedKeys.getLong(1),
+                workerDTO.ownerID,
+                workerDTO.creationDate,
+                workerDTO.salary,
+                workerDTO.status,
+                workerDTO.startDate,
+                workerDTO.endDate,
+                coordinatesDTO,
+                personDTO);
+      } else {
+        result =
+            new WorkerDTO(
+                Worker.DEFAULT_ID,
+                Worker.DEFAULT_OWNER_ID,
+                workerDTO.creationDate,
+                workerDTO.salary,
+                workerDTO.status,
+                workerDTO.startDate,
+                workerDTO.endDate,
+                workerDTO.coordinatesDTO,
+                workerDTO.personDTO);
       }
-    } catch (SQLException | ValidationException e) {
+    } catch (SQLException e) {
       logger.error(() -> "Cannot insert worker.", e);
       throw new DAOException(CANNOT_INSERT_WORKER_EXCEPTION, e);
     } finally {
@@ -213,34 +260,32 @@ public class WorkerDAO implements DAO<Long, Worker> {
     }
 
     logger.info(() -> "Worker has been inserted.");
-    return worker;
+    return result;
   }
 
   @Override
-  public Worker update(@Nonnull Worker worker) throws DAOException, DataSourceException {
+  public WorkerDTO update(@Nonnull WorkerDTO workerDTO) throws DAOException, DataSourceException {
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(UPDATE, Statement.NO_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, worker.getOwnerID());
-      preparedStatement.setTimestamp(2, Timestamp.valueOf(worker.getCreationDate()));
-      preparedStatement.setDouble(3, worker.getSalary());
-      preparedStatement.setString(4, worker.getStatus().toString());
-      preparedStatement.setTimestamp(5, Timestamp.valueOf(worker.getStartDate()));
-      preparedStatement.setTimestamp(6, Timestamp.valueOf(worker.getEndDate()));
+      preparedStatement.setLong(1, workerDTO.ownerID);
+      preparedStatement.setTimestamp(2, Timestamp.valueOf(workerDTO.creationDate));
+      preparedStatement.setDouble(3, workerDTO.salary);
+      preparedStatement.setString(4, workerDTO.status.toString());
+      preparedStatement.setTimestamp(5, Timestamp.valueOf(workerDTO.startDate));
+      preparedStatement.setTimestamp(6, Timestamp.valueOf(workerDTO.endDate));
 
-      Coordinates coordinates = coordinatesDAO.update(worker.getCoordinates());
-      worker.setCoordinates(coordinates);
-      preparedStatement.setLong(6, worker.getCoordinates().getID());
+      CoordinatesDTO coordinatesDTO = coordinatesDAO.insert(workerDTO.coordinatesDTO);
+      preparedStatement.setLong(6, coordinatesDTO.id);
 
-      Person person = personDAO.update(worker.getPerson());
-      worker.setPerson(person);
-      preparedStatement.setLong(6, worker.getPerson().getID());
+      PersonDTO personDTO = personDAO.insert(workerDTO.personDTO);
+      preparedStatement.setLong(6, personDTO.id);
 
-      preparedStatement.setLong(4, worker.getID());
+      preparedStatement.setLong(7, workerDTO.id);
 
       preparedStatement.execute();
-    } catch (SQLException | ValidationException e) {
+    } catch (SQLException e) {
       logger.error(() -> "Cannot update worker.", e);
       throw new DAOException(CANNOT_UPDATE_WORKER_EXCEPTION, e);
     } finally {
@@ -248,19 +293,19 @@ public class WorkerDAO implements DAO<Long, Worker> {
     }
 
     logger.info(() -> "Worker has been updated.");
-    return worker;
+    return workerDTO;
   }
 
   @Override
-  public void delete(@Nonnull Worker worker) throws DAOException, DataSourceException {
+  public void delete(@Nonnull WorkerDTO workerDTO) throws DAOException, DataSourceException {
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(DELETE, Statement.NO_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, worker.getID());
+      preparedStatement.setLong(1, workerDTO.id);
 
-      coordinatesDAO.delete(worker.getCoordinates());
-      personDAO.delete(worker.getPerson());
+      coordinatesDAO.delete(workerDTO.coordinatesDTO);
+      personDAO.delete(workerDTO.personDTO);
 
       preparedStatement.execute();
     } catch (SQLException e) {

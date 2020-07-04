@@ -6,21 +6,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
-import ru.storage.server.controller.command.factory.factories.ModificationCommandFactory;
 import ru.storage.server.controller.command.factory.factories.EntryCommandFactory;
 import ru.storage.server.controller.command.factory.factories.HistoryCommandFactory;
+import ru.storage.server.controller.command.factory.factories.ModificationCommandFactory;
 import ru.storage.server.controller.command.factory.factories.ViewCommandFactory;
+import ru.storage.server.controller.services.hash.HashGenerator;
 import ru.storage.server.controller.services.history.History;
+import ru.storage.server.controller.services.parser.Parser;
 import ru.storage.server.model.domain.entity.entities.user.User;
-import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.repository.Repository;
+import ru.storage.server.model.domain.repository.repositories.workerRepository.WorkerRepository;
 
+import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class CommandFactoryMediator {
   private final Logger logger;
-  private final Map<String, CommandFactory> commandFactories;
+  private final Map<String, CommandFactory> commandFactoriesMap;
 
   @Inject
   public CommandFactoryMediator(
@@ -28,21 +31,25 @@ public final class CommandFactoryMediator {
       ArgumentMediator argumentMediator,
       CommandMediator commandMediator,
       History history,
+      HashGenerator hashGenerator,
       Repository<User> userRepository,
-      Repository<Worker> workerRepository) {
+      Parser parser,
+      WorkerRepository workerRepository,
+      Key key) {
     this.logger = LogManager.getLogger(CommandFactoryMediator.class);
 
     CommandFactory entryCommandFactory =
-        new EntryCommandFactory(configuration, argumentMediator, commandMediator, userRepository);
+        new EntryCommandFactory(
+            configuration, argumentMediator, commandMediator, hashGenerator, userRepository, key);
     CommandFactory historyCommandFactory =
         new HistoryCommandFactory(configuration, argumentMediator, commandMediator, history);
     CommandFactory modificationCommandFactory =
         new ModificationCommandFactory(
-            configuration, argumentMediator, commandMediator, workerRepository);
+            configuration, argumentMediator, commandMediator, workerRepository, parser);
     CommandFactory viewCommandFactory =
         new ViewCommandFactory(configuration, argumentMediator, commandMediator, workerRepository);
 
-    this.commandFactories =
+    this.commandFactoriesMap =
         new HashMap<String, CommandFactory>() {
           {
             put(commandMediator.LOGIN, entryCommandFactory);
@@ -62,7 +69,7 @@ public final class CommandFactoryMediator {
   }
 
   public CommandFactory getCommandFactory(String command) {
-    CommandFactory commandFactory = commandFactories.get(command);
+    CommandFactory commandFactory = commandFactoriesMap.get(command);
 
     logger.info("Got command factory: {}, for command: {}.", () -> commandFactory, () -> command);
     return commandFactory;

@@ -40,7 +40,7 @@ public final class ServerResponseHandler implements ResponseHandler {
             put(Status.BAD_REQUEST, badRequestResponse);
             put(Status.UNAUTHORIZED, unauthorizedResponse);
             put(Status.NOT_FOUND, notFoundResponse);
-            put(Status.FORBIDDEN, forbiddenResponse);
+            put(Status.FORBIdDEN, forbiddenResponse);
             put(Status.CONFLICT, conflictResponse);
             put(Status.INTERNAL_SERVER_ERROR, internalServerErrorResponse);
           }

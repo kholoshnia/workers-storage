@@ -7,7 +7,6 @@ import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.domain.dto.dtos.LocationDTO;
 import ru.storage.server.model.domain.dto.dtos.PersonDTO;
-import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
@@ -24,6 +23,7 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
   private static final String CANNOT_GET_ALL_PERSON_EXCEPTION;
   private static final String CANNOT_GET_PERSON_BY_ID_EXCEPTION;
   private static final String CANNOT_INSERT_PERSON_EXCEPTION;
+  private static final String CANNOT_GET_GENERATED_PERSON_ID;
   private static final String CANNOT_UPDATE_PERSON_EXCEPTION;
   private static final String CANNOT_DELETE_PERSON_EXCEPTION;
 
@@ -33,6 +33,8 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
     CANNOT_GET_ALL_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotGetAllPersons");
     CANNOT_GET_PERSON_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.cannotGetPersonById");
     CANNOT_INSERT_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotInsertPerson");
+    CANNOT_GET_GENERATED_PERSON_ID =
+        resourceBundle.getString("exceptions.cannotGetGeneratedPersonId");
     CANNOT_UPDATE_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotUpdatePerson");
     CANNOT_DELETE_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotDeletePerson");
   }
@@ -96,12 +98,12 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
         Long id = resultSet.getObject(PersonDTO.ID_COLUMN, Long.class);
         Long ownerId = resultSet.getObject(PersonDTO.OWNER_ID_COLUMN, Long.class);
         String name = resultSet.getObject(PersonDTO.NAME_COLUMN, String.class);
-        String passportID = resultSet.getObject(PersonDTO.PASSPORT_ID_COLUMN, String.class);
+        String passportId = resultSet.getObject(PersonDTO.PASSPORT_ID_COLUMN, String.class);
 
-        Long locationID = resultSet.getObject(PersonDTO.LOCATION_COLUMN, Long.class);
-        LocationDTO locationDTO = locationDAO.getByKey(locationID);
+        Long locationId = resultSet.getObject(PersonDTO.LOCATION_COLUMN, Long.class);
+        LocationDTO locationDTO = locationDAO.getByKey(locationId);
 
-        PersonDTO personDTO = new PersonDTO(id, ownerId, name, passportID, locationDTO);
+        PersonDTO personDTO = new PersonDTO(id, ownerId, name, passportId, locationDTO);
         allPersonDTOs.add(personDTO);
       }
     } catch (SQLException e) {
@@ -127,12 +129,12 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
       while (resultSet.next()) {
         Long ownerId = resultSet.getLong(PersonDTO.OWNER_ID_COLUMN);
         String name = resultSet.getString(PersonDTO.NAME_COLUMN);
-        String passportID = resultSet.getString(PersonDTO.PASSPORT_ID_COLUMN);
+        String passportId = resultSet.getString(PersonDTO.PASSPORT_ID_COLUMN);
 
-        Long locationID = resultSet.getObject(PersonDTO.LOCATION_COLUMN, Long.class);
-        LocationDTO locationDTO = locationDAO.getByKey(locationID);
+        Long locationId = resultSet.getObject(PersonDTO.LOCATION_COLUMN, Long.class);
+        LocationDTO locationDTO = locationDAO.getByKey(locationId);
 
-        personDTO = new PersonDTO(id, ownerId, name, passportID, locationDTO);
+        personDTO = new PersonDTO(id, ownerId, name, passportId, locationDTO);
       }
     } catch (SQLException e) {
       logger.error("Cannot get person by id.", e);
@@ -147,37 +149,27 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
 
   @Override
   public PersonDTO insert(@Nonnull PersonDTO personDTO) throws DAOException, DataSourceException {
-    PersonDTO result;
+    Long resultId;
+    LocationDTO locationDTO;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, personDTO.ownerID);
+      preparedStatement.setLong(1, personDTO.ownerId);
       preparedStatement.setString(2, personDTO.name);
-      preparedStatement.setString(3, personDTO.passportID);
+      preparedStatement.setString(3, personDTO.passportId);
 
-      LocationDTO locationDTO = locationDAO.insert(personDTO.locationDTO);
+      locationDTO = locationDAO.insert(personDTO.locationDTO);
       preparedStatement.setDouble(4, locationDTO.id);
 
       preparedStatement.execute();
 
       ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
       if (generatedKeys.next()) {
-        result =
-            new PersonDTO(
-                generatedKeys.getLong(1),
-                personDTO.ownerID,
-                personDTO.name,
-                personDTO.passportID,
-                locationDTO);
+        resultId = generatedKeys.getObject(1, Long.class);
       } else {
-        result =
-            new PersonDTO(
-                Location.DEFAULT_ID,
-                Location.DEFAULT_OWNER_ID,
-                personDTO.name,
-                personDTO.passportID,
-                personDTO.locationDTO);
+        logger.error(() -> "Cannot get generated person id.");
+        throw new DAOException(CANNOT_GET_GENERATED_PERSON_ID);
       }
     } catch (SQLException e) {
       logger.error(() -> "Cannot insert person.", e);
@@ -187,7 +179,8 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
     }
 
     logger.info(() -> "Person has been inserted.");
-    return result;
+    return new PersonDTO(
+        resultId, personDTO.ownerId, personDTO.name, personDTO.passportId, locationDTO);
   }
 
   @Override
@@ -196,9 +189,9 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
         dataSource.getPrepareStatement(UPDATE, Statement.NO_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, personDTO.ownerID);
+      preparedStatement.setLong(1, personDTO.ownerId);
       preparedStatement.setString(2, personDTO.name);
-      preparedStatement.setString(3, personDTO.passportID);
+      preparedStatement.setString(3, personDTO.passportId);
 
       LocationDTO locationDTO = locationDAO.insert(personDTO.locationDTO);
       preparedStatement.setDouble(4, locationDTO.id);

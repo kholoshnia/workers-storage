@@ -17,7 +17,7 @@ public final class StatusLocaleFormat extends StatusFormat {
     this.logger = LogManager.getLogger(StatusLocaleFormat.class);
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.StatusFormat", locale);
 
-    statusMap =
+    this.statusMap =
         new HashMap<Status, String>() {
           {
             put(Status.FIRED, resourceBundle.getString("values.fired"));

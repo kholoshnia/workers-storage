@@ -5,7 +5,7 @@ import ru.storage.server.model.domain.entity.Entity;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -38,31 +38,31 @@ public final class Worker implements Cloneable, Entity {
   }
 
   private long id;
-  private long ownerID;
-  private LocalDateTime creationDate;
+  private long ownerId;
+  private ZonedDateTime creationDate;
   private Double salary;
   private Status status;
-  private LocalDateTime startDate;
-  private LocalDateTime endDate;
+  private ZonedDateTime startDate;
+  private ZonedDateTime endDate;
   private Coordinates coordinates;
   private Person person;
 
   public Worker(
       long id,
-      long ownerID,
-      LocalDateTime creationDate,
+      long ownerId,
+      ZonedDateTime creationDate,
       Double salary,
       Status status,
-      LocalDateTime startDate,
-      LocalDateTime endDate,
+      ZonedDateTime startDate,
+      ZonedDateTime endDate,
       Coordinates coordinates,
       Person person)
       throws ValidationException {
     checkId(id);
     this.id = id;
 
-    checkOwnerID(ownerID);
-    this.ownerID = ownerID;
+    checkOwnerId(ownerId);
+    this.ownerId = ownerId;
 
     checkCreationDate(creationDate);
     this.creationDate = creationDate;
@@ -90,7 +90,7 @@ public final class Worker implements Cloneable, Entity {
   public WorkerDTO toDTO() {
     return new WorkerDTO(
         this.id,
-        this.ownerID,
+        this.ownerId,
         this.creationDate,
         this.salary,
         this.status,
@@ -100,11 +100,11 @@ public final class Worker implements Cloneable, Entity {
         this.person.toDTO());
   }
 
-  public final long getID() {
+  public final long getId() {
     return id;
   }
 
-  public final void setID(long id) throws ValidationException {
+  public final void setId(long id) throws ValidationException {
     checkId(id);
     this.id = id;
   }
@@ -117,16 +117,16 @@ public final class Worker implements Cloneable, Entity {
     throw new ValidationException(WRONG_ID_EXCEPTION);
   }
 
-  public final long getOwnerID() {
-    return ownerID;
+  public final long getOwnerId() {
+    return ownerId;
   }
 
-  public final void setOwnerID(long ownerID) throws ValidationException {
-    checkOwnerID(ownerID);
-    this.ownerID = ownerID;
+  public final void setOwnerId(long ownerId) throws ValidationException {
+    checkOwnerId(ownerId);
+    this.ownerId = ownerId;
   }
 
-  private void checkOwnerID(long ownerId) throws ValidationException {
+  private void checkOwnerId(long ownerId) throws ValidationException {
     if (ownerId > 0 || ownerId == DEFAULT_OWNER_ID) {
       return;
     }
@@ -134,16 +134,16 @@ public final class Worker implements Cloneable, Entity {
     throw new ValidationException(WRONG_OWNER_ID_EXCEPTION);
   }
 
-  public LocalDateTime getCreationDate() {
+  public ZonedDateTime getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(LocalDateTime creationDate) throws ValidationException {
+  public void setCreationDate(ZonedDateTime creationDate) throws ValidationException {
     checkCreationDate(creationDate);
     this.creationDate = creationDate;
   }
 
-  private void checkCreationDate(LocalDateTime creationDate) throws ValidationException {
+  private void checkCreationDate(ZonedDateTime creationDate) throws ValidationException {
     if (creationDate != null) {
       return;
     }
@@ -185,16 +185,16 @@ public final class Worker implements Cloneable, Entity {
     throw new ValidationException(WRONG_STATUS_EXCEPTION);
   }
 
-  public LocalDateTime getStartDate() {
+  public ZonedDateTime getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(LocalDateTime startDate) throws ValidationException {
+  public void setStartDate(ZonedDateTime startDate) throws ValidationException {
     checkStartDate(startDate);
     this.startDate = startDate;
   }
 
-  private void checkStartDate(LocalDateTime startDate) throws ValidationException {
+  private void checkStartDate(ZonedDateTime startDate) throws ValidationException {
     if (startDate != null) {
       return;
     }
@@ -202,16 +202,16 @@ public final class Worker implements Cloneable, Entity {
     throw new ValidationException(WRONG_START_DATE_EXCEPTION);
   }
 
-  public LocalDateTime getEndDate() {
+  public ZonedDateTime getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(LocalDateTime endDate) throws ValidationException {
+  public void setEndDate(ZonedDateTime endDate) throws ValidationException {
     checkEndDate(endDate);
     this.endDate = endDate;
   }
 
-  private void checkEndDate(LocalDateTime endDate) throws ValidationException {
+  private void checkEndDate(ZonedDateTime endDate) throws ValidationException {
     if (endDate != null) {
       return;
     }
@@ -276,7 +276,7 @@ public final class Worker implements Cloneable, Entity {
     try {
       return new Worker(
           this.id,
-          this.ownerID,
+          this.ownerId,
           this.creationDate,
           this.salary,
           this.status,

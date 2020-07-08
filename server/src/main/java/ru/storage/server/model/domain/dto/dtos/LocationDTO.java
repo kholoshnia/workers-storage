@@ -13,14 +13,14 @@ public final class LocationDTO implements DTO<Location> {
   public static final String LONGITUDE_COLUMN = "longitude";
 
   public final long id;
-  public final long ownerID;
+  public final long ownerId;
   public final String address;
   public final Double latitude;
   public final Double longitude;
 
-  public LocationDTO(long id, long ownerID, String address, Double latitude, Double longitude) {
+  public LocationDTO(long id, long ownerId, String address, Double latitude, Double longitude) {
     this.id = id;
-    this.ownerID = ownerID;
+    this.ownerId = ownerId;
     this.address = address;
     this.latitude = latitude;
     this.longitude = longitude;
@@ -28,7 +28,7 @@ public final class LocationDTO implements DTO<Location> {
 
   @Override
   public Location toEntity() throws ValidationException {
-    return new Location(this.id, this.ownerID, this.address, this.latitude, this.longitude);
+    return new Location(this.id, this.ownerId, this.address, this.latitude, this.longitude);
   }
 
   @Override

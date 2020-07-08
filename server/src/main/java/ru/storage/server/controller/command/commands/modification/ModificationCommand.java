@@ -18,13 +18,13 @@ import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.domain.repository.Repository;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 public abstract class ModificationCommand extends Command {
-  protected final String WRONG_ID_ANSWER;
+  protected final String WRONG_Id_ANSWER;
   protected final String WORKER_NOT_FOUND_ANSWER;
   protected final String COLLECTION_IS_EMPTY_ANSWER;
   protected final String WRONG_WORKER_FORMAT_ANSWER;
@@ -48,7 +48,7 @@ public abstract class ModificationCommand extends Command {
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.ModificationCommand", locale);
 
-    WRONG_ID_ANSWER = resourceBundle.getString("answers.wrongID");
+    WRONG_Id_ANSWER = resourceBundle.getString("answers.wrongId");
     WORKER_NOT_FOUND_ANSWER = resourceBundle.getString("answers.workerNotFound");
     COLLECTION_IS_EMPTY_ANSWER = resourceBundle.getString("answers.collectionIsEmpty");
     WRONG_WORKER_FORMAT_ANSWER = resourceBundle.getString("answers.wrongWorkerFormat");
@@ -82,11 +82,11 @@ public abstract class ModificationCommand extends Command {
 
   protected final PersonDTO createPersonDTO(Map<String, String> arguments) throws ParserException {
     String name = parser.parseString(arguments.get(argumentMediator.PERSON_NAME));
-    String passportID = parser.parseString(arguments.get(argumentMediator.PERSON_PASSPORT_ID));
+    String passportId = parser.parseString(arguments.get(argumentMediator.PERSON_PASSPORT_Id));
     LocationDTO locationDTO = createLocationDTO(arguments);
 
     PersonDTO personDTO =
-        new PersonDTO(Person.DEFAULT_ID, Person.DEFAULT_OWNER_ID, name, passportID, locationDTO);
+        new PersonDTO(Person.DEFAULT_ID, Person.DEFAULT_OWNER_ID, name, passportId, locationDTO);
     logger.info(() -> "PersonDTO has been created.");
     return personDTO;
   }
@@ -94,9 +94,9 @@ public abstract class ModificationCommand extends Command {
   protected final WorkerDTO createWorkerDTO(Map<String, String> arguments) throws ParserException {
     Double salary = parser.parseDouble(arguments.get(argumentMediator.WORKER_SALARY));
     Status status = parser.parseStatus(arguments.get(argumentMediator.WORKER_STATUS));
-    LocalDateTime startDate =
+    ZonedDateTime startDate =
         parser.parseLocalDateTime(arguments.get(argumentMediator.WORKER_START_DATE));
-    LocalDateTime endDate =
+    ZonedDateTime endDate =
         parser.parseLocalDateTime(arguments.get(argumentMediator.WORKER_END_DATE));
     CoordinatesDTO coordinatesDTO = createCoordinatesDTO(arguments);
     PersonDTO personDTO = createPersonDTO(arguments);
@@ -105,7 +105,7 @@ public abstract class ModificationCommand extends Command {
         new WorkerDTO(
             Worker.DEFAULT_ID,
             Worker.DEFAULT_OWNER_ID,
-            LocalDateTime.now(),
+            ZonedDateTime.now(),
             salary,
             status,
             startDate,

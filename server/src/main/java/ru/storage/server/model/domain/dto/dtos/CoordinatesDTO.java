@@ -13,14 +13,14 @@ public final class CoordinatesDTO implements DTO<Coordinates> {
   public static final String Z_COLUMN = "z";
 
   public final long id;
-  public final long ownerID;
+  public final long ownerId;
   public final Double x;
   public final Double y;
   public final Double z;
 
-  public CoordinatesDTO(long id, long ownerID, Double x, Double y, Double z) {
+  public CoordinatesDTO(long id, long ownerId, Double x, Double y, Double z) {
     this.id = id;
-    this.ownerID = ownerID;
+    this.ownerId = ownerId;
     this.x = x;
     this.y = y;
     this.z = z;
@@ -28,7 +28,7 @@ public final class CoordinatesDTO implements DTO<Coordinates> {
 
   @Override
   public Coordinates toEntity() throws ValidationException {
-    return new Coordinates(this.id, this.ownerID, this.x, this.y, this.z);
+    return new Coordinates(this.id, this.ownerId, this.x, this.y, this.z);
   }
 
   @Override

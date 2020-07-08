@@ -16,7 +16,12 @@ import ru.storage.client.app.Client;
 import ru.storage.client.app.connection.ServerWorker;
 import ru.storage.client.app.connection.exceptions.ClientConnectionException;
 import ru.storage.client.app.guice.exceptions.ProvidingException;
+import ru.storage.client.controller.argumentFormer.ArgumentFormer;
 import ru.storage.client.controller.argumentFormer.FormerMediator;
+import ru.storage.client.controller.argumentFormer.argumentFormers.NewWorkerFormer;
+import ru.storage.client.controller.argumentFormer.argumentFormers.NewWorkerIdFormer;
+import ru.storage.client.controller.argumentFormer.argumentFormers.NoArgumentsFormer;
+import ru.storage.client.controller.argumentFormer.argumentFormers.WorkerIdFormer;
 import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.controller.localeManager.LocaleManager;
 import ru.storage.client.controller.responseHandler.ResponseHandler;
@@ -24,6 +29,7 @@ import ru.storage.client.controller.responseHandler.ServerResponseHandler;
 import ru.storage.client.view.View;
 import ru.storage.client.view.console.Console;
 import ru.storage.client.view.console.exceptions.ConsoleException;
+import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
 import ru.storage.common.guice.CommonModule;
 import ru.storage.common.serizliser.Serializer;
@@ -31,7 +37,9 @@ import ru.storage.common.serizliser.Serializer;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class ClientModule extends AbstractModule {
   private static final String CLIENT_CONFIG_PATH = "client.properties";
@@ -102,6 +110,37 @@ public final class ClientModule extends AbstractModule {
     LocaleManager localeManager = new LocaleManager(entities);
     logger.debug(() -> "Provided LocaleManager.");
     return localeManager;
+  }
+
+  @Provides
+  @Singleton
+  Map<String, ArgumentFormer> provideArgumentFormerMap(
+      CommandMediator commandMediator, ArgumentMediator argumentMediator) {
+    ArgumentFormer noArgumentsFormer = new NoArgumentsFormer();
+    ArgumentFormer workerIdFormer = new WorkerIdFormer(argumentMediator);
+    ArgumentFormer newWorkerFormer = new NewWorkerFormer(argumentMediator);
+    ArgumentFormer newWorkerId = new NewWorkerIdFormer(argumentMediator);
+
+    Map<String, ArgumentFormer> argumentFormerMap =
+        new HashMap<String, ArgumentFormer>() {
+          {
+            put(commandMediator.LOGIN, noArgumentsFormer);
+            put(commandMediator.LOGOUT, noArgumentsFormer);
+            put(commandMediator.REGISTER, noArgumentsFormer);
+            put(commandMediator.SHOW_HISTORY, noArgumentsFormer);
+            put(commandMediator.CLEAR_HISTORY, noArgumentsFormer);
+            put(commandMediator.ADD, newWorkerFormer);
+            put(commandMediator.REMOVE, workerIdFormer);
+            put(commandMediator.UPDATE, newWorkerId);
+            put(commandMediator.EXIT, workerIdFormer);
+            put(commandMediator.HELP, noArgumentsFormer);
+            put(commandMediator.INFO, noArgumentsFormer);
+            put(commandMediator.SHOW, noArgumentsFormer);
+          }
+        };
+
+    logger.debug(() -> "Provided argument former map.");
+    return argumentFormerMap;
   }
 
   @Provides

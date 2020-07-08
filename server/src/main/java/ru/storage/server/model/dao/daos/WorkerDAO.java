@@ -9,13 +9,13 @@ import ru.storage.server.model.domain.dto.dtos.CoordinatesDTO;
 import ru.storage.server.model.domain.dto.dtos.PersonDTO;
 import ru.storage.server.model.domain.dto.dtos.WorkerDTO;
 import ru.storage.server.model.domain.entity.entities.worker.Status;
-import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import javax.annotation.Nonnull;
 import java.sql.*;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -24,6 +24,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
   private static final String CANNOT_GET_ALL_WORKER_EXCEPTION;
   private static final String CANNOT_GET_WORKER_BY_ID_EXCEPTION;
   private static final String CANNOT_INSERT_WORKER_EXCEPTION;
+  private static final String CANNOT_GET_GENERATED_WORKER_ID;
   private static final String CANNOT_UPDATE_WORKER_EXCEPTION;
   private static final String CANNOT_DELETE_WORKER_EXCEPTION;
 
@@ -33,6 +34,8 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
     CANNOT_GET_ALL_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotGetAllWorkers");
     CANNOT_GET_WORKER_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.cannotGetWorkerById");
     CANNOT_INSERT_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotInsertWorker");
+    CANNOT_GET_GENERATED_WORKER_ID =
+        resourceBundle.getString("exceptions.cannotGetGeneratedWorkerId");
     CANNOT_UPDATE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotUpdateWorker");
     CANNOT_DELETE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteWorker");
   }
@@ -116,20 +119,30 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       while (resultSet.next()) {
         Long id = resultSet.getObject(WorkerDTO.ID_COLUMN, Long.class);
         Long ownerId = resultSet.getObject(WorkerDTO.OWNER_ID_COLUMN, Long.class);
-        LocalDateTime creationDate =
-            resultSet.getTimestamp(WorkerDTO.CREATION_DATE_COLUMN).toLocalDateTime();
+        ZonedDateTime creationDate =
+            resultSet
+                .getTimestamp(WorkerDTO.CREATION_DATE_COLUMN)
+                .toInstant()
+                .atZone(ZoneId.systemDefault());
         Double salary = resultSet.getObject(WorkerDTO.SALARY_COLUMN, Double.class);
         Status status =
             Status.getStatus(resultSet.getObject(WorkerDTO.STATUS_COLUMN, String.class));
-        LocalDateTime startDate =
-            resultSet.getTimestamp(WorkerDTO.START_DATE_COLUMN).toLocalDateTime();
-        LocalDateTime endDate = resultSet.getTimestamp(WorkerDTO.END_DATE_COLUMN).toLocalDateTime();
+        ZonedDateTime startDate =
+            resultSet
+                .getTimestamp(WorkerDTO.START_DATE_COLUMN)
+                .toInstant()
+                .atZone(ZoneId.systemDefault());
+        ZonedDateTime endDate =
+            resultSet
+                .getTimestamp(WorkerDTO.END_DATE_COLUMN)
+                .toInstant()
+                .atZone(ZoneId.systemDefault());
 
-        Long coordinatesID = resultSet.getObject(WorkerDTO.COORDINATES_COLUMN, Long.class);
-        CoordinatesDTO coordinatesDTO = coordinatesDAO.getByKey(coordinatesID);
+        Long coordinatesId = resultSet.getObject(WorkerDTO.COORDINATES_COLUMN, Long.class);
+        CoordinatesDTO coordinatesDTO = coordinatesDAO.getByKey(coordinatesId);
 
-        Long personID = resultSet.getObject(WorkerDTO.PERSON_COLUMN, Long.class);
-        PersonDTO personDTO = personDAO.getByKey(personID);
+        Long personId = resultSet.getObject(WorkerDTO.PERSON_COLUMN, Long.class);
+        PersonDTO personDTO = personDAO.getByKey(personId);
 
         WorkerDTO workerDTO =
             new WorkerDTO(
@@ -166,20 +179,30 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
 
       while (resultSet.next()) {
         Long ownerId = resultSet.getObject(WorkerDTO.OWNER_ID_COLUMN, Long.class);
-        LocalDateTime creationDate =
-            resultSet.getTimestamp(WorkerDTO.CREATION_DATE_COLUMN).toLocalDateTime();
+        ZonedDateTime creationDate =
+            resultSet
+                .getTimestamp(WorkerDTO.CREATION_DATE_COLUMN)
+                .toInstant()
+                .atZone(ZoneId.systemDefault());
         Double salary = resultSet.getObject(WorkerDTO.SALARY_COLUMN, Double.class);
         Status status =
             Status.getStatus(resultSet.getObject(WorkerDTO.STATUS_COLUMN, String.class));
-        LocalDateTime startDate =
-            resultSet.getTimestamp(WorkerDTO.START_DATE_COLUMN).toLocalDateTime();
-        LocalDateTime endDate = resultSet.getTimestamp(WorkerDTO.END_DATE_COLUMN).toLocalDateTime();
+        ZonedDateTime startDate =
+            resultSet
+                .getTimestamp(WorkerDTO.START_DATE_COLUMN)
+                .toInstant()
+                .atZone(ZoneId.systemDefault());
+        ZonedDateTime endDate =
+            resultSet
+                .getTimestamp(WorkerDTO.END_DATE_COLUMN)
+                .toInstant()
+                .atZone(ZoneId.systemDefault());
 
-        Long coordinatesID = resultSet.getObject(WorkerDTO.COORDINATES_COLUMN, Long.class);
-        CoordinatesDTO coordinatesDTO = coordinatesDAO.getByKey(coordinatesID);
+        Long coordinatesId = resultSet.getObject(WorkerDTO.COORDINATES_COLUMN, Long.class);
+        CoordinatesDTO coordinatesDTO = coordinatesDAO.getByKey(coordinatesId);
 
-        Long personID = resultSet.getObject(WorkerDTO.PERSON_COLUMN, Long.class);
-        PersonDTO personDTO = personDAO.getByKey(personID);
+        Long personId = resultSet.getObject(WorkerDTO.PERSON_COLUMN, Long.class);
+        PersonDTO personDTO = personDAO.getByKey(personId);
 
         workerDTO =
             new WorkerDTO(
@@ -206,51 +229,34 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
 
   @Override
   public WorkerDTO insert(@Nonnull WorkerDTO workerDTO) throws DAOException, DataSourceException {
-    WorkerDTO result;
+    Long resultId;
+    CoordinatesDTO coordinatesDTO;
+    PersonDTO personDTO;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, workerDTO.ownerID);
-      preparedStatement.setTimestamp(2, Timestamp.valueOf(workerDTO.creationDate));
+      preparedStatement.setLong(1, workerDTO.ownerId);
+      preparedStatement.setTimestamp(2, Timestamp.from(workerDTO.creationDate.toInstant()));
       preparedStatement.setDouble(3, workerDTO.salary);
       preparedStatement.setString(4, workerDTO.status.toString());
-      preparedStatement.setTimestamp(5, Timestamp.valueOf(workerDTO.startDate));
-      preparedStatement.setTimestamp(6, Timestamp.valueOf(workerDTO.endDate));
+      preparedStatement.setTimestamp(5, Timestamp.from(workerDTO.startDate.toInstant()));
+      preparedStatement.setTimestamp(6, Timestamp.from(workerDTO.endDate.toInstant()));
 
-      CoordinatesDTO coordinatesDTO = coordinatesDAO.insert(workerDTO.coordinatesDTO);
+      coordinatesDTO = coordinatesDAO.insert(workerDTO.coordinatesDTO);
       preparedStatement.setLong(6, coordinatesDTO.id);
 
-      PersonDTO personDTO = personDAO.insert(workerDTO.personDTO);
+      personDTO = personDAO.insert(workerDTO.personDTO);
       preparedStatement.setLong(6, personDTO.id);
 
       preparedStatement.execute();
 
       ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
       if (generatedKeys.next()) {
-        result =
-            new WorkerDTO(
-                generatedKeys.getLong(1),
-                workerDTO.ownerID,
-                workerDTO.creationDate,
-                workerDTO.salary,
-                workerDTO.status,
-                workerDTO.startDate,
-                workerDTO.endDate,
-                coordinatesDTO,
-                personDTO);
+        resultId = generatedKeys.getObject(1, Long.class);
       } else {
-        result =
-            new WorkerDTO(
-                Worker.DEFAULT_ID,
-                Worker.DEFAULT_OWNER_ID,
-                workerDTO.creationDate,
-                workerDTO.salary,
-                workerDTO.status,
-                workerDTO.startDate,
-                workerDTO.endDate,
-                workerDTO.coordinatesDTO,
-                workerDTO.personDTO);
+        logger.error(() -> "Cannot get generated worker id.");
+        throw new DAOException(CANNOT_GET_GENERATED_WORKER_ID);
       }
     } catch (SQLException e) {
       logger.error(() -> "Cannot insert worker.", e);
@@ -260,7 +266,16 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
     }
 
     logger.info(() -> "Worker has been inserted.");
-    return result;
+    return new WorkerDTO(
+        resultId,
+        workerDTO.ownerId,
+        workerDTO.creationDate,
+        workerDTO.salary,
+        workerDTO.status,
+        workerDTO.startDate,
+        workerDTO.endDate,
+        coordinatesDTO,
+        personDTO);
   }
 
   @Override
@@ -269,12 +284,12 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
         dataSource.getPrepareStatement(UPDATE, Statement.NO_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, workerDTO.ownerID);
-      preparedStatement.setTimestamp(2, Timestamp.valueOf(workerDTO.creationDate));
+      preparedStatement.setLong(1, workerDTO.ownerId);
+      preparedStatement.setTimestamp(2, Timestamp.from(workerDTO.creationDate.toInstant()));
       preparedStatement.setDouble(3, workerDTO.salary);
       preparedStatement.setString(4, workerDTO.status.toString());
-      preparedStatement.setTimestamp(5, Timestamp.valueOf(workerDTO.startDate));
-      preparedStatement.setTimestamp(6, Timestamp.valueOf(workerDTO.endDate));
+      preparedStatement.setTimestamp(5, Timestamp.from(workerDTO.startDate.toInstant()));
+      preparedStatement.setTimestamp(6, Timestamp.from(workerDTO.endDate.toInstant()));
 
       CoordinatesDTO coordinatesDTO = coordinatesDAO.insert(workerDTO.coordinatesDTO);
       preparedStatement.setLong(6, coordinatesDTO.id);

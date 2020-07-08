@@ -13,23 +13,23 @@ public final class PersonDTO implements DTO<Person> {
   public static final String LOCATION_COLUMN = "location";
 
   public final long id;
-  public final long ownerID;
+  public final long ownerId;
   public final String name;
-  public final String passportID;
+  public final String passportId;
   public final LocationDTO locationDTO;
 
-  public PersonDTO(long id, long ownerID, String name, String passportID, LocationDTO locationDTO) {
+  public PersonDTO(long id, long ownerId, String name, String passportId, LocationDTO locationDTO) {
     this.id = id;
-    this.ownerID = ownerID;
+    this.ownerId = ownerId;
     this.name = name;
-    this.passportID = passportID;
+    this.passportId = passportId;
     this.locationDTO = locationDTO;
   }
 
   @Override
   public Person toEntity() throws ValidationException {
     return new Person(
-        this.id, this.ownerID, this.name, this.passportID, this.locationDTO.toEntity());
+        this.id, this.ownerId, this.name, this.passportId, this.locationDTO.toEntity());
   }
 
   @Override
@@ -37,13 +37,13 @@ public final class PersonDTO implements DTO<Person> {
     return "PersonDTO{"
         + "id="
         + id
-        + ", ownerID="
-        + ownerID
+        + ", ownerId="
+        + ownerId
         + ", name='"
         + name
         + '\''
-        + ", passportID='"
-        + passportID
+        + ", passportId='"
+        + passportId
         + '\''
         + ", locationDTO="
         + locationDTO

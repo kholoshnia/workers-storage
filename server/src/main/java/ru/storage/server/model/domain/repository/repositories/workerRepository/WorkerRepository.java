@@ -143,7 +143,7 @@ public final class WorkerRepository implements Repository<Worker> {
   @Override
   public synchronized void update(@Nonnull Worker worker) throws WorkerRepositoryException {
     try {
-      WorkerDTO result = workerDAO.getByKey(worker.getID());
+      WorkerDTO result = workerDAO.getByKey(worker.getId());
 
       if (result == null) {
         logger.error(
@@ -174,7 +174,7 @@ public final class WorkerRepository implements Repository<Worker> {
   @Override
   public synchronized void delete(@Nonnull Worker worker) throws WorkerRepositoryException {
     try {
-      WorkerDTO result = workerDAO.getByKey(worker.getID());
+      WorkerDTO result = workerDAO.getByKey(worker.getId());
 
       if (result == null) {
         logger.error(

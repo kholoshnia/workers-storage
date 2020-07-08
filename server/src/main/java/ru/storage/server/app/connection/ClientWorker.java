@@ -10,19 +10,22 @@ import ru.storage.server.app.connection.exceptions.ServerException;
 import ru.storage.server.app.connection.selector.exceptions.SelectorException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 public final class ClientWorker {
   private final Logger logger;
-  private final ByteBuffer byteBuffer;
+  private final int bufferSize;
   private final Serializer serializer;
   private final SocketChannel client;
+  private ByteBuffer buffer;
 
   public ClientWorker(int bufferSize, Serializer serializer, SocketChannel client)
       throws ServerException {
     this.logger = LogManager.getLogger(ClientWorker.class);
-    this.byteBuffer = ByteBuffer.allocate(bufferSize);
+    this.buffer = ByteBuffer.allocate(bufferSize);
+    this.bufferSize = bufferSize;
     this.serializer = serializer;
     this.client = client;
 
@@ -35,21 +38,65 @@ public final class ClientWorker {
   }
 
   public Request read() throws SelectorException {
+    int size;
     try {
-      byteBuffer.clear();
-      client.read(byteBuffer);
-      return serializer.deserialize(byteBuffer.array(), Request.class);
-    } catch (IOException | DeserializationException e) {
-      logger.error(() -> "Cannot read request.", e);
+      InputStream inputStream = client.socket().getInputStream();
+      size = inputStream.read(buffer.array());
+      // socket.setSoTimeout(5000);
+    } catch (IOException e) {
+      try {
+        client.close();
+        buffer = ByteBuffer.allocate(bufferSize);
+      } catch (IOException ex) {
+        ex.printStackTrace();
+        System.exit(1);
+      }
       throw new SelectorException(e);
+    }
+
+    if (size == -1) {
+      try {
+        client.close();
+        buffer = ByteBuffer.allocate(bufferSize);
+      } catch (IOException e) {
+        e.printStackTrace();
+        System.exit(1);
+      }
+      throw new SelectorException("Reached an end of inputStream");
+    }
+
+    byte[] bytes = new byte[bufferSize];
+    buffer.rewind();
+    buffer.get(bytes, 0, size);
+    buffer.clear();
+
+    try {
+      return serializer.deserialize(bytes, Request.class);
+    } catch (DeserializationException e) {
+      return null;
     }
   }
 
+  //  public Request read() throws SelectorException {
+  //    try {
+  //      buffer.clear();
+  //
+  //      InputStream inputStream = client.socket().getInputStream();
+  //      int size = inputStream.read(buffer.array());
+  //
+  //      // client.read(buffer);
+  //      return serializer.deserialize(buffer.array(), Request.class);
+  //    } catch (IOException | DeserializationException e) {
+  //      logger.error(() -> "Cannot read request.", e);
+  //      throw new SelectorException(e);
+  //    }
+  //  }
+
   public void write(Response response) throws SelectorException {
     try {
-      byteBuffer.clear();
-      byteBuffer.put(serializer.serialize(response));
-      client.write(byteBuffer);
+      buffer.clear();
+      buffer.put(serializer.serialize(response));
+      client.write(buffer);
     } catch (IOException e) {
       logger.error(() -> "Cannot write response.", e);
       throw new SelectorException(e);

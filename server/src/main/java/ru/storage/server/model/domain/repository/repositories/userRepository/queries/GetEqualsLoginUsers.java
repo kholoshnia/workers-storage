@@ -22,7 +22,7 @@ public final class GetEqualsLoginUsers implements Query<User> {
   }
 
   @Override
-  public List<User> execute(List<User> users) throws RepositoryException {
+  public List<User> execute(List<User> users) {
     return users.stream()
         .filter(user -> user.getLogin().equals(login))
         .collect(Collectors.toCollection(CopyOnWriteArrayList::new));

@@ -24,7 +24,7 @@ public final class NewWorkerFormer implements ArgumentFormer {
 
   @Override
   public void changeLocale() {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.NoArgumentsFormer");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.NewWorkerFormer");
 
     wrongArgumentsNumberException = resourceBundle.getString("exceptions.wrongArgumentsNumber");
   }

@@ -11,21 +11,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public final class WorkerIDFormer implements ArgumentFormer {
+public final class NewWorkerIdFormer implements ArgumentFormer {
   private final Logger logger;
   private final ArgumentMediator argumentMediator;
 
   private String wrongArgumentsNumberException;
   private String wrongArgumentValueException;
 
-  public WorkerIDFormer(ArgumentMediator argumentMediator) {
-    this.logger = LogManager.getLogger(WorkerIDFormer.class);
+  public NewWorkerIdFormer(ArgumentMediator argumentMediator) {
+    this.logger = LogManager.getLogger(NewWorkerIdFormer.class);
     this.argumentMediator = argumentMediator;
   }
 
   @Override
   public void changeLocale() {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.WorkerIDFormer");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.NewWorkerIdFormer");
 
     wrongArgumentsNumberException = resourceBundle.getString("exceptions.wrongArgumentsNumber");
     wrongArgumentValueException = resourceBundle.getString("exceptions.wrongArgumentValue");
@@ -58,7 +58,7 @@ public final class WorkerIDFormer implements ArgumentFormer {
   @Override
   public Map<String, String> form(List<String> arguments) {
     Map<String, String> allArguments = new HashMap<>();
-    allArguments.put(argumentMediator.WORKER_ID, arguments.get(0));
+    allArguments.put(argumentMediator.WORKER_Id, arguments.get(0));
 
     logger.info(() -> "All arguments were formed.");
     return allArguments;

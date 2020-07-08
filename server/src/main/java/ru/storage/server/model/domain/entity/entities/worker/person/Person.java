@@ -23,29 +23,29 @@ public final class Person implements Cloneable, Entity {
     WRONG_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongId");
     WRONG_OWNER_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongOwnerId");
     WRONG_NAME_EXCEPTION = resourceBundle.getString("exceptions.wrongName");
-    WRONG_PASSPORT_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongPassportID");
+    WRONG_PASSPORT_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongPassportId");
     WRONG_LOCATION_EXCEPTION = resourceBundle.getString("exceptions.wrongLocation");
   }
 
   private long id;
-  private long ownerID;
+  private long ownerId;
   private String name;
-  private String passportID;
+  private String passportId;
   private Location location;
 
-  public Person(long id, long ownerID, String name, String passportID, Location location)
+  public Person(long id, long ownerId, String name, String passportId, Location location)
       throws ValidationException {
     checkId(id);
     this.id = id;
 
-    checkOwnerID(ownerID);
-    this.ownerID = ownerID;
+    checkOwnerId(ownerId);
+    this.ownerId = ownerId;
 
     checkName(name);
     this.name = name;
 
-    checkPassportID(passportID);
-    this.passportID = passportID;
+    checkPassportId(passportId);
+    this.passportId = passportId;
 
     checkLocation(location);
     this.location = location;
@@ -53,14 +53,14 @@ public final class Person implements Cloneable, Entity {
 
   @Override
   public PersonDTO toDTO() {
-    return new PersonDTO(this.id, this.ownerID, this.name, this.passportID, this.location.toDTO());
+    return new PersonDTO(this.id, this.ownerId, this.name, this.passportId, this.location.toDTO());
   }
 
-  public final long getID() {
+  public final long getId() {
     return id;
   }
 
-  public final void setID(long id) throws ValidationException {
+  public final void setId(long id) throws ValidationException {
     checkId(id);
     this.id = id;
   }
@@ -73,16 +73,16 @@ public final class Person implements Cloneable, Entity {
     throw new ValidationException(WRONG_ID_EXCEPTION);
   }
 
-  public final long getOwnerID() {
-    return ownerID;
+  public final long getOwnerId() {
+    return ownerId;
   }
 
-  public final void setOwnerID(long ownerID) throws ValidationException {
-    checkOwnerID(ownerID);
-    this.ownerID = ownerID;
+  public final void setOwnerId(long ownerId) throws ValidationException {
+    checkOwnerId(ownerId);
+    this.ownerId = ownerId;
   }
 
-  private void checkOwnerID(long ownerId) throws ValidationException {
+  private void checkOwnerId(long ownerId) throws ValidationException {
     if (ownerId > 0 || ownerId == DEFAULT_OWNER_ID) {
       return;
     }
@@ -107,17 +107,17 @@ public final class Person implements Cloneable, Entity {
     throw new ValidationException(WRONG_NAME_EXCEPTION);
   }
 
-  public String getPassportID() {
-    return passportID;
+  public String getPassportId() {
+    return passportId;
   }
 
-  public void setPassportID(String passportID) throws ValidationException {
-    checkPassportID(passportID);
-    this.passportID = passportID;
+  public void setPassportId(String passportId) throws ValidationException {
+    checkPassportId(passportId);
+    this.passportId = passportId;
   }
 
-  private void checkPassportID(String passportID) throws ValidationException {
-    if (passportID != null && passportID.length() >= 10 && passportID.length() <= 40) {
+  private void checkPassportId(String passportId) throws ValidationException {
+    if (passportId != null && passportId.length() >= 10 && passportId.length() <= 40) {
 
       return;
     }
@@ -148,19 +148,19 @@ public final class Person implements Cloneable, Entity {
     if (o == null || getClass() != o.getClass()) return false;
     Person person = (Person) o;
     return Objects.equals(name, person.name)
-        && Objects.equals(passportID, person.passportID)
+        && Objects.equals(passportId, person.passportId)
         && Objects.equals(location, person.location);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, passportID, location);
+    return Objects.hash(name, passportId, location);
   }
 
   @Override
   public Person clone() {
     try {
-      return new Person(this.id, this.ownerID, this.name, this.passportID, this.location);
+      return new Person(this.id, this.ownerId, this.name, this.passportId, this.location);
     } catch (ValidationException e) {
       throw new RuntimeException(e);
     }
@@ -172,8 +172,8 @@ public final class Person implements Cloneable, Entity {
         + "name='"
         + name
         + '\''
-        + ", passportID='"
-        + passportID
+        + ", passportId='"
+        + passportId
         + '\''
         + ", location="
         + location

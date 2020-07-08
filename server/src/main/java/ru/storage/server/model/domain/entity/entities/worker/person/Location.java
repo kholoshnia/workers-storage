@@ -28,18 +28,18 @@ public final class Location implements Cloneable, Entity {
   }
 
   private long id;
-  private long ownerID;
+  private long ownerId;
   private String address;
   private Double latitude;
   private Double longitude;
 
-  public Location(long id, long ownerID, String address, Double latitude, Double longitude)
+  public Location(long id, long ownerId, String address, Double latitude, Double longitude)
       throws ValidationException {
     checkId(id);
     this.id = id;
 
-    checkOwnerID(ownerID);
-    this.ownerID = ownerID;
+    checkOwnerId(ownerId);
+    this.ownerId = ownerId;
 
     checkAddress(address);
     this.address = address;
@@ -53,14 +53,14 @@ public final class Location implements Cloneable, Entity {
 
   @Override
   public LocationDTO toDTO() {
-    return new LocationDTO(this.id, this.ownerID, this.address, this.latitude, this.longitude);
+    return new LocationDTO(this.id, this.ownerId, this.address, this.latitude, this.longitude);
   }
 
-  public final long getID() {
+  public final long getId() {
     return id;
   }
 
-  public final void setID(long id) throws ValidationException {
+  public final void setId(long id) throws ValidationException {
     checkId(id);
     this.id = id;
   }
@@ -73,16 +73,16 @@ public final class Location implements Cloneable, Entity {
     throw new ValidationException(WRONG_ID_EXCEPTION);
   }
 
-  public final long getOwnerID() {
-    return ownerID;
+  public final long getOwnerId() {
+    return ownerId;
   }
 
-  public final void setOwnerID(long ownerID) throws ValidationException {
-    checkOwnerID(ownerID);
-    this.ownerID = ownerID;
+  public final void setOwnerId(long ownerId) throws ValidationException {
+    checkOwnerId(ownerId);
+    this.ownerId = ownerId;
   }
 
-  private void checkOwnerID(long ownerId) throws ValidationException {
+  private void checkOwnerId(long ownerId) throws ValidationException {
     if (ownerId > 0 || ownerId == DEFAULT_OWNER_ID) {
       return;
     }
@@ -159,7 +159,7 @@ public final class Location implements Cloneable, Entity {
   @Override
   public Location clone() {
     try {
-      return new Location(this.id, this.ownerID, this.address, this.latitude, this.longitude);
+      return new Location(this.id, this.ownerId, this.address, this.latitude, this.longitude);
     } catch (ValidationException e) {
       throw new RuntimeException(e);
     }

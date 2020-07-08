@@ -24,6 +24,7 @@ import ru.storage.server.app.connection.selector.exceptions.SelectorException;
 import ru.storage.server.app.guice.exceptions.ProvidingException;
 import ru.storage.server.controller.Controller;
 import ru.storage.server.controller.auth.AuthController;
+import ru.storage.server.controller.check.CheckController;
 import ru.storage.server.controller.command.CommandController;
 import ru.storage.server.controller.command.factory.CommandFactoryMediator;
 import ru.storage.server.controller.services.hash.HashGenerator;
@@ -75,6 +76,7 @@ public final class ServerModule extends AbstractModule {
     bind(History.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Services have been configured.");
 
+    bind(CheckController.class).in(Scopes.SINGLETON);
     bind(AuthController.class).in(Scopes.SINGLETON);
     bind(CommandController.class).in(Scopes.SINGLETON);
     bind(CommandFactoryMediator.class).in(Scopes.SINGLETON);
@@ -165,11 +167,11 @@ public final class ServerModule extends AbstractModule {
     Executor readExecutor =
         Executors.newCachedThreadPool(
             new ThreadFactory() {
-              private final AtomicLong threadIndex = new AtomicLong(0);
+              private final AtomicLong index = new AtomicLong(0);
 
               @Override
               public Thread newThread(Runnable runnable) {
-                return new Thread(runnable, "read-" + threadIndex.getAndIncrement());
+                return new Thread(runnable, "read-" + index.getAndIncrement());
               }
             });
 
@@ -188,11 +190,11 @@ public final class ServerModule extends AbstractModule {
     Executor sendExecutor =
         Executors.newCachedThreadPool(
             new ThreadFactory() {
-              private final AtomicLong threadIndex = new AtomicLong(0);
+              private final AtomicLong index = new AtomicLong(0);
 
               @Override
               public Thread newThread(Runnable runnable) {
-                return new Thread(runnable, "send-" + threadIndex.getAndIncrement());
+                return new Thread(runnable, "send-" + index.getAndIncrement());
               }
             });
 
@@ -215,10 +217,13 @@ public final class ServerModule extends AbstractModule {
   @Provides
   @Singleton
   List<Controller> provideControllers(
-      AuthController authController, CommandController commandController) {
+      CheckController checkController,
+      AuthController authController,
+      CommandController commandController) {
     List<Controller> controllers =
         new ArrayList<Controller>() {
           {
+            add(checkController);
             add(authController);
             add(commandController);
           }

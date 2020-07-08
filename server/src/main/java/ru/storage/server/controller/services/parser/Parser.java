@@ -6,7 +6,7 @@ import org.apache.logging.log4j.util.Supplier;
 import ru.storage.server.controller.services.parser.exceptions.ParserException;
 import ru.storage.server.model.domain.entity.entities.worker.Status;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
@@ -57,11 +57,11 @@ public final class Parser {
     return status;
   }
 
-  public LocalDateTime parseLocalDateTime(String localDateTimeString) throws ParserException {
-    LocalDateTime result;
+  public ZonedDateTime parseLocalDateTime(String localDateTimeString) throws ParserException {
+    ZonedDateTime result;
 
     try {
-      result = LocalDateTime.parse(localDateTimeString, DateTimeFormatter.ISO_DATE_TIME);
+      result = ZonedDateTime.parse(localDateTimeString, DateTimeFormatter.ISO_DATE_TIME);
     } catch (DateTimeParseException | NullPointerException e) {
       logger.info(
           "Exception was caught during parsing local date time string: \"{}\".",

@@ -42,6 +42,7 @@ public class AuthController implements Controller {
     this.subject = configuration.getString("jwt.subject");
   }
 
+  // TODO: Implement on client side.
   @Override
   public Response handle(Request request) {
     ResourceBundle resourceBundle =
@@ -53,8 +54,8 @@ public class AuthController implements Controller {
       return null;
     }
 
-    if (request.getToken() == null) {
-      logger.warn("Token was not found, user was not authorized.");
+    if (request.getToken().isEmpty()) {
+      logger.warn("Token was not found, user was not authenticated.");
       return new Response(Status.UNAUTHORIZED, unauthorizedAnswer);
     }
 
@@ -66,15 +67,15 @@ public class AuthController implements Controller {
           .getBody()
           .getSubject()
           .equals(subject)) {
-        logger.warn(() -> "User was not authenticated");
+        logger.warn(() -> "User was not authorized");
         return new Response(Status.UNAUTHORIZED, unauthorizedAnswer);
       }
     } catch (JwtException e) {
-      logger.warn(() -> "User was not authenticated", e);
+      logger.warn(() -> "User was not authorized", e);
       return new Response(Status.UNAUTHORIZED, unauthorizedAnswer);
     }
 
-    logger.info(() -> "User has been authenticated.");
+    logger.info(() -> "User has been authorized.");
     return null;
   }
 }

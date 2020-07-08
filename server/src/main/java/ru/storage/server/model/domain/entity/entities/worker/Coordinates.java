@@ -28,18 +28,18 @@ public final class Coordinates implements Cloneable, Entity {
   }
 
   private long id;
-  private long ownerID;
+  private long ownerId;
   private Double x;
   private Double y;
   private Double z;
 
-  public Coordinates(long id, long ownerID, Double x, Double y, Double z)
+  public Coordinates(long id, long ownerId, Double x, Double y, Double z)
       throws ValidationException {
     checkId(id);
     this.id = id;
 
-    checkOwnerID(ownerID);
-    this.ownerID = ownerID;
+    checkOwnerId(ownerId);
+    this.ownerId = ownerId;
 
     checkX(x);
     this.x = x;
@@ -53,14 +53,14 @@ public final class Coordinates implements Cloneable, Entity {
 
   @Override
   public CoordinatesDTO toDTO() {
-    return new CoordinatesDTO(this.id, this.ownerID, this.x, this.y, this.z);
+    return new CoordinatesDTO(this.id, this.ownerId, this.x, this.y, this.z);
   }
 
-  public final long getID() {
+  public final long getId() {
     return id;
   }
 
-  public final void setID(long id) throws ValidationException {
+  public final void setId(long id) throws ValidationException {
     checkId(id);
     this.id = id;
   }
@@ -73,16 +73,16 @@ public final class Coordinates implements Cloneable, Entity {
     throw new ValidationException(WRONG_ID_EXCEPTION);
   }
 
-  public final long getOwnerID() {
-    return ownerID;
+  public final long getOwnerId() {
+    return ownerId;
   }
 
-  public final void setOwnerID(long ownerID) throws ValidationException {
-    checkOwnerID(ownerID);
-    this.ownerID = ownerID;
+  public final void setOwnerId(long ownerId) throws ValidationException {
+    checkOwnerId(ownerId);
+    this.ownerId = ownerId;
   }
 
-  private void checkOwnerID(long ownerId) throws ValidationException {
+  private void checkOwnerId(long ownerId) throws ValidationException {
     if (ownerId > 0 || ownerId == DEFAULT_OWNER_ID) {
       return;
     }
@@ -157,7 +157,7 @@ public final class Coordinates implements Cloneable, Entity {
   @Override
   public Coordinates clone() {
     try {
-      return new Coordinates(this.id, this.ownerID, this.x, this.y, this.z);
+      return new Coordinates(this.id, this.ownerId, this.x, this.y, this.z);
     } catch (ValidationException e) {
       throw new RuntimeException(e);
     }

@@ -26,27 +26,27 @@ public abstract class ViewCommand extends Command {
   protected final CurrencyFormat currencyFormat;
 
   private final String WORKER_PREFIX;
-  private final String WORKER_ID_PREFIX;
-  private final String WORKER_OWNER_ID_PREFIX;
+  private final String WORKER_Id_PREFIX;
+  private final String WORKER_OWNER_Id_PREFIX;
   private final String WORKER_CREATION_DATE_PREFIX;
   private final String WORKER_SALARY_PREFIX;
   private final String WORKER_STATUS_PREFIX;
   private final String WORKER_START_DATE_PREFIX;
   private final String WORKER_END_DATE_PREFIX;
   private final String COORDINATES_PREFIX;
-  private final String COORDINATES_OWNER_ID_PREFIX;
-  private final String COORDINATES_ID_PREFIX;
+  private final String COORDINATES_OWNER_Id_PREFIX;
+  private final String COORDINATES_Id_PREFIX;
   private final String COORDINATES_X_PREFIX;
   private final String COORDINATES_Y_PREFIX;
   private final String COORDINATES_Z_PREFIX;
   private final String PERSON_PREFIX;
-  private final String PERSON_ID_PREFIX;
-  private final String PERSON_OWNER_ID_PREFIX;
+  private final String PERSON_Id_PREFIX;
+  private final String PERSON_OWNER_Id_PREFIX;
   private final String PERSON_NAME_PREFIX;
-  private final String PERSON_PASSWORD_ID_PREFIX;
+  private final String PERSON_PASSWORD_Id_PREFIX;
   private final String LOCATION_PREFIX;
-  private final String LOCATION_ID_PREFIX;
-  private final String LOCATION_OWNER_ID_PREFIX;
+  private final String LOCATION_Id_PREFIX;
+  private final String LOCATION_OWNER_Id_PREFIX;
   private final String LOCATION_ADDRESS_PREFIX;
   private final String LOCATION_LATITUDE_PREFIX;
   private final String LOCATION_LONGITUDE_PREFIX;
@@ -70,27 +70,27 @@ public abstract class ViewCommand extends Command {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ViewCommand", locale);
 
     WORKER_PREFIX = resourceBundle.getString("prefixes.worker");
-    WORKER_ID_PREFIX = resourceBundle.getString("prefixes.worker.ID");
-    WORKER_OWNER_ID_PREFIX = resourceBundle.getString("prefixes.worker.ownerID");
+    WORKER_Id_PREFIX = resourceBundle.getString("prefixes.worker.id");
+    WORKER_OWNER_Id_PREFIX = resourceBundle.getString("prefixes.worker.ownerId");
     WORKER_CREATION_DATE_PREFIX = resourceBundle.getString("prefixes.worker.creationDate");
     WORKER_SALARY_PREFIX = resourceBundle.getString("prefixes.worker.salary");
     WORKER_STATUS_PREFIX = resourceBundle.getString("prefixes.worker.status");
     WORKER_START_DATE_PREFIX = resourceBundle.getString("prefixes.worker.startDate");
     WORKER_END_DATE_PREFIX = resourceBundle.getString("prefixes.worker.endDate");
     COORDINATES_PREFIX = resourceBundle.getString("prefixes.coordinates");
-    COORDINATES_ID_PREFIX = resourceBundle.getString("prefixes.coordinates.ID");
-    COORDINATES_OWNER_ID_PREFIX = resourceBundle.getString("prefixes.coordinates.ownerID");
+    COORDINATES_Id_PREFIX = resourceBundle.getString("prefixes.coordinates.Id");
+    COORDINATES_OWNER_Id_PREFIX = resourceBundle.getString("prefixes.coordinates.ownerId");
     COORDINATES_X_PREFIX = resourceBundle.getString("prefixes.coordinates.x");
     COORDINATES_Y_PREFIX = resourceBundle.getString("prefixes.coordinates.y");
     COORDINATES_Z_PREFIX = resourceBundle.getString("prefixes.coordinates.z");
     PERSON_PREFIX = resourceBundle.getString("prefixes.person");
-    PERSON_ID_PREFIX = resourceBundle.getString("prefixes.person.ID");
-    PERSON_OWNER_ID_PREFIX = resourceBundle.getString("prefixes.person.ownerID");
+    PERSON_Id_PREFIX = resourceBundle.getString("prefixes.person.id");
+    PERSON_OWNER_Id_PREFIX = resourceBundle.getString("prefixes.person.ownerId");
     PERSON_NAME_PREFIX = resourceBundle.getString("prefixes.person.name");
-    PERSON_PASSWORD_ID_PREFIX = resourceBundle.getString("prefixes.person.passwordID");
+    PERSON_PASSWORD_Id_PREFIX = resourceBundle.getString("prefixes.person.passwordId");
     LOCATION_PREFIX = resourceBundle.getString("prefixes.location");
-    LOCATION_ID_PREFIX = resourceBundle.getString("prefixes.location.ID");
-    LOCATION_OWNER_ID_PREFIX = resourceBundle.getString("prefixes.location.ownerID");
+    LOCATION_Id_PREFIX = resourceBundle.getString("prefixes.location.id");
+    LOCATION_OWNER_Id_PREFIX = resourceBundle.getString("prefixes.location.ownerId");
     LOCATION_ADDRESS_PREFIX = resourceBundle.getString("prefixes.location.address");
     LOCATION_LATITUDE_PREFIX = resourceBundle.getString("prefixes.location.latitude");
     LOCATION_LONGITUDE_PREFIX = resourceBundle.getString("prefixes.location.longitude");
@@ -100,9 +100,9 @@ public abstract class ViewCommand extends Command {
     stringBuilder
         .append(String.format("%s: ", WORKER_PREFIX))
         .append(System.lineSeparator())
-        .append(String.format("\t%s: %d", WORKER_ID_PREFIX, worker.getID()))
+        .append(String.format("\t%s: %d", WORKER_Id_PREFIX, worker.getId()))
         .append(System.lineSeparator())
-        .append(String.format("\t%s: %d", WORKER_OWNER_ID_PREFIX, worker.getOwnerID()))
+        .append(String.format("\t%s: %d", WORKER_OWNER_Id_PREFIX, worker.getOwnerId()))
         .append(System.lineSeparator())
         .append(
             String.format(
@@ -127,9 +127,9 @@ public abstract class ViewCommand extends Command {
         .append(System.lineSeparator())
         .append(String.format("\t%s: ", COORDINATES_PREFIX))
         .append(System.lineSeparator())
-        .append(String.format("\t\t%s: %d", COORDINATES_ID_PREFIX, worker.getCoordinates().getID()))
+        .append(String.format("\t\t%s: %d", COORDINATES_Id_PREFIX, worker.getCoordinates().getId()))
         .append(System.lineSeparator())
-        .append(String.format("\t%s: %d", COORDINATES_OWNER_ID_PREFIX, worker.getOwnerID()))
+        .append(String.format("\t%s: %d", COORDINATES_OWNER_Id_PREFIX, worker.getOwnerId()))
         .append(System.lineSeparator())
         .append(
             String.format(
@@ -148,27 +148,27 @@ public abstract class ViewCommand extends Command {
         .append(System.lineSeparator())
         .append(String.format("\t\t%s: ", PERSON_PREFIX))
         .append(System.lineSeparator())
-        .append(String.format("\t\t\t%s: %d", PERSON_ID_PREFIX, worker.getPerson().getID()))
+        .append(String.format("\t\t\t%s: %d", PERSON_Id_PREFIX, worker.getPerson().getId()))
         .append(System.lineSeparator())
         .append(
-            String.format("\t\t\t%s: %d", PERSON_OWNER_ID_PREFIX, worker.getPerson().getOwnerID()))
+            String.format("\t\t\t%s: %d", PERSON_OWNER_Id_PREFIX, worker.getPerson().getOwnerId()))
         .append(System.lineSeparator())
         .append(String.format("\t\t\t%s: %s", PERSON_NAME_PREFIX, worker.getPerson().getName()))
         .append(System.lineSeparator())
         .append(
             String.format(
-                "\t\t\t%s: %s", PERSON_PASSWORD_ID_PREFIX, worker.getPerson().getPassportID()))
+                "\t\t\t%s: %s", PERSON_PASSWORD_Id_PREFIX, worker.getPerson().getPassportId()))
         .append(System.lineSeparator())
         .append(String.format("\t\t\t%s: ", LOCATION_PREFIX))
         .append(System.lineSeparator())
         .append(
             String.format(
-                "\t\t\t\t%s: %d", LOCATION_ID_PREFIX, worker.getPerson().getLocation().getID()))
+                "\t\t\t\t%s: %d", LOCATION_Id_PREFIX, worker.getPerson().getLocation().getId()))
         .append(System.lineSeparator())
         .append(
             String.format(
                 "\t\t\t\t%s: %d",
-                LOCATION_OWNER_ID_PREFIX, worker.getPerson().getLocation().getOwnerID()))
+                LOCATION_OWNER_Id_PREFIX, worker.getPerson().getLocation().getOwnerId()))
         .append(System.lineSeparator())
         .append(
             String.format(

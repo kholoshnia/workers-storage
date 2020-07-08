@@ -51,7 +51,7 @@ public class ServerConnection extends SelectorConnection {
     try {
       SocketChannel client = serverSocketChannel.accept();
       client.configureBlocking(false);
-      client.register(selector, SelectionKey.OP_READ);
+      client.register(selector, client.validOps());
     } catch (IOException e) {
       logger.error(() -> "Cannot accept client.", e);
       throw new SelectorException(e);
@@ -62,7 +62,7 @@ public class ServerConnection extends SelectorConnection {
   protected void handle(SelectionKey selectionKey) throws ServerException {
     SocketChannel client = (SocketChannel) selectionKey.channel();
     ClientWorker clientWorker = new ClientWorker(bufferSize, serializer, client);
-    logger.info(() -> "ClientWorker with client was created.");
+    logger.info(() -> "Client worker has been created.");
     serverProcessor.process(clientWorker);
   }
 }

@@ -77,7 +77,7 @@ public class LoginCommand extends EntryCommand {
     for (User user : equalLoginUsers) {
       if (!user.getPassword().equals(hashedPassword)) {
         logger.warn("Wrong user password.");
-        return new Response(Status.FORBIDDEN, WRONG_USER_PASSWORD_ANSWER);
+        return new Response(Status.FORBIdDEN, WRONG_USER_PASSWORD_ANSWER);
       }
     }
 

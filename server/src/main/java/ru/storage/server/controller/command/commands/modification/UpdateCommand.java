@@ -15,7 +15,7 @@ import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.repository.Query;
 import ru.storage.server.model.domain.repository.Repository;
 import ru.storage.server.model.domain.repository.exceptions.RepositoryException;
-import ru.storage.server.model.domain.repository.repositories.workerRepository.queries.GetEqualIDWorkers;
+import ru.storage.server.model.domain.repository.repositories.workerRepository.queries.GetEqualIdWorkers;
 
 import java.util.List;
 import java.util.Locale;
@@ -47,23 +47,23 @@ public final class UpdateCommand extends ModificationCommand {
     long id;
 
     try {
-      id = Long.parseLong(arguments.get(argumentMediator.WORKER_ID));
+      id = Long.parseLong(arguments.get(argumentMediator.WORKER_Id));
     } catch (NumberFormatException e) {
       logger.warn(() -> "Got wrong id.", e);
-      return new Response(Status.BAD_REQUEST, WRONG_ID_ANSWER);
+      return new Response(Status.BAD_REQUEST, WRONG_Id_ANSWER);
     }
 
-    Query<Worker> query = new GetEqualIDWorkers(id);
-    List<Worker> equalIDWorkers;
+    Query<Worker> query = new GetEqualIdWorkers(id);
+    List<Worker> equalIdWorkers;
 
     try {
-      equalIDWorkers = workerRepository.get(query);
+      equalIdWorkers = workerRepository.get(query);
     } catch (RepositoryException e) {
       logger.error("Cannot get workers with id equal to {}.", (Supplier<?>) () -> id, e);
       return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
-    if (equalIDWorkers.isEmpty()) {
+    if (equalIdWorkers.isEmpty()) {
       logger.info("Worker with specified id: {} was not found.", () -> id);
       return new Response(Status.NOT_FOUND, WORKER_NOT_FOUND_ANSWER);
     }
@@ -77,10 +77,10 @@ public final class UpdateCommand extends ModificationCommand {
       return new Response(Status.BAD_REQUEST, WRONG_WORKER_FORMAT_ANSWER);
     }
 
-    for (Worker worker : equalIDWorkers) {
+    for (Worker worker : equalIdWorkers) {
       try {
         Worker newWorker = workerDTO.toEntity();
-        newWorker.setID(worker.getID());
+        newWorker.setId(worker.getId());
         workerRepository.update(newWorker);
       } catch (RepositoryException | ValidationException e) {
         logger.error("Cannot update worker which id is equal to {}.", (Supplier<?>) () -> id, e);

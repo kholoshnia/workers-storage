@@ -5,7 +5,7 @@ import ru.storage.server.model.domain.entity.entities.worker.Status;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public final class WorkerDTO implements DTO<Worker> {
   public static final String ID_COLUMN = "id";
@@ -20,27 +20,27 @@ public final class WorkerDTO implements DTO<Worker> {
   public static final String PERSON_COLUMN = "person";
 
   public final long id;
-  public final long ownerID;
-  public final LocalDateTime creationDate;
+  public final long ownerId;
+  public final ZonedDateTime creationDate;
   public final Double salary;
   public final Status status;
-  public final LocalDateTime startDate;
-  public final LocalDateTime endDate;
+  public final ZonedDateTime startDate;
+  public final ZonedDateTime endDate;
   public final CoordinatesDTO coordinatesDTO;
   public final PersonDTO personDTO;
 
   public WorkerDTO(
-      long id,
-      long ownerID,
-      LocalDateTime creationDate,
-      Double salary,
-      Status status,
-      LocalDateTime startDate,
-      LocalDateTime endDate,
-      CoordinatesDTO coordinatesDTO,
-      PersonDTO personDTO) {
+          long id,
+          long ownerId,
+          ZonedDateTime creationDate,
+          Double salary,
+          Status status,
+          ZonedDateTime startDate,
+          ZonedDateTime endDate,
+          CoordinatesDTO coordinatesDTO,
+          PersonDTO personDTO) {
     this.id = id;
-    this.ownerID = ownerID;
+    this.ownerId = ownerId;
     this.creationDate = creationDate;
     this.salary = salary;
     this.status = status;
@@ -54,7 +54,7 @@ public final class WorkerDTO implements DTO<Worker> {
   public Worker toEntity() throws ValidationException {
     return new Worker(
         this.id,
-        this.ownerID,
+        this.ownerId,
         this.creationDate,
         this.salary,
         this.status,

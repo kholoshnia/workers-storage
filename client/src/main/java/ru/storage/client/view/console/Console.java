@@ -79,7 +79,7 @@ public final class Console implements View, ExitListener, LocaleListener {
     this.formerMediator = formerMediator;
     this.responseHandler = responseHandler;
     this.regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
-    this.prompt = " $ ";
+    this.prompt = " ~ $ ";
     this.processing = true;
   }
 
@@ -213,14 +213,22 @@ public final class Console implements View, ExitListener, LocaleListener {
 
   /** Waits serverWorker to the server. Checks serverWorker every 1 second. */
   private void waitConnection() {
+    String anim = "|/-\\";
+    int counter = 0;
+
     while (!serverWorker.isConnected()) {
       try {
-        Thread.sleep(1000);
+        Thread.sleep(100);
       } catch (InterruptedException e) {
         logger.error(() -> "Cannot interrupt thread.", e);
       }
 
-      write(String.format("\r%s...", connectingMessage));
+      counter++;
+      if (counter > 3) {
+        counter = 0;
+      }
+
+      write(String.format("\r%s %s...", anim.charAt(counter % anim.length()), connectingMessage));
     }
 
     logger.info(() -> "Connected to the server.");

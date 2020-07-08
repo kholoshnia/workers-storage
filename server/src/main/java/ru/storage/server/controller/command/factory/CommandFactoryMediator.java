@@ -13,8 +13,7 @@ import ru.storage.server.controller.command.factory.factories.ViewCommandFactory
 import ru.storage.server.controller.services.hash.HashGenerator;
 import ru.storage.server.controller.services.history.History;
 import ru.storage.server.controller.services.parser.Parser;
-import ru.storage.server.model.domain.entity.entities.user.User;
-import ru.storage.server.model.domain.repository.Repository;
+import ru.storage.server.model.domain.repository.repositories.userRepository.UserRepository;
 import ru.storage.server.model.domain.repository.repositories.workerRepository.WorkerRepository;
 
 import java.security.Key;
@@ -32,7 +31,7 @@ public final class CommandFactoryMediator {
       CommandMediator commandMediator,
       History history,
       HashGenerator hashGenerator,
-      Repository<User> userRepository,
+      UserRepository userRepository,
       Parser parser,
       WorkerRepository workerRepository,
       Key key) {

@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * DAO interface can be used to create data access objects objects.
+ * DAO interface can be used to create data access objects.
  *
  * @param <Entity> Entity of DAO object.
  */

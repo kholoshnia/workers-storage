@@ -16,7 +16,7 @@ import java.nio.channels.SocketChannel;
 
 public final class ServerWorker {
   private final Logger logger;
-  private final ByteBuffer byteBuffer;
+  private final ByteBuffer buffer;
   private final Serializer serializer;
   private final SocketChannel server;
   private final InetSocketAddress socketAddress;
@@ -24,7 +24,7 @@ public final class ServerWorker {
   public ServerWorker(int bufferSize, Serializer serializer, InetAddress address, int port)
       throws ClientConnectionException {
     this.logger = LogManager.getLogger(ServerWorker.class);
-    this.byteBuffer = ByteBuffer.allocate(bufferSize);
+    this.buffer = ByteBuffer.allocate(bufferSize);
     this.serializer = serializer;
     this.socketAddress = new InetSocketAddress(address, port);
 
@@ -47,14 +47,14 @@ public final class ServerWorker {
   }
 
   public boolean isConnected() {
-    return server.isConnected();
+    return server.isOpen();
   }
 
   public Response read() throws ClientConnectionException, DeserializationException {
     try {
-      byteBuffer.clear();
-      server.read(byteBuffer);
-      return serializer.deserialize(byteBuffer.array(), Response.class);
+      buffer.clear();
+      server.read(buffer);
+      return serializer.deserialize(buffer.array(), Response.class);
     } catch (IOException e) {
       logger.error(() -> "Cannot read response.", e);
       throw new ClientConnectionException(e);
@@ -63,9 +63,9 @@ public final class ServerWorker {
 
   public void write(Request request) throws ClientConnectionException {
     try {
-      byteBuffer.clear();
-      byteBuffer.put(serializer.serialize(request));
-      server.write(byteBuffer);
+      buffer.clear();
+      buffer.put(serializer.serialize(request));
+      server.write(buffer);
     } catch (IOException e) {
       logger.error(() -> "Cannot write request.", e);
       throw new ClientConnectionException(e);

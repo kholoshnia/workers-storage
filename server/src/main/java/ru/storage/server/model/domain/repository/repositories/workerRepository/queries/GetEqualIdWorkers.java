@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 /**
  * Returns workers collection copy. The copy contains a workers with an id equal to the specified.
  */
-public final class GetEqualIDWorkers implements Query<Worker> {
+public final class GetEqualIdWorkers implements Query<Worker> {
   private final long id;
 
   /**
@@ -18,14 +18,14 @@ public final class GetEqualIDWorkers implements Query<Worker> {
    *
    * @param id concrete id
    */
-  public GetEqualIDWorkers(long id) {
+  public GetEqualIdWorkers(long id) {
     this.id = id;
   }
 
   @Override
   public List<Worker> execute(List<Worker> workers) {
     return workers.stream()
-        .filter(worker -> worker.getID() == id)
+        .filter(worker -> worker.getId() == id)
         .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
   }
 }

@@ -55,11 +55,11 @@ public final class User implements Entity {
     return new UserDTO(this.id, this.name, this.login, this.password, this.role);
   }
 
-  public final long getID() {
+  public final long getId() {
     return id;
   }
 
-  public final void setID(long id) throws ValidationException {
+  public final void setId(long id) throws ValidationException {
     checkId(id);
     this.id = id;
   }

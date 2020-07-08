@@ -67,11 +67,11 @@ public abstract class DataSource implements ExitListener {
     try {
       connection = DriverManager.getConnection(url, user, password);
     } catch (SQLException e) {
-      logger.fatal(() -> "Cannot connect to database", e);
+      logger.fatal(() -> "Cannot connect to the database", e);
       throw new DataSourceException(SETUP_CONNECTION_EXCEPTION, e);
     }
 
-    logger.debug(() -> "ClientWorker setup completed.");
+    logger.debug(() -> "Connection setup has been completed.");
     return connection;
   }
 
@@ -139,7 +139,7 @@ public abstract class DataSource implements ExitListener {
       }
     }
 
-    logger.debug(() -> "ClientWorker has been closed.");
+    logger.debug(() -> "Connection has been closed.");
   }
 
   @Override
@@ -151,6 +151,6 @@ public abstract class DataSource implements ExitListener {
       throw new ExitingException(e);
     }
 
-    logger.debug(() -> "ClientWorker with database has been closed.");
+    logger.debug(() -> "Connection with database has been closed.");
   }
 }

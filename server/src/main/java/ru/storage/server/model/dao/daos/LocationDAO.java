@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.domain.dto.dtos.LocationDTO;
-import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
@@ -23,6 +22,7 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
   private static final String CANNOT_GET_ALL_LOCATION_EXCEPTION;
   private static final String CANNOT_GET_LOCATION_BY_ID_EXCEPTION;
   private static final String CANNOT_INSERT_LOCATION_EXCEPTION;
+  private static final String CANNOT_GET_GENERATED_LOCATION_ID;
   private static final String CANNOT_UPDATE_LOCATION_EXCEPTION;
   private static final String CANNOT_DELETE_LOCATION_EXCEPTION;
 
@@ -34,6 +34,8 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
     CANNOT_GET_LOCATION_BY_ID_EXCEPTION =
         resourceBundle.getString("exceptions.cannotGetLocationById");
     CANNOT_INSERT_LOCATION_EXCEPTION = resourceBundle.getString("exceptions.cannotInsertLocation");
+    CANNOT_GET_GENERATED_LOCATION_ID =
+        resourceBundle.getString("exceptions.cannotGetGeneratedLocationId");
     CANNOT_UPDATE_LOCATION_EXCEPTION = resourceBundle.getString("exceptions.cannotUpdateLocation");
     CANNOT_DELETE_LOCATION_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteLocation");
   }
@@ -143,12 +145,12 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
   @Override
   public LocationDTO insert(@Nonnull LocationDTO locationDTO)
       throws DAOException, DataSourceException {
-    LocationDTO result;
+    Long resultId;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, locationDTO.ownerID);
+      preparedStatement.setLong(1, locationDTO.ownerId);
       preparedStatement.setString(2, locationDTO.address);
       preparedStatement.setDouble(3, locationDTO.latitude);
       preparedStatement.setDouble(4, locationDTO.longitude);
@@ -157,21 +159,10 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
 
       ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
       if (generatedKeys.next()) {
-        result =
-            new LocationDTO(
-                generatedKeys.getLong(1),
-                locationDTO.ownerID,
-                locationDTO.address,
-                locationDTO.latitude,
-                locationDTO.longitude);
+        resultId = generatedKeys.getObject(1, Long.class);
       } else {
-        result =
-            new LocationDTO(
-                Location.DEFAULT_ID,
-                Location.DEFAULT_OWNER_ID,
-                locationDTO.address,
-                locationDTO.latitude,
-                locationDTO.longitude);
+        logger.error(() -> "Cannot get generated location id.");
+        throw new DAOException(CANNOT_GET_GENERATED_LOCATION_ID);
       }
     } catch (SQLException e) {
       logger.error(() -> "Cannot insert location.", e);
@@ -181,7 +172,12 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
     }
 
     logger.info(() -> "Location has been inserted.");
-    return result;
+    return new LocationDTO(
+        resultId,
+        locationDTO.ownerId,
+        locationDTO.address,
+        locationDTO.latitude,
+        locationDTO.longitude);
   }
 
   @Override
@@ -191,7 +187,7 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
         dataSource.getPrepareStatement(UPDATE, Statement.NO_GENERATED_KEYS);
 
     try {
-      preparedStatement.setLong(1, locationDTO.ownerID);
+      preparedStatement.setLong(1, locationDTO.ownerId);
       preparedStatement.setString(2, locationDTO.address);
       preparedStatement.setDouble(3, locationDTO.latitude);
       preparedStatement.setDouble(4, locationDTO.longitude);

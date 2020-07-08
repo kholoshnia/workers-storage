@@ -5,6 +5,7 @@ import ru.storage.client.controller.argumentFormer.FormerMediator;
 import ru.storage.client.controller.requestBuilder.exceptions.BuildingException;
 import ru.storage.common.transfer.request.Request;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -13,9 +14,9 @@ import java.util.Map;
 public final class RequestBuilder {
   private FormerMediator formerMediator;
   private String command;
-  private List<String> arguments;
-  private Locale locale;
-  private String token;
+  private List<String> arguments = new ArrayList<>();
+  private Locale locale = Locale.ENGLISH;
+  private String token = "";
 
   /**
    * Sets argument former mediator. NOTE: if not set on {@link RequestBuilder#build()} it throws
@@ -77,7 +78,7 @@ public final class RequestBuilder {
   }
 
   /**
-   * Builds request from set parameters.
+   * Builds request from set parameters. NOTE: returns null if cannot build request.
    *
    * @return new request
    * @throws BuildingException - if parameters were not set or required were empty

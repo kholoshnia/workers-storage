@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.app.guice.ClientModule;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /** Main server application class. */

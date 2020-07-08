@@ -7,7 +7,6 @@ import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.domain.dto.dtos.UserDTO;
 import ru.storage.server.model.domain.entity.entities.user.Role;
-import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
@@ -24,6 +23,7 @@ public class UserDAO implements DAO<String, UserDTO> {
   private static final String CANNOT_GET_ALL_USER_EXCEPTION;
   private static final String CANNOT_GET_USER_BY_ID_EXCEPTION;
   private static final String CANNOT_INSERT_USER_EXCEPTION;
+  private static final String CANNOT_GET_GENERATED_USER_ID;
   private static final String CANNOT_UPDATE_USER_EXCEPTION;
   private static final String CANNOT_DELETE_USER_EXCEPTION;
 
@@ -33,6 +33,7 @@ public class UserDAO implements DAO<String, UserDTO> {
     CANNOT_GET_ALL_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotGetAllUsers");
     CANNOT_GET_USER_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.cannotGetUserById");
     CANNOT_INSERT_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotInsertUser");
+    CANNOT_GET_GENERATED_USER_ID = resourceBundle.getString("exceptions.cannotGetGeneratedUserId");
     CANNOT_UPDATE_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotUpdateUser");
     CANNOT_DELETE_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteUser");
   }
@@ -141,7 +142,7 @@ public class UserDAO implements DAO<String, UserDTO> {
 
   @Override
   public UserDTO insert(@Nonnull UserDTO userDTO) throws DAOException, DataSourceException {
-    UserDTO result;
+    Long resultId;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 
@@ -155,18 +156,10 @@ public class UserDAO implements DAO<String, UserDTO> {
 
       ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
       if (generatedKeys.next()) {
-        result =
-            new UserDTO(
-                generatedKeys.getLong(1),
-                userDTO.name,
-                userDTO.login,
-                userDTO.password,
-                userDTO.role);
-
+        resultId = generatedKeys.getObject(1, Long.class);
       } else {
-        result =
-            new UserDTO(
-                User.DEFAULT_ID, userDTO.name, userDTO.login, userDTO.password, userDTO.role);
+        logger.error(() -> "Cannot get generated user id.");
+        throw new DAOException(CANNOT_GET_GENERATED_USER_ID);
       }
     } catch (SQLException e) {
       logger.error(() -> "Cannot insert user.", e);
@@ -176,7 +169,7 @@ public class UserDAO implements DAO<String, UserDTO> {
     }
 
     logger.info(() -> "User has been inserted.");
-    return result;
+    return new UserDTO(resultId, userDTO.name, userDTO.login, userDTO.password, userDTO.role);
   }
 
   @Override

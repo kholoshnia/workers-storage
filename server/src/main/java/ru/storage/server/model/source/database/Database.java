@@ -217,7 +217,7 @@ public final class Database extends DataSource {
   public Database(String url, String user, String password)
       throws DataSourceException, DatabaseException {
     super(url, user, password);
-    this.logger = LogManager.getLogger(Database.class);
+    logger = LogManager.getLogger(Database.class);
 
     initUsersTable();
     initCoordinatesTable();

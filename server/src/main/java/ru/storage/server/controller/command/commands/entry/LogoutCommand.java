@@ -29,7 +29,7 @@ public class LogoutCommand extends EntryCommand {
       Repository<User> userRepository,
       Key key) {
     super(configuration, argumentMediator, arguments, locale, hashGenerator, userRepository, key);
-    this.logger = LogManager.getLogger(LogoutCommand.class);
+    logger = LogManager.getLogger(LogoutCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.LogoutCommand", locale);
 

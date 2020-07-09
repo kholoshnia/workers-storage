@@ -18,7 +18,7 @@ public final class NewWorkerFormer implements ArgumentFormer {
   private String wrongArgumentsNumberException;
 
   public NewWorkerFormer(ArgumentMediator argumentMediator) {
-    this.logger = LogManager.getLogger(NewWorkerFormer.class);
+    logger = LogManager.getLogger(NewWorkerFormer.class);
     this.argumentMediator = argumentMediator;
   }
 

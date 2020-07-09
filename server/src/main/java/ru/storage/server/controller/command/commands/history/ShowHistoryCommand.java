@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class ShowHistoryCommand extends HistoryCommand {
+  public static final String BEGINNING = "---------------< HISTORY >---------------";
+  public static final String SEPARATOR = "-----------------------------------------";
+
   private final String SHOW_HISTORY_PREFIX;
 
   private final Logger logger;
@@ -26,7 +29,7 @@ public final class ShowHistoryCommand extends HistoryCommand {
       Locale locale,
       History history) {
     super(configuration, argumentMediator, arguments, locale, history);
-    this.logger = LogManager.getLogger(ShowHistoryCommand.class);
+    logger = LogManager.getLogger(ShowHistoryCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ShowHistoryCommand");
 
@@ -42,9 +45,10 @@ public final class ShowHistoryCommand extends HistoryCommand {
 
     List<Record> records = history.getRecords(10);
     StringBuilder result =
-        new StringBuilder(SEPARATOR)
+        new StringBuilder(BEGINNING)
             .append(System.lineSeparator())
             .append(SHOW_HISTORY_PREFIX)
+            .append(System.lineSeparator())
             .append(SEPARATOR)
             .append(System.lineSeparator());
 

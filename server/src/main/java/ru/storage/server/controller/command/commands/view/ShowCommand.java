@@ -18,6 +18,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class ShowCommand extends ViewCommand {
+  public static final String BEGINNING = "--------------------< SHOW >--------------------";
+  public static final String SEPARATOR = "------------------------------------------------";
+
   private final String SHOW_PREFIX;
   private final String COLLECTION_IS_EMPTY_ANSWER;
 
@@ -30,9 +33,9 @@ public final class ShowCommand extends ViewCommand {
       Locale locale,
       WorkerRepository workerRepository) {
     super(configuration, argumentMediator, arguments, locale, workerRepository);
-    this.logger = LogManager.getLogger(ShowCommand.class);
+    logger = LogManager.getLogger(ShowCommand.class);
 
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.ShowCommand");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ShowCommand");
 
     SHOW_PREFIX = resourceBundle.getString("prefixes.show");
     COLLECTION_IS_EMPTY_ANSWER = resourceBundle.getString("answers.collectionIsEmpty");
@@ -56,7 +59,7 @@ public final class ShowCommand extends ViewCommand {
     }
 
     StringBuilder result =
-        new StringBuilder(SEPARATOR)
+        new StringBuilder(BEGINNING)
             .append(System.lineSeparator())
             .append(SHOW_PREFIX)
             .append(SEPARATOR)

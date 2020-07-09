@@ -53,7 +53,7 @@ public final class Location implements Cloneable, Entity {
 
   @Override
   public LocationDTO toDTO() {
-    return new LocationDTO(this.id, this.ownerId, this.address, this.latitude, this.longitude);
+    return new LocationDTO(id, ownerId, address, latitude, longitude);
   }
 
   public final long getId() {
@@ -159,7 +159,7 @@ public final class Location implements Cloneable, Entity {
   @Override
   public Location clone() {
     try {
-      return new Location(this.id, this.ownerId, this.address, this.latitude, this.longitude);
+      return new Location(id, ownerId, address, latitude, longitude);
     } catch (ValidationException e) {
       throw new RuntimeException(e);
     }

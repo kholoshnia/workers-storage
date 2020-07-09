@@ -19,7 +19,7 @@ import java.util.Map;
 
 public final class HistoryCommandFactory extends CommandFactory {
   private final History history;
-  private final Map<String, Class<? extends HistoryCommand>> historyCommandsMap;
+  private final Map<String, Class<? extends HistoryCommand>> historyCommandMap;
 
   public HistoryCommandFactory(
       Configuration configuration,
@@ -28,7 +28,7 @@ public final class HistoryCommandFactory extends CommandFactory {
       History history) {
     super(configuration, argumentMediator);
     this.history = history;
-    this.historyCommandsMap =
+    historyCommandMap =
         new HashMap<String, Class<? extends HistoryCommand>>() {
           {
             put(commandMediator.SHOW_HISTORY, ShowHistoryCommand.class);
@@ -40,7 +40,7 @@ public final class HistoryCommandFactory extends CommandFactory {
   @Override
   public Command createCommand(String command, Map<String, String> arguments, Locale locale)
       throws CommandFactoryException {
-    Class<? extends HistoryCommand> clazz = historyCommandsMap.get(command);
+    Class<? extends HistoryCommand> clazz = historyCommandMap.get(command);
     try {
       Constructor<? extends HistoryCommand> constructor =
           clazz.getConstructor(

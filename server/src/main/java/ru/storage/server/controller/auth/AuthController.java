@@ -1,22 +1,19 @@
 package ru.storage.server.controller.auth;
 
 import com.google.inject.Inject;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.CommandMediator;
 import ru.storage.common.transfer.request.Request;
 import ru.storage.common.transfer.response.Response;
-import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.Controller;
 
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
+/** Authorizes user using java web token. */
 public class AuthController implements Controller {
   private final Logger logger;
   private final List<String> authCommands;
@@ -27,9 +24,9 @@ public class AuthController implements Controller {
 
   @Inject
   public AuthController(Configuration configuration, CommandMediator commandMediator, Key key) {
-    this.logger = LogManager.getLogger(AuthController.class);
+    logger = LogManager.getLogger(AuthController.class);
 
-    this.authCommands =
+    authCommands =
         new ArrayList<String>() {
           {
             add(commandMediator.LOGIN);
@@ -39,13 +36,13 @@ public class AuthController implements Controller {
         };
 
     this.key = key;
-    this.subject = configuration.getString("jwt.subject");
+    subject = configuration.getString("jwt.subject");
   }
 
-  // TODO: Implement on client side.
+  // TODO: Implement support on client side.
   @Override
   public Response handle(Request request) {
-    ResourceBundle resourceBundle =
+    /*ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.AuthController", request.getLocale());
     unauthorizedAnswer = resourceBundle.getString("answers.unauthorized");
 
@@ -75,7 +72,7 @@ public class AuthController implements Controller {
       return new Response(Status.UNAUTHORIZED, unauthorizedAnswer);
     }
 
-    logger.info(() -> "User has been authorized.");
+    logger.info(() -> "User has been authorized.");*/
     return null;
   }
 }

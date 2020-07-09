@@ -29,7 +29,7 @@ public final class UserDTO implements DTO<User> {
 
   @Override
   public User toEntity() throws ValidationException {
-    return new User(this.id, this.name, this.login, this.password, this.role);
+    return new User(id, name, login, password, role);
   }
 
   @Override

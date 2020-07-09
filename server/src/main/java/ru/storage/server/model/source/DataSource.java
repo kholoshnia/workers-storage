@@ -40,8 +40,8 @@ public abstract class DataSource implements ExitListener {
   private final Connection connection;
 
   public DataSource(String url, String user, String password) throws DataSourceException {
-    this.logger = LogManager.getLogger(DataSource.class);
-    this.connection = initConnection(url, user, password);
+    logger = LogManager.getLogger(DataSource.class);
+    connection = initConnection(url, user, password);
   }
 
   /**

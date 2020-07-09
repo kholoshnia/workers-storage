@@ -44,9 +44,9 @@ public final class UserRepository implements Repository<User> {
 
   @Inject
   public UserRepository(@Nonnull DAO<String, UserDTO> userDAO) throws UserRepositoryException {
-    this.logger = LogManager.getLogger(UserRepository.class);
+    logger = LogManager.getLogger(UserRepository.class);
     this.userDAO = userDAO;
-    this.users = initUsersList();
+    users = initUsersList();
   }
 
   /**

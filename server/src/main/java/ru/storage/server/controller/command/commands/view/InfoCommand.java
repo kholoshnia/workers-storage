@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class InfoCommand extends ViewCommand {
+  public static final String BEGINNING = "-----------------------< INFO >----------------------";
+  public static final String SEPARATOR = "-----------------------------------------------------";
+
   private final String INFO_PREFIX;
   private final String TYPE_PREFIX;
   private final String INIT_TIME_PREFIX;
@@ -27,7 +30,7 @@ public final class InfoCommand extends ViewCommand {
       Locale locale,
       WorkerRepository workerRepository) {
     super(configuration, argumentMediator, arguments, locale, workerRepository);
-    this.logger = LogManager.getLogger(InfoCommand.class);
+    logger = LogManager.getLogger(InfoCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.InfoCommand", locale);
 
@@ -40,7 +43,7 @@ public final class InfoCommand extends ViewCommand {
   @Override
   public Response executeCommand() {
     String result =
-        SEPARATOR
+        BEGINNING
             + System.lineSeparator()
             + INFO_PREFIX
             + System.lineSeparator()

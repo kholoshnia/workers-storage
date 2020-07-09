@@ -19,7 +19,7 @@ public final class WorkerIdFormer implements ArgumentFormer {
   private String wrongArgumentValueException;
 
   public WorkerIdFormer(ArgumentMediator argumentMediator) {
-    this.logger = LogManager.getLogger(WorkerIdFormer.class);
+    logger = LogManager.getLogger(WorkerIdFormer.class);
     this.argumentMediator = argumentMediator;
   }
 
@@ -58,7 +58,7 @@ public final class WorkerIdFormer implements ArgumentFormer {
   @Override
   public Map<String, String> form(List<String> arguments) {
     Map<String, String> allArguments = new HashMap<>();
-    allArguments.put(argumentMediator.WORKER_Id, arguments.get(0));
+    allArguments.put(argumentMediator.WORKER_ID, arguments.get(0));
 
     logger.info(() -> "All arguments were formed.");
     return allArguments;

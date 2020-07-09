@@ -18,7 +18,7 @@ public final class SHA256Generator extends HashGenerator {
   @Inject
   public SHA256Generator(@Nonnull Configuration configuration) {
     super(configuration);
-    this.logger = LogManager.getLogger(SHA256Generator.class);
+    logger = LogManager.getLogger(SHA256Generator.class);
   }
 
   @Override

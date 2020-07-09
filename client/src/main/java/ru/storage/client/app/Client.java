@@ -6,14 +6,13 @@ import org.apache.logging.log4j.Logger;
 import ru.storage.client.app.exceptions.ClientException;
 import ru.storage.client.view.View;
 
-// TODO: Implement TCP connection with server.
 public final class Client {
   private final Logger logger;
   private final View view;
 
   @Inject
   public Client(View view) {
-    this.logger = LogManager.getLogger(Client.class);
+    logger = LogManager.getLogger(Client.class);
     this.view = view;
   }
 

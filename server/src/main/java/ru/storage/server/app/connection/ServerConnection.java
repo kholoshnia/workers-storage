@@ -29,16 +29,16 @@ public class ServerConnection extends SelectorConnection {
       ServerProcessor serverProcessor,
       Serializer serializer)
       throws SelectorException, ServerException {
-    this.logger = LogManager.getLogger(ServerConnection.class);
+    logger = LogManager.getLogger(ServerConnection.class);
     this.bufferSize = bufferSize;
     this.serializer = serializer;
     this.serverProcessor = serverProcessor;
 
     try {
-      this.serverSocketChannel = ServerSocketChannel.open();
-      this.serverSocketChannel.bind(new InetSocketAddress(address, port));
-      this.serverSocketChannel.configureBlocking(false);
-      this.serverSocketChannel.register(selector, serverSocketChannel.validOps());
+      serverSocketChannel = ServerSocketChannel.open();
+      serverSocketChannel.bind(new InetSocketAddress(address, port));
+      serverSocketChannel.configureBlocking(false);
+      serverSocketChannel.register(selector, serverSocketChannel.validOps());
       logger.debug(() -> "Server was opened.");
     } catch (IOException e) {
       logger.error(() -> "Cannot open server.", e);
@@ -51,18 +51,18 @@ public class ServerConnection extends SelectorConnection {
     try {
       SocketChannel client = serverSocketChannel.accept();
       client.configureBlocking(false);
-      client.register(selector, client.validOps());
-    } catch (IOException e) {
+      ClientWorker clientWorker = new ClientWorker(bufferSize, serializer, client);
+      client.register(selector, client.validOps(), clientWorker);
+      logger.info("New client was accepted: {}.", client.getRemoteAddress());
+    } catch (IOException | ServerException e) {
       logger.error(() -> "Cannot accept client.", e);
       throw new SelectorException(e);
     }
   }
 
   @Override
-  protected void handle(SelectionKey selectionKey) throws ServerException {
-    SocketChannel client = (SocketChannel) selectionKey.channel();
-    ClientWorker clientWorker = new ClientWorker(bufferSize, serializer, client);
-    logger.info(() -> "Client worker has been created.");
+  protected void handle(SelectionKey selectionKey) {
+    ClientWorker clientWorker = (ClientWorker) selectionKey.attachment();
     serverProcessor.process(clientWorker);
   }
 }

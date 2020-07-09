@@ -12,7 +12,7 @@ public final class CurrencyCalculator extends CurrencyFormat {
   private final NumberFormat numberFormat;
 
   CurrencyCalculator(Locale locale) {
-    this.numberFormat = NumberFormat.getCurrencyInstance(locale);
+    numberFormat = NumberFormat.getCurrencyInstance(locale);
   }
 
   @Override

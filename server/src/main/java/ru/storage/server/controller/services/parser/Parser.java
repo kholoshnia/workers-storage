@@ -14,7 +14,7 @@ public final class Parser {
   private final Logger logger;
 
   public Parser() {
-    this.logger = LogManager.getLogger(Parser.class);
+    logger = LogManager.getLogger(Parser.class);
   }
 
   public Double parseDouble(String doubleString) throws ParserException {

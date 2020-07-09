@@ -23,7 +23,7 @@ import java.util.Map;
 public final class ModificationCommandFactory extends CommandFactory {
   private final Repository<Worker> workerRepository;
   private final Parser parser;
-  private final Map<String, Class<? extends ModificationCommand>> modificationCommandsMap;
+  private final Map<String, Class<? extends ModificationCommand>> modificationCommandMap;
 
   public ModificationCommandFactory(
       Configuration configuration,
@@ -34,7 +34,7 @@ public final class ModificationCommandFactory extends CommandFactory {
     super(configuration, argumentMediator);
     this.workerRepository = workerRepository;
     this.parser = parser;
-    this.modificationCommandsMap =
+    modificationCommandMap =
         new HashMap<String, Class<? extends ModificationCommand>>() {
           {
             put(commandMediator.ADD, AddCommand.class);
@@ -47,7 +47,7 @@ public final class ModificationCommandFactory extends CommandFactory {
   @Override
   public Command createCommand(String command, Map<String, String> arguments, Locale locale)
       throws CommandFactoryException {
-    Class<? extends ModificationCommand> clazz = modificationCommandsMap.get(command);
+    Class<? extends ModificationCommand> clazz = modificationCommandMap.get(command);
     try {
       Constructor<? extends ModificationCommand> constructor =
           clazz.getConstructor(

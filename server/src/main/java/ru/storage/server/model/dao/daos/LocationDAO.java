@@ -80,7 +80,7 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
 
   @Inject
   public LocationDAO(DataSource dataSource) {
-    this.logger = LogManager.getLogger(LocationDAO.class);
+    logger = LogManager.getLogger(LocationDAO.class);
     this.dataSource = dataSource;
   }
 

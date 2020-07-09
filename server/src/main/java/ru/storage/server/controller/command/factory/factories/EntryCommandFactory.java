@@ -25,7 +25,7 @@ public final class EntryCommandFactory extends CommandFactory {
   private final HashGenerator hashGenerator;
   private final Repository<User> userRepository;
   private final Key key;
-  private final Map<String, Class<? extends EntryCommand>> entryCommandsMap;
+  private final Map<String, Class<? extends EntryCommand>> entryCommandMap;
 
   public EntryCommandFactory(
       Configuration configuration,
@@ -38,7 +38,7 @@ public final class EntryCommandFactory extends CommandFactory {
     this.hashGenerator = hashGenerator;
     this.userRepository = userRepository;
     this.key = key;
-    this.entryCommandsMap =
+    entryCommandMap =
         new HashMap<String, Class<? extends EntryCommand>>() {
           {
             put(commandMediator.LOGIN, LoginCommand.class);
@@ -51,7 +51,7 @@ public final class EntryCommandFactory extends CommandFactory {
   @Override
   public Command createCommand(String command, Map<String, String> arguments, Locale locale)
       throws CommandFactoryException {
-    Class<? extends EntryCommand> clazz = entryCommandsMap.get(command);
+    Class<? extends EntryCommand> clazz = entryCommandMap.get(command);
     try {
       Constructor<? extends EntryCommand> constructor =
           clazz.getConstructor(

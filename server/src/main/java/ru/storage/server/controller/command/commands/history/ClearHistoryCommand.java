@@ -24,7 +24,7 @@ public final class ClearHistoryCommand extends HistoryCommand {
       Locale locale,
       History history) {
     super(configuration, argumentMediator, arguments, locale, history);
-    this.logger = LogManager.getLogger(ClearHistoryCommand.class);
+    logger = LogManager.getLogger(ClearHistoryCommand.class);
 
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.ClearHistoryCommand", locale);

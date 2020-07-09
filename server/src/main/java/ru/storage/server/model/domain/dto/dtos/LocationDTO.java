@@ -28,7 +28,7 @@ public final class LocationDTO implements DTO<Location> {
 
   @Override
   public Location toEntity() throws ValidationException {
-    return new Location(this.id, this.ownerId, this.address, this.latitude, this.longitude);
+    return new Location(id, ownerId, address, latitude, longitude);
   }
 
   @Override

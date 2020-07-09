@@ -29,6 +29,6 @@ public final class Record implements Cloneable {
 
   @Override
   public Record clone() {
-    return new Record(this.command, this.arguments, this.response);
+    return new Record(command, arguments, response);
   }
 }

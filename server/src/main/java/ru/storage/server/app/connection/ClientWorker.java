@@ -10,8 +10,8 @@ import ru.storage.server.app.connection.exceptions.ServerException;
 import ru.storage.server.app.connection.selector.exceptions.SelectorException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SocketChannel;
 
 public final class ClientWorker {
@@ -19,13 +19,14 @@ public final class ClientWorker {
   private final int bufferSize;
   private final Serializer serializer;
   private final SocketChannel client;
+
   private ByteBuffer buffer;
 
   public ClientWorker(int bufferSize, Serializer serializer, SocketChannel client)
       throws ServerException {
-    this.logger = LogManager.getLogger(ClientWorker.class);
-    this.buffer = ByteBuffer.allocate(bufferSize);
+    logger = LogManager.getLogger(ClientWorker.class);
     this.bufferSize = bufferSize;
+    buffer = ByteBuffer.allocate(bufferSize);
     this.serializer = serializer;
     this.client = client;
 
@@ -38,66 +39,52 @@ public final class ClientWorker {
   }
 
   public Request read() throws SelectorException {
-    int size;
     try {
-      InputStream inputStream = client.socket().getInputStream();
-      size = inputStream.read(buffer.array());
-      // socket.setSoTimeout(5000);
-    } catch (IOException e) {
-      try {
-        client.close();
+      int size = client.read(buffer);
+
+      if (size == -1) {
         buffer = ByteBuffer.allocate(bufferSize);
-      } catch (IOException ex) {
-        ex.printStackTrace();
-        System.exit(1);
-      }
-      throw new SelectorException(e);
-    }
-
-    if (size == -1) {
-      try {
         client.close();
-        buffer = ByteBuffer.allocate(bufferSize);
-      } catch (IOException e) {
-        e.printStackTrace();
-        System.exit(1);
+        return null;
       }
-      throw new SelectorException("Reached an end of inputStream");
-    }
 
-    byte[] bytes = new byte[bufferSize];
-    buffer.rewind();
-    buffer.get(bytes, 0, size);
-    buffer.clear();
+      byte[] bytes = new byte[size];
+      buffer.rewind();
+      buffer.get(bytes, 0, size);
+      buffer.clear();
 
-    try {
       return serializer.deserialize(bytes, Request.class);
-    } catch (DeserializationException e) {
+    } catch (ClosedChannelException e) {
+      logger.info(() -> "Client has closed connection.");
       return null;
+    } catch (IOException | DeserializationException e) {
+      try {
+        buffer = ByteBuffer.allocate(bufferSize);
+        client.close();
+      } catch (IOException ex) {
+        logger.error(() -> "Cannot close connection.", e);
+        throw new SelectorException(e);
+      }
+
+      logger.error(() -> "Cannot read request.", e);
+      throw new SelectorException(e);
     }
   }
 
-  //  public Request read() throws SelectorException {
-  //    try {
-  //      buffer.clear();
-  //
-  //      InputStream inputStream = client.socket().getInputStream();
-  //      int size = inputStream.read(buffer.array());
-  //
-  //      // client.read(buffer);
-  //      return serializer.deserialize(buffer.array(), Request.class);
-  //    } catch (IOException | DeserializationException e) {
-  //      logger.error(() -> "Cannot read request.", e);
-  //      throw new SelectorException(e);
-  //    }
-  //  }
-
   public void write(Response response) throws SelectorException {
     try {
-      buffer.clear();
-      buffer.put(serializer.serialize(response));
-      client.write(buffer);
+      byte[] bytes = serializer.serialize(response);
+      client.write(ByteBuffer.wrap(bytes));
+    } catch (ClosedChannelException e) {
+      logger.info(() -> "Client has closed connection.");
     } catch (IOException e) {
+      try {
+        client.close();
+      } catch (IOException ex) {
+        logger.error(() -> "Cannot close connection.", e);
+        throw new SelectorException(e);
+      }
+
       logger.error(() -> "Cannot write response.", e);
       throw new SelectorException(e);
     }

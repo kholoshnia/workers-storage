@@ -29,6 +29,6 @@ public abstract class EntryCommand extends Command {
     this.hashGenerator = hashGenerator;
     this.userRepository = userRepository;
     this.key = key;
-    this.subject = configuration.getString("jwt.subject");
+    subject = configuration.getString("jwt.subject");
   }
 }

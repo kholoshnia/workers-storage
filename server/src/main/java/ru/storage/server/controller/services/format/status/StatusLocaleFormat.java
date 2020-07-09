@@ -14,10 +14,10 @@ public final class StatusLocaleFormat extends StatusFormat {
   private final Map<Status, String> statusMap;
 
   public StatusLocaleFormat(Locale locale) {
-    this.logger = LogManager.getLogger(StatusLocaleFormat.class);
+    logger = LogManager.getLogger(StatusLocaleFormat.class);
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.StatusFormat", locale);
 
-    this.statusMap =
+    statusMap =
         new HashMap<Status, String>() {
           {
             put(Status.FIRED, resourceBundle.getString("values.fired"));

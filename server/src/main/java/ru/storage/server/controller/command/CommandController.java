@@ -34,7 +34,7 @@ public final class CommandController implements Controller {
 
   @Inject
   public CommandController(CommandFactoryMediator commandFactoryMediator, History history) {
-    this.logger = LogManager.getLogger(CommandController.class);
+    logger = LogManager.getLogger(CommandController.class);
     this.commandFactoryMediator = commandFactoryMediator;
     this.history = history;
   }

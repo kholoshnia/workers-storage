@@ -32,7 +32,7 @@ public final class RemoveCommand extends ModificationCommand {
       Repository<Worker> workerRepository,
       Parser parser) {
     super(configuration, argumentMediator, arguments, locale, workerRepository, parser);
-    this.logger = LogManager.getLogger(RemoveCommand.class);
+    logger = LogManager.getLogger(RemoveCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.RemoveCommand");
 
@@ -44,10 +44,10 @@ public final class RemoveCommand extends ModificationCommand {
     long id;
 
     try {
-      id = Long.parseLong(arguments.get(argumentMediator.WORKER_Id));
+      id = Long.parseLong(arguments.get(argumentMediator.WORKER_ID));
     } catch (NumberFormatException e) {
       logger.warn(() -> "Got wrong id.", e);
-      return new Response(Status.BAD_REQUEST, WRONG_Id_ANSWER);
+      return new Response(Status.BAD_REQUEST, WRONG_ID_ANSWER);
     }
 
     Query<Worker> query = new GetEqualIdWorkers(id);

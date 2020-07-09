@@ -83,7 +83,7 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
 
   @Inject
   public CoordinatesDAO(DataSource dataSource) {
-    this.logger = LogManager.getLogger(CoordinatesDAO.class);
+    logger = LogManager.getLogger(CoordinatesDAO.class);
     this.dataSource = dataSource;
   }
 

@@ -101,7 +101,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       DataSource dataSource,
       DAO<Long, CoordinatesDTO> coordinatesDAO,
       DAO<Long, PersonDTO> personDAO) {
-    this.logger = LogManager.getLogger(WorkerDAO.class);
+    logger = LogManager.getLogger(WorkerDAO.class);
     this.dataSource = dataSource;
     this.coordinatesDAO = coordinatesDAO;
     this.personDAO = personDAO;

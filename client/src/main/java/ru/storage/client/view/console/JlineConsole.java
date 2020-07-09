@@ -26,9 +26,9 @@ public final class JlineConsole implements LocaleListener {
   public JlineConsole(
       Configuration configuration, InputStream inputStream, OutputStream outputStream)
       throws ConsoleException {
-    this.logger = LogManager.getLogger(JlineConsole.class);
+    logger = LogManager.getLogger(JlineConsole.class);
     this.configuration = configuration;
-    this.terminal = initTerminal(inputStream, outputStream);
+    terminal = initTerminal(inputStream, outputStream);
   }
 
   @Override

@@ -14,27 +14,57 @@ public final class ExecutorService {
   private final Executor sendExecutor;
 
   public ExecutorService(Executor readExecutor, Executor handleExecutor, Executor sendExecutor) {
-    this.logger = LogManager.getLogger(ExecutorService.class);
+    logger = LogManager.getLogger(ExecutorService.class);
     this.readExecutor = readExecutor;
     this.handleExecutor = handleExecutor;
     this.sendExecutor = sendExecutor;
   }
 
-  /** Executes read task using specified {@link Executor}. */
+  /**
+   * Executes read task using specified {@link Executor}.
+   *
+   * @param readTask concrete read task
+   */
   public void read(Runnable readTask) throws ExecutorServicesException {
     logger.info("Executing read task...");
-    readExecutor.execute(readTask);
+
+    try {
+      readExecutor.execute(readTask);
+    } catch (Exception e) {
+      logger.error(() -> "Exception was caught during reading.", e);
+      throw new ExecutorServicesException(e);
+    }
   }
 
-  /** Executes handle task using specified {@link Executor}. */
+  /**
+   * Executes handle task using specified {@link Executor}.
+   *
+   * @param handleTask concrete handle task
+   */
   public void handle(Runnable handleTask) throws ExecutorServicesException {
     logger.info("Executing handle task...");
-    handleExecutor.execute(handleTask);
+
+    try {
+      handleExecutor.execute(handleTask);
+    } catch (Exception e) {
+      logger.error(() -> "Exception was caught during handling.", e);
+      throw new ExecutorServicesException(e);
+    }
   }
 
-  /** Executes send task using specified {@link Executor}. */
+  /**
+   * Executes send task using specified {@link Executor}.
+   *
+   * @param sendTask concrete send task
+   */
   public void send(Runnable sendTask) throws ExecutorServicesException {
     logger.info("Executing send task...");
-    sendExecutor.execute(sendTask);
+
+    try {
+      sendExecutor.execute(sendTask);
+    } catch (Exception e) {
+      logger.error(() -> "Exception was caught during handling.", e);
+      throw new ExecutorServicesException(e);
+    }
   }
 }

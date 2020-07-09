@@ -30,15 +30,15 @@ public final class WorkerDTO implements DTO<Worker> {
   public final PersonDTO personDTO;
 
   public WorkerDTO(
-          long id,
-          long ownerId,
-          ZonedDateTime creationDate,
-          Double salary,
-          Status status,
-          ZonedDateTime startDate,
-          ZonedDateTime endDate,
-          CoordinatesDTO coordinatesDTO,
-          PersonDTO personDTO) {
+      long id,
+      long ownerId,
+      ZonedDateTime creationDate,
+      Double salary,
+      Status status,
+      ZonedDateTime startDate,
+      ZonedDateTime endDate,
+      CoordinatesDTO coordinatesDTO,
+      PersonDTO personDTO) {
     this.id = id;
     this.ownerId = ownerId;
     this.creationDate = creationDate;
@@ -53,15 +53,15 @@ public final class WorkerDTO implements DTO<Worker> {
   @Override
   public Worker toEntity() throws ValidationException {
     return new Worker(
-        this.id,
-        this.ownerId,
-        this.creationDate,
-        this.salary,
-        this.status,
-        this.startDate,
-        this.endDate,
-        this.coordinatesDTO.toEntity(),
-        this.personDTO.toEntity());
+        id,
+        ownerId,
+        creationDate,
+        salary,
+        status,
+        startDate,
+        endDate,
+        coordinatesDTO.toEntity(),
+        personDTO.toEntity());
   }
 
   @Override

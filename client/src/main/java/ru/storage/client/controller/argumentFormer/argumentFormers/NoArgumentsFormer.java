@@ -16,7 +16,7 @@ public final class NoArgumentsFormer implements ArgumentFormer {
   private String wrongArgumentsNumberException;
 
   public NoArgumentsFormer() {
-    this.logger = LogManager.getLogger(NoArgumentsFormer.class);
+    logger = LogManager.getLogger(NoArgumentsFormer.class);
   }
 
   @Override

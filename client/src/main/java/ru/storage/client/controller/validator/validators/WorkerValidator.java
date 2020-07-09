@@ -16,7 +16,7 @@ public final class WorkerValidator implements LocaleListener {
   private String wrongStatusException;
   private String wrongStartDateException;
   private String wrongEndDateException;
-  private List<String> statuses;
+  private List<String> statusMap;
 
   @Override
   public void changeLocale() {
@@ -28,7 +28,7 @@ public final class WorkerValidator implements LocaleListener {
     wrongStartDateException = resourceBundle.getString("exceptions.wrongStartDate");
     wrongEndDateException = resourceBundle.getString("exceptions.wrongEndDate");
 
-    statuses =
+    statusMap =
         new ArrayList<String>() {
           {
             add(resourceBundle.getString("constants.fired"));
@@ -53,7 +53,7 @@ public final class WorkerValidator implements LocaleListener {
   }
 
   public void checkStatus(String statusString) throws ValidationException {
-    if (!statuses.contains(statusString)) {
+    if (!statusMap.contains(statusString)) {
       throw new ValidationException(wrongStatusException);
     }
   }

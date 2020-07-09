@@ -3,59 +3,76 @@ package ru.storage.client.app.connection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.app.connection.exceptions.ClientConnectionException;
+import ru.storage.common.exitManager.ExitListener;
+import ru.storage.common.exitManager.exceptions.ExitingException;
 import ru.storage.common.serizliser.Serializer;
 import ru.storage.common.serizliser.exceptions.DeserializationException;
 import ru.storage.common.transfer.request.Request;
 import ru.storage.common.transfer.response.Response;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
 
-public final class ServerWorker {
+public final class ServerWorker implements ExitListener {
   private final Logger logger;
-  private final ByteBuffer buffer;
+  private final int bufferSize;
   private final Serializer serializer;
-  private final SocketChannel server;
+  private final Socket server;
   private final InetSocketAddress socketAddress;
+
+  private ByteBuffer buffer;
 
   public ServerWorker(int bufferSize, Serializer serializer, InetAddress address, int port)
       throws ClientConnectionException {
-    this.logger = LogManager.getLogger(ServerWorker.class);
-    this.buffer = ByteBuffer.allocate(bufferSize);
+    logger = LogManager.getLogger(ServerWorker.class);
+    this.bufferSize = bufferSize;
+    buffer = ByteBuffer.allocate(bufferSize);
     this.serializer = serializer;
-    this.socketAddress = new InetSocketAddress(address, port);
-
-    try {
-      this.server = SocketChannel.open();
-      this.server.configureBlocking(false);
-    } catch (IOException e) {
-      logger.info(() -> "Cannot configure client connection.", e);
-      throw new ClientConnectionException(e);
-    }
+    socketAddress = new InetSocketAddress(address, port);
+    server = new Socket();
   }
 
   public void connect() throws ClientConnectionException {
     try {
       server.connect(socketAddress);
+      server.setSoTimeout(5000);
     } catch (IOException e) {
-      logger.warn(() -> "Cannot connect to the server.");
+      logger.warn(() -> "Cannot connect to the server.", e);
       throw new ClientConnectionException(e);
     }
   }
 
-  public boolean isConnected() {
-    return server.isOpen();
-  }
-
   public Response read() throws ClientConnectionException, DeserializationException {
     try {
+      InputStream inputStream = server.getInputStream();
+      int size = inputStream.read(buffer.array());
+
+      if (size == -1) {
+        buffer = ByteBuffer.allocate(bufferSize);
+        server.close();
+        return null;
+      }
+
+      byte[] bytes = new byte[size];
+      buffer.rewind();
+      buffer.get(bytes, 0, size);
       buffer.clear();
-      server.read(buffer);
-      return serializer.deserialize(buffer.array(), Response.class);
+
+      return serializer.deserialize(bytes, Response.class);
     } catch (IOException e) {
+      try {
+        buffer = ByteBuffer.allocate(bufferSize);
+        server.close();
+      } catch (IOException ex) {
+        logger.error(() -> "Cannot close connection.", e);
+        throw new ClientConnectionException(e);
+      }
+
       logger.error(() -> "Cannot read response.", e);
       throw new ClientConnectionException(e);
     }
@@ -63,12 +80,29 @@ public final class ServerWorker {
 
   public void write(Request request) throws ClientConnectionException {
     try {
-      buffer.clear();
-      buffer.put(serializer.serialize(request));
-      server.write(buffer);
+      OutputStream outputStream = server.getOutputStream();
+      byte[] bytes = serializer.serialize(request);
+      outputStream.write(bytes);
     } catch (IOException e) {
+      try {
+        server.close();
+      } catch (IOException ex) {
+        logger.error(() -> "Cannot close connection.", e);
+        throw new ClientConnectionException(e);
+      }
+
       logger.error(() -> "Cannot write request.", e);
       throw new ClientConnectionException(e);
+    }
+  }
+
+  @Override
+  public void exit() throws ExitingException {
+    try {
+      server.close();
+    } catch (IOException e) {
+      logger.error(() -> "Cannot close connection.", e);
+      throw new ExitingException(e);
     }
   }
 }

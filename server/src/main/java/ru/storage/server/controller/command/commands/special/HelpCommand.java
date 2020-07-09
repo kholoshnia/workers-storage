@@ -6,14 +6,17 @@ import ru.storage.common.CommandMediator;
 import ru.storage.common.exitManager.ExitManager;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
-import ru.storage.server.controller.command.commands.view.ViewCommand;
 
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 public class HelpCommand extends SpecialCommand {
-  private static final String PATTERN = "%s - %s";
+  public static final String BEGINNING =
+      "---------------------------------------------< HELP >---------------------------------------------";
+  public static final String SEPARATOR =
+      "--------------------------------------------------------------------------------------------------";
+  private static final String PATTERN = "%-20s- %s";
 
   private final String HELP_PREFIX;
   private final String LOGIN_INFO;
@@ -38,7 +41,7 @@ public class HelpCommand extends SpecialCommand {
       ExitManager exitManager) {
     super(configuration, commandMediator, argumentMediator, arguments, locale, exitManager);
 
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.HelpCommand");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.HelpCommand");
 
     HELP_PREFIX = resourceBundle.getString("prefixes.help");
     LOGIN_INFO = resourceBundle.getString("infos.login");
@@ -58,11 +61,12 @@ public class HelpCommand extends SpecialCommand {
   @Override
   public Response executeCommand() {
     String result =
-        ViewCommand.SEPARATOR
+        BEGINNING
             + System.lineSeparator()
             + HELP_PREFIX
             + System.lineSeparator()
-            + ViewCommand.SEPARATOR
+            + SEPARATOR
+            + System.lineSeparator()
             + String.format(PATTERN, commandMediator.LOGIN, LOGIN_INFO)
             + System.lineSeparator()
             + String.format(PATTERN, commandMediator.LOGOUT, LOGOUT_INFO)
@@ -87,7 +91,7 @@ public class HelpCommand extends SpecialCommand {
             + System.lineSeparator()
             + String.format(PATTERN, commandMediator.SHOW, SHOW_INFO)
             + System.lineSeparator()
-            + ViewCommand.SEPARATOR;
+            + SEPARATOR;
 
     return new Response(Status.OK, result);
   }

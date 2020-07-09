@@ -38,7 +38,7 @@ public class RegisterCommand extends EntryCommand {
       Repository<User> userRepository,
       Key key) {
     super(configuration, argumentMediator, arguments, locale, hashGenerator, userRepository, key);
-    this.logger = LogManager.getLogger(RegisterCommand.class);
+    logger = LogManager.getLogger(RegisterCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.RegisterCommand", locale);
 

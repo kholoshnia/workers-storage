@@ -28,8 +28,7 @@ public final class PersonDTO implements DTO<Person> {
 
   @Override
   public Person toEntity() throws ValidationException {
-    return new Person(
-        this.id, this.ownerId, this.name, this.passportId, this.locationDTO.toEntity());
+    return new Person(id, ownerId, name, passportId, locationDTO.toEntity());
   }
 
   @Override

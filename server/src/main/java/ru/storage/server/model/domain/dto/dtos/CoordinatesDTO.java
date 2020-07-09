@@ -28,7 +28,7 @@ public final class CoordinatesDTO implements DTO<Coordinates> {
 
   @Override
   public Coordinates toEntity() throws ValidationException {
-    return new Coordinates(this.id, this.ownerId, this.x, this.y, this.z);
+    return new Coordinates(id, ownerId, x, y, z);
   }
 
   @Override

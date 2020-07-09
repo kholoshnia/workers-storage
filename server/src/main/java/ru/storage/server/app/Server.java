@@ -37,13 +37,23 @@ public final class Server implements ServerProcessor {
       ExecutorService executorService,
       List<Controller> controllers,
       ServerConnection serverConnection) {
-    this.logger = LogManager.getLogger(Server.class);
+    logger = LogManager.getLogger(Server.class);
     this.executorService = executorService;
     this.controllers = controllers;
     this.serverConnection = serverConnection;
   }
 
   public void start() throws ServerException {
+    /*new Thread(
+        () -> {
+          try {
+            view.process();
+          } catch (Throwable throwable) {
+            logger.fatal(() -> "Fatal view error, continuing server work.", throwable);
+          }
+        })
+    .start();*/
+
     try {
       serverConnection.process();
     } catch (SelectorException e) {
@@ -57,11 +67,27 @@ public final class Server implements ServerProcessor {
     try {
       executorService.read(
           () -> {
-            Request request = read(clientWorker);
+            Request request;
+
+            try {
+              request = clientWorker.read();
+            } catch (SelectorException e) {
+              logger.error(() -> "Cannot read request.", e);
+              return;
+            }
+
             executorService.handle(
                 () -> {
                   Response response = handle(request);
-                  executorService.send(() -> send(clientWorker, response));
+
+                  executorService.send(
+                      () -> {
+                        try {
+                          clientWorker.write(response);
+                        } catch (SelectorException e) {
+                          logger.error(() -> "Cannot write response.", e);
+                        }
+                      });
                 });
           });
     } catch (ExecutorServicesException e) {
@@ -69,32 +95,16 @@ public final class Server implements ServerProcessor {
     }
   }
 
-  private Request read(ClientWorker clientWorker) {
-    try {
-      return clientWorker.read();
-    } catch (SelectorException e) {
-      logger.error(() -> "Cannot read request.", e);
-      throw new ExecutorServicesException(e);
-    }
-  }
+  private Response handle(Request request) {
+    Response response;
 
-  protected Response handle(Request request) {
     for (Controller controller : controllers) {
-      Response response = controller.handle(request);
+      response = controller.handle(request);
       if (response != null) {
         return response;
       }
     }
 
     return new Response(Status.INTERNAL_SERVER_ERROR, NO_RESPONSE_FROM_HANDLERS_ANSWER);
-  }
-
-  private void send(ClientWorker clientWorker, Response response) {
-    try {
-      clientWorker.write(response);
-    } catch (SelectorException e) {
-      logger.error(() -> "Cannot write response.", e);
-      throw new ExecutorServicesException(e);
-    }
   }
 }

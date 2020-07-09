@@ -19,11 +19,11 @@ public abstract class SelectorConnection implements ExitListener {
   private boolean processing;
 
   public SelectorConnection() throws SelectorException {
-    this.logger = LogManager.getLogger(SelectorConnection.class);
-    this.processing = true;
+    logger = LogManager.getLogger(SelectorConnection.class);
+    processing = true;
 
     try {
-      this.selector = Selector.open();
+      selector = Selector.open();
       logger.debug(() -> "Selector was opened.");
     } catch (IOException e) {
       logger.error(() -> "Cannot open selector.", e);
@@ -56,12 +56,14 @@ public abstract class SelectorConnection implements ExitListener {
     while (iterator.hasNext()) {
       SelectionKey key = iterator.next();
 
-      if (key.isAcceptable()) {
-        accept(selector);
-      }
+      if (key.isValid()) {
+        if (key.isAcceptable()) {
+          accept(selector);
+        }
 
-      if (key.isReadable()) {
-        handle(key);
+        if (key.isReadable()) {
+          handle(key);
+        }
       }
 
       iterator.remove();

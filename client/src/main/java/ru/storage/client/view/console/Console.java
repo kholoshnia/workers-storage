@@ -18,6 +18,8 @@ import ru.storage.client.view.View;
 import ru.storage.client.view.console.exceptions.ConsoleException;
 import ru.storage.common.CommandMediator;
 import ru.storage.common.exitManager.ExitListener;
+import ru.storage.common.exitManager.ExitManager;
+import ru.storage.common.exitManager.exceptions.ExitingException;
 import ru.storage.common.serizliser.exceptions.DeserializationException;
 import ru.storage.common.transfer.request.Request;
 import ru.storage.common.transfer.response.Response;
@@ -25,6 +27,7 @@ import ru.storage.common.transfer.response.Response;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.channels.ConnectionPendingException;
 import java.nio.channels.NotYetConnectedException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,7 @@ import java.util.regex.Pattern;
 
 public final class Console implements View, ExitListener, LocaleListener {
   private final Logger logger;
+  private final ExitManager exitManager;
   private final ServerWorker serverWorker;
   private final CommandMediator commandMediator;
   private final Pattern regex;
@@ -47,6 +51,7 @@ public final class Console implements View, ExitListener, LocaleListener {
   private PrintWriter writer;
   private String prompt;
   private boolean processing;
+  private String token;
 
   private String connectedMessage;
   private String connectingMessage;
@@ -60,6 +65,7 @@ public final class Console implements View, ExitListener, LocaleListener {
 
   public Console(
       Configuration configuration,
+      ExitManager exitManager,
       InputStream inputStream,
       OutputStream outputStream,
       ServerWorker serverWorker,
@@ -68,19 +74,22 @@ public final class Console implements View, ExitListener, LocaleListener {
       FormerMediator formerMediator,
       ResponseHandler responseHandler)
       throws ConsoleException {
-    this.logger = LogManager.getLogger(Console.class);
-    this.jlineConsole = new JlineConsole(configuration, inputStream, outputStream);
-    this.reader = jlineConsole.getLineReader();
-    this.writer = jlineConsole.getPrintWriter();
+    logger = LogManager.getLogger(Console.class);
+    this.exitManager = exitManager;
+    exitManager.subscribe(this);
     this.serverWorker = serverWorker;
     this.commandMediator = commandMediator;
-    this.localeManager = localeManager;
-    this.localeManager.subscribe(this);
-    this.formerMediator = formerMediator;
+    regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
     this.responseHandler = responseHandler;
-    this.regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
-    this.prompt = " ~ $ ";
-    this.processing = true;
+    this.localeManager = localeManager;
+    localeManager.subscribe(this);
+    this.formerMediator = formerMediator;
+    jlineConsole = new JlineConsole(configuration, inputStream, outputStream);
+    reader = jlineConsole.getLineReader();
+    writer = jlineConsole.getPrintWriter();
+    prompt = " ~ $ ";
+    processing = true;
+    token = "";
   }
 
   @Override
@@ -104,20 +113,17 @@ public final class Console implements View, ExitListener, LocaleListener {
   }
 
   /** Processes client console */
-  public void process() {
+  public void process() throws ExitingException {
     localeManager.changeLocale();
     writeLine(greetingsMessage);
 
     try {
       serverWorker.connect();
     } catch (ClientConnectionException e) {
-      logger.fatal(() -> "Cannot connect to the server...");
+      logger.fatal(() -> "Cannot connect to the server...", e);
       writeLine(connectionException);
       return;
     }
-
-    waitConnection();
-    writeLine();
 
     while (processing) {
       logger.info(() -> "Waiting for user input...");
@@ -145,33 +151,26 @@ public final class Console implements View, ExitListener, LocaleListener {
 
       try {
         serverWorker.write(request);
+
+        try {
+          response = serverWorker.read();
+        } catch (DeserializationException e) {
+          logger.error(() -> "Got wrong or corrupted response.", e);
+          writeLine(deserializationException);
+          continue;
+        }
       } catch (NotYetConnectedException e) {
         logger.info(() -> "Client not yet connected to the server.", e);
         writeLine(notYetConnectedException);
-        waitConnection();
-        continue;
+        response = waitConnection(request);
       } catch (ClientConnectionException e) {
-        logger.info(() -> "Error in connection server.", e);
+        logger.info(() -> "Error in connection with server.", e);
         writeLine(connectionException);
-        waitConnection();
-        continue;
+        response = waitConnection(request);
       }
 
-      try {
-        response = serverWorker.read();
-      } catch (NotYetConnectedException e) {
-        logger.info(() -> "Client not yet connected to the server.", e);
-        writeLine(notYetConnectedException);
-        waitConnection();
-        continue;
-      } catch (ClientConnectionException e) {
-        logger.info(() -> "Error in serverWorker with server.", e);
-        writeLine(connectionException);
-        waitConnection();
-        continue;
-      } catch (DeserializationException e) {
-        logger.info(() -> "Got deserialization exception.", e);
-        writeLine(deserializationException);
+      if (response == null) {
+        logger.info(() -> "Got null response continuing...");
         continue;
       }
 
@@ -179,6 +178,8 @@ public final class Console implements View, ExitListener, LocaleListener {
       logger.info("Got answer from server: {}.", () -> answer);
       writeLine(answer);
     }
+
+    serverWorker.exit();
   }
 
   /**
@@ -187,7 +188,7 @@ public final class Console implements View, ExitListener, LocaleListener {
    * @param words user input words
    * @return new request
    */
-  private Request createRequest(List<String> words) {
+  private Request createRequest(List<String> words) throws ExitingException {
     String command = words.get(0);
     List<String> arguments;
 
@@ -197,12 +198,17 @@ public final class Console implements View, ExitListener, LocaleListener {
       arguments = new ArrayList<>();
     }
 
+    if (command.equals(commandMediator.EXIT)) {
+      exitManager.exit();
+      return null;
+    }
+
     try {
       return new RequestBuilder()
-          .setFormerMediator(formerMediator)
           .setCommand(command)
-          .setArguments(arguments)
+          .setRawArguments(arguments, formerMediator)
           .setLocale(Locale.getDefault())
+          .setToken(token)
           .build();
     } catch (BuildingException e) {
       logger.warn(() -> "Request building exception.", e);
@@ -211,12 +217,13 @@ public final class Console implements View, ExitListener, LocaleListener {
     }
   }
 
-  /** Waits serverWorker to the server. Checks serverWorker every 1 second. */
-  private void waitConnection() {
+  /** Waits connection with the server. Pending request every 1 second. */
+  private Response waitConnection(Request request) {
+    Response response = null;
     String anim = "|/-\\";
     int counter = 0;
 
-    while (!serverWorker.isConnected()) {
+    do {
       try {
         Thread.sleep(100);
       } catch (InterruptedException e) {
@@ -228,12 +235,27 @@ public final class Console implements View, ExitListener, LocaleListener {
         counter = 0;
       }
 
-      write(String.format("\r%s %s...", anim.charAt(counter % anim.length()), connectingMessage));
-    }
+      write(String.format("\r%s %s", anim.charAt(counter % anim.length()), connectingMessage));
+
+      try {
+        serverWorker.connect();
+        serverWorker.write(request);
+        response = serverWorker.read();
+      } catch (ClientConnectionException
+          | NotYetConnectedException
+          | ConnectionPendingException e) {
+        logger.error(() -> "Got connection exception, reconnecting.", e);
+      } catch (DeserializationException e) {
+        logger.error(() -> "Got wrong or corrupted response.", e);
+        return null;
+      }
+    } while (response == null);
 
     logger.info(() -> "Connected to the server.");
+    writeLine(String.format("\r%s", connectedMessage));
     writeLine();
-    writeLine(connectedMessage);
+
+    return response;
   }
 
   /**

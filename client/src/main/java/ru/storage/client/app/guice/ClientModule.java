@@ -31,6 +31,8 @@ import ru.storage.client.view.console.Console;
 import ru.storage.client.view.console.exceptions.ConsoleException;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
+import ru.storage.common.exitManager.ExitListener;
+import ru.storage.common.exitManager.ExitManager;
 import ru.storage.common.guice.CommonModule;
 import ru.storage.common.serizliser.Serializer;
 
@@ -47,7 +49,7 @@ public final class ClientModule extends AbstractModule {
   private final Logger logger;
 
   public ClientModule(String[] args) {
-    this.logger = LogManager.getLogger(ClientModule.class);
+    logger = LogManager.getLogger(ClientModule.class);
   }
 
   @Override
@@ -68,6 +70,7 @@ public final class ClientModule extends AbstractModule {
   @Singleton
   View provideView(
       Configuration configuration,
+      ExitManager exitManager,
       ServerWorker serverWorker,
       CommandMediator commandMediator,
       LocaleManager localeManager,
@@ -80,6 +83,7 @@ public final class ClientModule extends AbstractModule {
       console =
           new Console(
               configuration,
+              exitManager,
               System.in,
               System.out,
               serverWorker,
@@ -184,5 +188,15 @@ public final class ClientModule extends AbstractModule {
 
     logger.debug(() -> "Provided ServerWorker.");
     return serverWorker;
+  }
+
+  @Provides
+  @Singleton
+  ExitManager provideExitManager() {
+    List<ExitListener> entities = new ArrayList<>();
+
+    ExitManager exitManager = new ExitManager(entities);
+    logger.debug(() -> "Provided ExitManager.");
+    return exitManager;
   }
 }

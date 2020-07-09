@@ -89,15 +89,15 @@ public final class Worker implements Cloneable, Entity {
   @Override
   public WorkerDTO toDTO() {
     return new WorkerDTO(
-        this.id,
-        this.ownerId,
-        this.creationDate,
-        this.salary,
-        this.status,
-        this.startDate,
-        this.endDate,
-        this.coordinates.toDTO(),
-        this.person.toDTO());
+        id,
+        ownerId,
+        creationDate,
+        salary,
+        status,
+        startDate,
+        endDate,
+        coordinates.toDTO(),
+        person.toDTO());
   }
 
   public final long getId() {
@@ -275,15 +275,7 @@ public final class Worker implements Cloneable, Entity {
   public Worker clone() {
     try {
       return new Worker(
-          this.id,
-          this.ownerId,
-          this.creationDate,
-          this.salary,
-          this.status,
-          this.startDate,
-          this.endDate,
-          this.coordinates,
-          this.person);
+          id, ownerId, creationDate, salary, status, startDate, endDate, coordinates, person);
     } catch (ValidationException e) {
       throw new RuntimeException(e);
     }

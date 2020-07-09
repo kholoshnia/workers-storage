@@ -7,6 +7,7 @@ import ru.storage.server.controller.Controller;
 
 import java.util.ResourceBundle;
 
+/** Checks if got correct request to continue handling. */
 public final class CheckController implements Controller {
   private static String GOT_NULL_REQUEST_ANSWER;
   private static String GOT_NULL_LOCALE_ANSWER;

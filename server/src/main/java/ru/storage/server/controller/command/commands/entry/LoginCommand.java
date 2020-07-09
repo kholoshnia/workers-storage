@@ -37,7 +37,7 @@ public class LoginCommand extends EntryCommand {
       Repository<User> userRepository,
       Key key) {
     super(configuration, argumentMediator, arguments, locale, hashGenerator, userRepository, key);
-    this.logger = LogManager.getLogger(LoginCommand.class);
+    logger = LogManager.getLogger(LoginCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.LoginCommand", locale);
 
@@ -77,7 +77,7 @@ public class LoginCommand extends EntryCommand {
     for (User user : equalLoginUsers) {
       if (!user.getPassword().equals(hashedPassword)) {
         logger.warn("Wrong user password.");
-        return new Response(Status.FORBIdDEN, WRONG_USER_PASSWORD_ANSWER);
+        return new Response(Status.FORBIDDEN, WRONG_USER_PASSWORD_ANSWER);
       }
     }
 

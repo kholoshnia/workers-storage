@@ -15,7 +15,7 @@ import ru.storage.server.model.domain.repository.repositories.workerRepository.e
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import javax.annotation.Nonnull;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -44,18 +44,18 @@ public final class WorkerRepository implements Repository<Worker> {
   private final DAO<Long, WorkerDTO> workerDAO;
   private final List<Worker> workers;
   private final Class<?> type;
-  private final LocalDateTime initTime;
+  private final ZonedDateTime initTime;
   private long size;
 
   @Inject
   public WorkerRepository(@Nonnull DAO<Long, WorkerDTO> workerDAO)
       throws WorkerRepositoryException {
-    this.logger = LogManager.getLogger(WorkerRepository.class);
+    logger = LogManager.getLogger(WorkerRepository.class);
     this.workerDAO = workerDAO;
-    this.workers = initWorkersList();
-    this.initTime = LocalDateTime.now();
-    this.type = workers.getClass();
-    this.size = workers.size();
+    workers = initWorkersList();
+    initTime = ZonedDateTime.now();
+    type = workers.getClass();
+    size = workers.size();
   }
 
   /** Returns type of the collection. */
@@ -64,7 +64,7 @@ public final class WorkerRepository implements Repository<Worker> {
   }
 
   /** Returns initialization time of the collection. */
-  public LocalDateTime getInitTime() {
+  public ZonedDateTime getInitTime() {
     return initTime;
   }
 

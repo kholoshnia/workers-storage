@@ -11,6 +11,8 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.storage.common.ArgumentMediator;
+import ru.storage.common.CommandMediator;
 import ru.storage.common.exitManager.ExitListener;
 import ru.storage.common.exitManager.ExitManager;
 import ru.storage.common.guice.CommonModule;
@@ -26,10 +28,13 @@ import ru.storage.server.controller.Controller;
 import ru.storage.server.controller.auth.AuthController;
 import ru.storage.server.controller.check.CheckController;
 import ru.storage.server.controller.command.CommandController;
+import ru.storage.server.controller.command.factory.CommandFactory;
 import ru.storage.server.controller.command.factory.CommandFactoryMediator;
+import ru.storage.server.controller.command.factory.factories.*;
 import ru.storage.server.controller.services.hash.HashGenerator;
 import ru.storage.server.controller.services.hash.SHA256Generator;
 import ru.storage.server.controller.services.history.History;
+import ru.storage.server.controller.services.parser.Parser;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.daos.*;
 import ru.storage.server.model.domain.dto.dtos.*;
@@ -44,8 +49,11 @@ import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.Key;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -59,7 +67,7 @@ public final class ServerModule extends AbstractModule {
   private final Logger logger;
 
   public ServerModule(String[] args) {
-    this.logger = LogManager.getLogger(ServerModule.class);
+    logger = LogManager.getLogger(ServerModule.class);
 
     URL = args[0];
     USER = args[1];
@@ -231,6 +239,54 @@ public final class ServerModule extends AbstractModule {
 
     logger.debug(() -> "Provided Controllers list.");
     return controllers;
+  }
+
+  @Provides
+  @Singleton
+  Map<String, CommandFactory> provideCommandFactoryMap(
+      Configuration configuration,
+      CommandMediator commandMediator,
+      ArgumentMediator argumentMediator,
+      HashGenerator hashGenerator,
+      UserRepository userRepository,
+      Key key,
+      History history,
+      WorkerRepository workerRepository,
+      Parser parser,
+      ExitManager exitManager) {
+    CommandFactory entryCommandFactory =
+        new EntryCommandFactory(
+            configuration, argumentMediator, commandMediator, hashGenerator, userRepository, key);
+    CommandFactory historyCommandFactory =
+        new HistoryCommandFactory(configuration, argumentMediator, commandMediator, history);
+    CommandFactory modificationCommandFactory =
+        new ModificationCommandFactory(
+            configuration, argumentMediator, commandMediator, workerRepository, parser);
+    CommandFactory viewCommandFactory =
+        new ViewCommandFactory(configuration, argumentMediator, commandMediator, workerRepository);
+    CommandFactory specialCommandFactory =
+        new SpecialCommandFactory(configuration, argumentMediator, commandMediator, exitManager);
+
+    Map<String, CommandFactory> commandFactoryMap =
+        new HashMap<String, CommandFactory>() {
+          {
+            put(commandMediator.LOGIN, entryCommandFactory);
+            put(commandMediator.LOGOUT, entryCommandFactory);
+            put(commandMediator.REGISTER, entryCommandFactory);
+            put(commandMediator.SHOW_HISTORY, historyCommandFactory);
+            put(commandMediator.CLEAR_HISTORY, historyCommandFactory);
+            put(commandMediator.ADD, modificationCommandFactory);
+            put(commandMediator.REMOVE, modificationCommandFactory);
+            put(commandMediator.UPDATE, modificationCommandFactory);
+            put(commandMediator.EXIT, specialCommandFactory);
+            put(commandMediator.HELP, specialCommandFactory);
+            put(commandMediator.INFO, viewCommandFactory);
+            put(commandMediator.SHOW, viewCommandFactory);
+          }
+        };
+
+    logger.debug(() -> "Provided command factory map.");
+    return commandFactoryMap;
   }
 
   @Provides

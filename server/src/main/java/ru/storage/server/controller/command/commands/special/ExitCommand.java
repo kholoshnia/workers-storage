@@ -28,7 +28,7 @@ public class ExitCommand extends SpecialCommand {
       Locale locale,
       ExitManager exitManager) {
     super(configuration, commandMediator, argumentMediator, arguments, locale, exitManager);
-    this.logger = LogManager.getLogger(ExitCommand.class);
+    logger = LogManager.getLogger(ExitCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ExitCommand", locale);
 

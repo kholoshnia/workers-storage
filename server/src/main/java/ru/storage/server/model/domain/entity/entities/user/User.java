@@ -52,7 +52,7 @@ public final class User implements Entity {
 
   @Override
   public UserDTO toDTO() {
-    return new UserDTO(this.id, this.name, this.login, this.password, this.role);
+    return new UserDTO(id, name, login, password, role);
   }
 
   public final long getId() {

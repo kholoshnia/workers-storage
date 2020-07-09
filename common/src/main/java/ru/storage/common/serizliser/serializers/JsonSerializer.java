@@ -17,7 +17,7 @@ public final class JsonSerializer implements Serializer {
 
   @Inject
   public JsonSerializer(Gson gson) {
-    this.logger = LogManager.getLogger(JsonSerializer.class);
+    logger = LogManager.getLogger(JsonSerializer.class);
     this.gson = gson;
   }
 

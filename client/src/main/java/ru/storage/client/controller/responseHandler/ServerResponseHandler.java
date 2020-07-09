@@ -12,7 +12,8 @@ import java.util.ResourceBundle;
 
 public final class ServerResponseHandler implements ResponseHandler {
   private final Logger logger;
-  private final Map<Status, String> statuses;
+
+  private Map<Status, String> statusMap;
 
   private String serverAnswerPrefix;
   private String OKResponse;
@@ -28,25 +29,7 @@ public final class ServerResponseHandler implements ResponseHandler {
 
   @Inject
   public ServerResponseHandler() {
-    this.logger = LogManager.getLogger(ServerResponseHandler.class);
-
-    this.statuses =
-        new HashMap<Status, String>() {
-          {
-            put(Status.OK, OKResponse);
-            put(Status.CREATED, createdResponse);
-            put(Status.NO_CONTENT, noContentResponse);
-            put(Status.NOT_MODIFIED, notModifiedResponse);
-            put(Status.BAD_REQUEST, badRequestResponse);
-            put(Status.UNAUTHORIZED, unauthorizedResponse);
-            put(Status.NOT_FOUND, notFoundResponse);
-            put(Status.FORBIdDEN, forbiddenResponse);
-            put(Status.CONFLICT, conflictResponse);
-            put(Status.INTERNAL_SERVER_ERROR, internalServerErrorResponse);
-          }
-        };
-
-    logger.debug(() -> "Response handler map was created.");
+    logger = LogManager.getLogger(ServerResponseHandler.class);
   }
 
   @Override
@@ -64,14 +47,30 @@ public final class ServerResponseHandler implements ResponseHandler {
     forbiddenResponse = resourceBundle.getString("responses.forbidden");
     conflictResponse = resourceBundle.getString("responses.conflict");
     internalServerErrorResponse = resourceBundle.getString("responses.internalServerError");
+
+    statusMap =
+        new HashMap<Status, String>() {
+          {
+            put(Status.OK, OKResponse);
+            put(Status.CREATED, createdResponse);
+            put(Status.NO_CONTENT, noContentResponse);
+            put(Status.NOT_MODIFIED, notModifiedResponse);
+            put(Status.BAD_REQUEST, badRequestResponse);
+            put(Status.UNAUTHORIZED, unauthorizedResponse);
+            put(Status.NOT_FOUND, notFoundResponse);
+            put(Status.FORBIDDEN, forbiddenResponse);
+            put(Status.CONFLICT, conflictResponse);
+            put(Status.INTERNAL_SERVER_ERROR, internalServerErrorResponse);
+          }
+        };
   }
 
   @Override
   public String handle(Response response) {
     String result =
         String.format(
-            "%s (%s): %s",
-            serverAnswerPrefix, statuses.get(response.getStatus()), response.getAnswer());
+            "%s (%s):\n%s",
+            serverAnswerPrefix, statusMap.get(response.getStatus()), response.getAnswer());
 
     logger.info("Got string: {}, for response: {}.", () -> response, () -> result);
     return result;

@@ -53,7 +53,7 @@ public final class Person implements Cloneable, Entity {
 
   @Override
   public PersonDTO toDTO() {
-    return new PersonDTO(this.id, this.ownerId, this.name, this.passportId, this.location.toDTO());
+    return new PersonDTO(id, ownerId, name, passportId, location.toDTO());
   }
 
   public final long getId() {
@@ -160,7 +160,7 @@ public final class Person implements Cloneable, Entity {
   @Override
   public Person clone() {
     try {
-      return new Person(this.id, this.ownerId, this.name, this.passportId, this.location);
+      return new Person(id, ownerId, name, passportId, location);
     } catch (ValidationException e) {
       throw new RuntimeException(e);
     }

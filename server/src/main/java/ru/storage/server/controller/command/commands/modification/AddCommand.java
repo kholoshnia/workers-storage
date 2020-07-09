@@ -31,7 +31,7 @@ public final class AddCommand extends ModificationCommand {
       Repository<Worker> workerRepository,
       Parser parser) {
     super(configuration, argumentMediator, arguments, locale, workerRepository, parser);
-    this.logger = LogManager.getLogger(AddCommand.class);
+    logger = LogManager.getLogger(AddCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.AddCommand");
 

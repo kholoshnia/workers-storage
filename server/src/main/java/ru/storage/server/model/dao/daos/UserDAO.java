@@ -78,7 +78,7 @@ public class UserDAO implements DAO<String, UserDTO> {
 
   @Inject
   public UserDAO(DataSource dataSource) {
-    this.logger = LogManager.getLogger(UserDAO.class);
+    logger = LogManager.getLogger(UserDAO.class);
     this.dataSource = dataSource;
   }
 

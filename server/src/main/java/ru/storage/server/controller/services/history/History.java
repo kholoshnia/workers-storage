@@ -13,8 +13,8 @@ public final class History {
   private final List<Record> records;
 
   public History() {
-    this.logger = LogManager.getLogger(History.class);
-    this.records = new ArrayList<>();
+    logger = LogManager.getLogger(History.class);
+    records = new ArrayList<>();
   }
 
   public List<Record> getRecords(int number) {

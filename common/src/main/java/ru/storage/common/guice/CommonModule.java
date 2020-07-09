@@ -17,7 +17,7 @@ public class CommonModule extends AbstractModule {
   private final Logger logger;
 
   public CommonModule() {
-    this.logger = LogManager.getLogger(CommonModule.class);
+    logger = LogManager.getLogger(CommonModule.class);
   }
 
   @Override

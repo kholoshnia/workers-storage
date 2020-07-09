@@ -53,7 +53,7 @@ public final class Coordinates implements Cloneable, Entity {
 
   @Override
   public CoordinatesDTO toDTO() {
-    return new CoordinatesDTO(this.id, this.ownerId, this.x, this.y, this.z);
+    return new CoordinatesDTO(id, ownerId, x, y, z);
   }
 
   public final long getId() {
@@ -157,7 +157,7 @@ public final class Coordinates implements Cloneable, Entity {
   @Override
   public Coordinates clone() {
     try {
-      return new Coordinates(this.id, this.ownerId, this.x, this.y, this.z);
+      return new Coordinates(id, ownerId, x, y, z);
     } catch (ValidationException e) {
       throw new RuntimeException(e);
     }

@@ -13,7 +13,7 @@ public final class FormerMediator implements LocaleListener {
 
   @Inject
   public FormerMediator(Map<String, ArgumentFormer> argumentFormerMap) {
-    this.logger = LogManager.getLogger(FormerMediator.class);
+    logger = LogManager.getLogger(FormerMediator.class);
     this.argumentFormers = argumentFormerMap;
   }
 

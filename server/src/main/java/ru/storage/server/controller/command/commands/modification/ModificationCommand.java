@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public abstract class ModificationCommand extends Command {
-  protected final String WRONG_Id_ANSWER;
+  protected final String WRONG_ID_ANSWER;
   protected final String WORKER_NOT_FOUND_ANSWER;
   protected final String COLLECTION_IS_EMPTY_ANSWER;
   protected final String WRONG_WORKER_FORMAT_ANSWER;
@@ -41,14 +41,14 @@ public abstract class ModificationCommand extends Command {
       Repository<Worker> workerRepository,
       Parser parser) {
     super(configuration, argumentMediator, arguments);
-    this.logger = LogManager.getLogger(ModificationCommand.class);
+    logger = LogManager.getLogger(ModificationCommand.class);
     this.workerRepository = workerRepository;
     this.parser = parser;
 
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.ModificationCommand", locale);
 
-    WRONG_Id_ANSWER = resourceBundle.getString("answers.wrongId");
+    WRONG_ID_ANSWER = resourceBundle.getString("answers.wrongId");
     WORKER_NOT_FOUND_ANSWER = resourceBundle.getString("answers.workerNotFound");
     COLLECTION_IS_EMPTY_ANSWER = resourceBundle.getString("answers.collectionIsEmpty");
     WRONG_WORKER_FORMAT_ANSWER = resourceBundle.getString("answers.wrongWorkerFormat");
@@ -82,7 +82,7 @@ public abstract class ModificationCommand extends Command {
 
   protected final PersonDTO createPersonDTO(Map<String, String> arguments) throws ParserException {
     String name = parser.parseString(arguments.get(argumentMediator.PERSON_NAME));
-    String passportId = parser.parseString(arguments.get(argumentMediator.PERSON_PASSPORT_Id));
+    String passportId = parser.parseString(arguments.get(argumentMediator.PERSON_PASSPORT_ID));
     LocationDTO locationDTO = createLocationDTO(arguments);
 
     PersonDTO personDTO =

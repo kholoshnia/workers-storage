@@ -25,7 +25,7 @@
         </plugins>
     </reporting>
 
-    <!--<build>
+    <build>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -53,7 +53,7 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>-->
+    </build>
 
     <dependencies>
         <dependency>

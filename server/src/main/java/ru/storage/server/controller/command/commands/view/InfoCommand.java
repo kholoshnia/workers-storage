@@ -13,8 +13,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class InfoCommand extends ViewCommand {
-  public static final String BEGINNING = "-----------------------< INFO >----------------------";
-  public static final String SEPARATOR = "-----------------------------------------------------";
+  public static final String BEGINNING =
+      "-----------------------------< INFO >-----------------------------";
+  public static final String SEPARATOR =
+      "------------------------------------------------------------------";
 
   private final String INFO_PREFIX;
   private final String TYPE_PREFIX;

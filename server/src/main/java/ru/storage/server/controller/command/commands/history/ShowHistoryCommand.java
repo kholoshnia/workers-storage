@@ -64,6 +64,10 @@ public final class ShowHistoryCommand extends HistoryCommand {
       result.append(SEPARATOR).append(System.lineSeparator());
     }
 
+    if (result.length() > 0) {
+      result.setLength(result.length() - 1); // TODO: Kostyl'
+    }
+
     logger.info(() -> "History has been formed.");
     return new Response(Status.OK, result.toString());
   }

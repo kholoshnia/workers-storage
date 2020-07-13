@@ -17,6 +17,7 @@ import ru.storage.client.app.connection.ServerWorker;
 import ru.storage.client.app.connection.exceptions.ClientConnectionException;
 import ru.storage.client.app.guice.exceptions.ProvidingException;
 import ru.storage.client.controller.argumentFormer.ArgumentFormer;
+import ru.storage.client.controller.argumentFormer.ArgumentValidator;
 import ru.storage.client.controller.argumentFormer.FormerMediator;
 import ru.storage.client.controller.argumentFormer.argumentFormers.NewWorkerFormer;
 import ru.storage.client.controller.argumentFormer.argumentFormers.NewWorkerIdFormer;
@@ -26,6 +27,7 @@ import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.controller.localeManager.LocaleManager;
 import ru.storage.client.controller.responseHandler.ResponseHandler;
 import ru.storage.client.controller.responseHandler.ServerResponseHandler;
+import ru.storage.client.controller.validator.validators.*;
 import ru.storage.client.view.View;
 import ru.storage.client.view.console.Console;
 import ru.storage.client.view.console.exceptions.ConsoleException;
@@ -119,10 +121,14 @@ public final class ClientModule extends AbstractModule {
   @Provides
   @Singleton
   Map<String, ArgumentFormer> provideArgumentFormerMap(
-      CommandMediator commandMediator, ArgumentMediator argumentMediator) {
+      CommandMediator commandMediator,
+      ArgumentMediator argumentMediator,
+      Map<String, ArgumentValidator> argumentValidatorMap,
+      Console console) {
     ArgumentFormer noArgumentsFormer = new NoArgumentsFormer();
     ArgumentFormer workerIdFormer = new WorkerIdFormer(argumentMediator);
-    ArgumentFormer newWorkerFormer = new NewWorkerFormer(argumentMediator);
+    ArgumentFormer newWorkerFormer =
+        new NewWorkerFormer(argumentValidatorMap, argumentMediator, console);
     ArgumentFormer newWorkerId = new NewWorkerIdFormer(argumentMediator);
 
     Map<String, ArgumentFormer> argumentFormerMap =
@@ -145,6 +151,40 @@ public final class ClientModule extends AbstractModule {
 
     logger.debug(() -> "Provided argument former map.");
     return argumentFormerMap;
+  }
+
+  @Provides
+  @Singleton
+  Map<String, ArgumentValidator> provideArgumentValidatorMap(
+      ArgumentMediator argumentMediator,
+      WorkerValidator workerValidator,
+      CoordinatesValidator coordinatesValidator,
+      PersonValidator personValidator,
+      LocationValidator locationValidator,
+      UserValidator userValidator) {
+    Map<String, ArgumentValidator> argumentValidatorMap =
+        new HashMap<String, ArgumentValidator>() {
+          {
+            put(argumentMediator.WORKER_SALARY, workerValidator::checkSalary);
+            put(argumentMediator.WORKER_STATUS, workerValidator::checkStatus);
+            put(argumentMediator.WORKER_START_DATE, workerValidator::checkStartDate);
+            put(argumentMediator.WORKER_END_DATE, workerValidator::checkEndDate);
+            put(argumentMediator.COORDINATES_X, coordinatesValidator::checkX);
+            put(argumentMediator.COORDINATES_Y, coordinatesValidator::checkY);
+            put(argumentMediator.COORDINATES_Z, coordinatesValidator::checkZ);
+            put(argumentMediator.PERSON_NAME, personValidator::checkName);
+            put(argumentMediator.PERSON_PASSPORT_ID, personValidator::checkPassportId);
+            put(argumentMediator.LOCATION_ADDRESS, locationValidator::checkAddress);
+            put(argumentMediator.LOCATION_LATITUDE, locationValidator::checkLatitude);
+            put(argumentMediator.LOCATION_LONGITUDE, locationValidator::checkLongitude);
+            put(argumentMediator.USER_NAME, userValidator::checkName);
+            put(argumentMediator.USER_LOGIN, userValidator::checkName);
+            put(argumentMediator.USER_PASSWORD, userValidator::checkPassword);
+          }
+        };
+
+    logger.debug(() -> "Provided argument validator map.");
+    return argumentValidatorMap;
   }
 
   @Provides

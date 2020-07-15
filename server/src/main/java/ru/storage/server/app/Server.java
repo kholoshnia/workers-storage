@@ -47,7 +47,7 @@ public final class Server implements ServerProcessor {
     /*new Thread(
         () -> {
           try {
-            view.process();
+            console.process();
           } catch (Throwable throwable) {
             logger.fatal(() -> "Fatal view error, continuing server work.", throwable);
           }

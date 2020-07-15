@@ -25,6 +25,7 @@ import java.util.ResourceBundle;
 public class LoginCommand extends EntryCommand {
   private final String USER_NOT_REGISTERED_ANSWER;
   private final String WRONG_USER_PASSWORD_ANSWER;
+  private final String LOGGED_IN_ANSWER;
 
   private final Logger logger;
 
@@ -43,6 +44,7 @@ public class LoginCommand extends EntryCommand {
 
     USER_NOT_REGISTERED_ANSWER = resourceBundle.getString("answers.userNotRegistered");
     WRONG_USER_PASSWORD_ANSWER = resourceBundle.getString("answers.wrongUserPassword");
+    LOGGED_IN_ANSWER = resourceBundle.getString("answers.loggedIn");
   }
 
   @Override
@@ -84,6 +86,6 @@ public class LoginCommand extends EntryCommand {
     String jws = Jwts.builder().setSubject(subject).signWith(key).compact();
     logger.warn(() -> "Json web signature was created.");
 
-    return new Response(Status.OK, jws);
+    return new Response(Status.OK, LOGGED_IN_ANSWER, jws);
   }
 }

@@ -30,8 +30,6 @@ public final class CommandController implements Controller {
   private final CommandFactoryMediator commandFactoryMediator;
   private final History history;
 
-  private String noSuchCommandAnswer;
-
   @Inject
   public CommandController(CommandFactoryMediator commandFactoryMediator, History history) {
     logger = LogManager.getLogger(CommandController.class);
@@ -43,7 +41,7 @@ public final class CommandController implements Controller {
   public Response handle(Request request) {
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.CommandController", request.getLocale());
-    noSuchCommandAnswer = resourceBundle.getString("answers.noSuchCommand");
+    String noSuchCommandAnswer = resourceBundle.getString("answers.noSuchCommand");
 
     CommandFactory commandFactory = commandFactoryMediator.getCommandFactory(request.getCommand());
 

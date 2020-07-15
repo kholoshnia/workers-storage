@@ -132,8 +132,8 @@ public final class ServerModule extends AbstractModule {
     ServerConnection serverConnection;
 
     try {
-      InetAddress address = InetAddress.getByName(configuration.getString("server.localhost"));
       int bufferSize = configuration.getInt("server.bufferSize");
+      InetAddress address = InetAddress.getByName(configuration.getString("server.localhost"));
       int port = configuration.getInt("server.port");
       serverConnection =
           new ServerConnection(bufferSize, address, port, serverProcessor, serializer);

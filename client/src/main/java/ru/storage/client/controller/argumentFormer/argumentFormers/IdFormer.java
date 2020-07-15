@@ -3,7 +3,9 @@ package ru.storage.client.controller.argumentFormer.argumentFormers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.controller.argumentFormer.ArgumentFormer;
+import ru.storage.client.controller.argumentFormer.ArgumentValidator;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
+import ru.storage.client.controller.validator.exceptions.ValidationException;
 import ru.storage.common.ArgumentMediator;
 
 import java.util.HashMap;
@@ -11,24 +13,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public final class WorkerIdFormer implements ArgumentFormer {
+public final class IdFormer extends ArgumentFormer {
   private final Logger logger;
   private final ArgumentMediator argumentMediator;
 
   private String wrongArgumentsNumberException;
-  private String wrongArgumentValueException;
 
-  public WorkerIdFormer(ArgumentMediator argumentMediator) {
-    logger = LogManager.getLogger(WorkerIdFormer.class);
+  public IdFormer(
+      Map<String, ArgumentValidator> argumentValidatorMap, ArgumentMediator argumentMediator) {
+    super(argumentValidatorMap);
+    logger = LogManager.getLogger(IdFormer.class);
     this.argumentMediator = argumentMediator;
   }
 
   @Override
   public void changeLocale() {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.WorkerIdFormer");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.IdFormer");
 
     wrongArgumentsNumberException = resourceBundle.getString("exceptions.wrongArgumentsNumber");
-    wrongArgumentValueException = resourceBundle.getString("exceptions.wrongArgumentValue");
   }
 
   @Override
@@ -38,20 +40,11 @@ public final class WorkerIdFormer implements ArgumentFormer {
       throw new WrongArgumentsException(wrongArgumentsNumberException);
     }
 
-    String idArgument = arguments.get(0);
-
-    long id;
-
     try {
-      id = Long.parseLong(idArgument);
-    } catch (NumberFormatException | NullPointerException exception) {
-      logger.warn(() -> "Got wrong argument value.");
-      throw new WrongArgumentsException(wrongArgumentValueException);
-    }
-
-    if (id < 0) {
-      logger.warn(() -> "Got wrong argument value.");
-      throw new WrongArgumentsException(wrongArgumentValueException);
+      checkArgument(argumentMediator.WORKER_ID, arguments.get(0));
+    } catch (ValidationException e) {
+      logger.warn(() -> "Got wrong argument.", e);
+      throw new WrongArgumentsException(e);
     }
   }
 

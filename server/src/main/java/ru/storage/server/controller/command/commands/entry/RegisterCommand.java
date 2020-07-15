@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 
 public class RegisterCommand extends EntryCommand {
   public final String USER_ALREADY_REGISTERED_ANSWER;
+  private final String REGISTERED_ANSWER;
 
   private final Logger logger;
 
@@ -43,6 +44,7 @@ public class RegisterCommand extends EntryCommand {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.RegisterCommand", locale);
 
     USER_ALREADY_REGISTERED_ANSWER = resourceBundle.getString("answers.alreadyRegistered");
+    REGISTERED_ANSWER = resourceBundle.getString("answers.registered");
   }
 
   @Override
@@ -94,6 +96,6 @@ public class RegisterCommand extends EntryCommand {
     String jws = Jwts.builder().setSubject(subject).signWith(key).compact();
     logger.warn(() -> "Json web signature was created.");
 
-    return new Response(Status.OK, jws);
+    return new Response(Status.OK, REGISTERED_ANSWER, jws);
   }
 }

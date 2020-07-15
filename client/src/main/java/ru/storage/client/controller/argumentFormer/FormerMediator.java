@@ -9,21 +9,21 @@ import java.util.Map;
 
 public final class FormerMediator implements LocaleListener {
   private final Logger logger;
-  private Map<String, ArgumentFormer> argumentFormers;
+  private final Map<String, ArgumentFormer> argumentFormerMap;
 
   @Inject
   public FormerMediator(Map<String, ArgumentFormer> argumentFormerMap) {
     logger = LogManager.getLogger(FormerMediator.class);
-    this.argumentFormers = argumentFormerMap;
+    this.argumentFormerMap = argumentFormerMap;
   }
 
   @Override
   public void changeLocale() {
-    argumentFormers.values().forEach(LocaleListener::changeLocale);
+    argumentFormerMap.values().forEach(LocaleListener::changeLocale);
   }
 
   public ArgumentFormer getArgumentFormer(String command) {
-    ArgumentFormer argumentFormer = argumentFormers.get(command);
+    ArgumentFormer argumentFormer = argumentFormerMap.get(command);
 
     logger.info("Got argument former {}, for command {}.", () -> argumentFormer, () -> command);
     return argumentFormer;

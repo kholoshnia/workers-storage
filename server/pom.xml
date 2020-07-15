@@ -64,7 +64,7 @@
     <dependencies>
         <dependency>
             <groupId>ru.storage</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>client</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

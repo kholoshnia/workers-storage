@@ -1,17 +1,21 @@
 package ru.storage.server.controller.auth;
 
 import com.google.inject.Inject;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.CommandMediator;
 import ru.storage.common.transfer.request.Request;
 import ru.storage.common.transfer.response.Response;
+import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.Controller;
 
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /** Authorizes user using java web token. */
 public class AuthController implements Controller {
@@ -19,8 +23,6 @@ public class AuthController implements Controller {
   private final List<String> authCommands;
   private final Key key;
   private final String subject;
-
-  public String unauthorizedAnswer;
 
   @Inject
   public AuthController(Configuration configuration, CommandMediator commandMediator, Key key) {
@@ -39,12 +41,11 @@ public class AuthController implements Controller {
     subject = configuration.getString("jwt.subject");
   }
 
-  // TODO: Implement support on client side.
   @Override
   public Response handle(Request request) {
-    /*ResourceBundle resourceBundle =
+    ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.AuthController", request.getLocale());
-    unauthorizedAnswer = resourceBundle.getString("answers.unauthorized");
+    String unauthorizedAnswer = resourceBundle.getString("answers.unauthorized");
 
     if (authCommands.contains(request.getCommand())) {
       logger.warn(() -> "Got an authentication command, skipping the token check.");
@@ -72,7 +73,7 @@ public class AuthController implements Controller {
       return new Response(Status.UNAUTHORIZED, unauthorizedAnswer);
     }
 
-    logger.info(() -> "User has been authorized.");*/
+    logger.info(() -> "User has been authorized.");
     return null;
   }
 }

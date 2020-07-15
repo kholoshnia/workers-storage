@@ -4,21 +4,21 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.app.exceptions.ClientException;
-import ru.storage.client.view.View;
+import ru.storage.client.view.console.Console;
 
 public final class Client {
   private final Logger logger;
-  private final View view;
+  private final Console console;
 
   @Inject
-  public Client(View view) {
+  public Client(Console console) {
     logger = LogManager.getLogger(Client.class);
-    this.view = view;
+    this.console = console;
   }
 
   public void start() throws ClientException {
     try {
-      view.process();
+      console.process();
     } catch (Throwable e) {
       logger.fatal("Error while work of user interface.");
       throw new ClientException(e);

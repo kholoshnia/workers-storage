@@ -40,6 +40,6 @@ public class LogoutCommand extends EntryCommand {
   public Response executeCommand() {
     logger.info(
         () -> "Returning unauthorized answer, user must be unauthorized on the client size.");
-    return new Response(Status.OK, LOGGED_OUT_ANSWER);
+    return new Response(Status.OK, LOGGED_OUT_ANSWER, "");
   }
 }

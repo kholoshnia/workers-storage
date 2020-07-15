@@ -12,10 +12,12 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class WorkerValidator implements LocaleListener {
+  private String wrongIdException;
   private String wrongSalaryException;
   private String wrongStatusException;
   private String wrongStartDateException;
   private String wrongEndDateException;
+
   private List<String> statusMap;
 
   @Override
@@ -23,6 +25,7 @@ public final class WorkerValidator implements LocaleListener {
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.WorkerValidator", Locale.getDefault());
 
+    wrongIdException = resourceBundle.getString("exceptions.wrongId");
     wrongSalaryException = resourceBundle.getString("exceptions.wrongSalary");
     wrongStatusException = resourceBundle.getString("exceptions.wrongStatus");
     wrongStartDateException = resourceBundle.getString("exceptions.wrongStartDate");
@@ -36,6 +39,20 @@ public final class WorkerValidator implements LocaleListener {
             add(resourceBundle.getString("constants.promotion"));
           }
         };
+  }
+
+  public void checkId(String idString) throws ValidationException {
+    long id;
+
+    try {
+      id = Long.parseLong(idString);
+    } catch (NumberFormatException | NullPointerException exception) {
+      throw new ValidationException(wrongIdException);
+    }
+
+    if (id < 0) {
+      throw new ValidationException(wrongIdException);
+    }
   }
 
   public void checkSalary(String salaryString) throws ValidationException {

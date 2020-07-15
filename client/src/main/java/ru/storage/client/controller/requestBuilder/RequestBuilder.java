@@ -59,11 +59,8 @@ public final class RequestBuilder {
   public RequestBuilder setRawArguments(
       @Nonnull List<String> arguments, @Nonnull FormerMediator formerMediator)
       throws BuildingException {
-    if (formerMediator == null) {
-      throw new BuildingException();
-    }
-
     ArgumentFormer argumentFormer = formerMediator.getArgumentFormer(command);
+
     if (argumentFormer == null) {
       throw new BuildingException();
     }

@@ -5,6 +5,8 @@ import com.google.inject.Injector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.app.guice.ClientModule;
+import ru.storage.client.view.View;
+import ru.storage.client.view.console.ConsoleImpl;
 
 import java.util.ResourceBundle;
 
@@ -36,15 +38,15 @@ public final class App {
       Injector injector = Guice.createInjector(new ClientModule(args));
       LOGGER.debug(() -> "Guice injector was created.");
 
-      Client client = injector.getInstance(Client.class);
+      View view = injector.getInstance(ConsoleImpl.class);
       LOGGER.debug(() -> "Client was created.");
 
       LOGGER.debug(() -> "Client was started.");
-      client.start();
-    } catch (Throwable throwable) {
-      LOGGER.fatal(() -> "Got a throwable during work of server.", throwable);
+      view.process();
+    } catch (Exception exception) {
+      LOGGER.fatal(() -> "Got an exception during work of server.", exception);
       System.err.println(FATAL_ERROR);
-      System.err.println(throwable.getMessage());
+      System.err.println(exception.getMessage());
       LOGGER.fatal(() -> "App was stopped with error.");
       System.exit(1);
     }

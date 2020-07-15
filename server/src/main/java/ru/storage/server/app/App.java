@@ -41,10 +41,10 @@ public final class App {
 
       LOGGER.debug(() -> "Server has been started.");
       server.start();
-    } catch (Throwable throwable) {
-      LOGGER.fatal(() -> "Got a throwable during work of server.", throwable);
+    } catch (Exception exception) {
+      LOGGER.fatal(() -> "Got an exception during work of server.", exception);
       System.err.println(FATAL_ERROR);
-      System.err.println(throwable.getMessage());
+      System.err.println(exception.getMessage());
       LOGGER.fatal(() -> "Application has been stopped with an error.");
       System.exit(1);
     }

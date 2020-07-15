@@ -9,8 +9,8 @@ import java.util.ResourceBundle;
 
 /** Checks if got correct request to continue handling. */
 public final class CheckController implements Controller {
-  private static String GOT_NULL_REQUEST_ANSWER;
-  private static String GOT_NULL_LOCALE_ANSWER;
+  private static final String GOT_NULL_REQUEST_ANSWER;
+  private static final String GOT_NULL_LOCALE_ANSWER;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.CheckController");
@@ -18,10 +18,6 @@ public final class CheckController implements Controller {
     GOT_NULL_REQUEST_ANSWER = resourceBundle.getString("answers.gotNullRequest");
     GOT_NULL_LOCALE_ANSWER = resourceBundle.getString("answers.gotNullLocale");
   }
-
-  private String gotNullCommandAnswer;
-  private String gotNullArgumentsAnswer;
-  private String gotNullTokenAnswer;
 
   @Override
   public Response handle(Request request) {
@@ -36,9 +32,9 @@ public final class CheckController implements Controller {
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.CheckController", request.getLocale());
 
-    gotNullCommandAnswer = resourceBundle.getString("answers.gotNullCommand");
-    gotNullArgumentsAnswer = resourceBundle.getString("answers.gotNullArguments");
-    gotNullTokenAnswer = resourceBundle.getString("answers.gotNullToken");
+    String gotNullCommandAnswer = resourceBundle.getString("answers.gotNullCommand");
+    String gotNullArgumentsAnswer = resourceBundle.getString("answers.gotNullArguments");
+    String gotNullTokenAnswer = resourceBundle.getString("answers.gotNullToken");
 
     if (request.getCommand() == null) {
       return new Response(Status.BAD_REQUEST, gotNullCommandAnswer);

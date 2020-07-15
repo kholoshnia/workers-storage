@@ -27,7 +27,7 @@ public final class ServerWorker implements ExitListener {
 
   private ByteBuffer buffer;
 
-  public ServerWorker(int bufferSize, Serializer serializer, InetAddress address, int port)
+  public ServerWorker(InetAddress address, int port, int bufferSize, Serializer serializer)
       throws ClientConnectionException {
     logger = LogManager.getLogger(ServerWorker.class);
     this.bufferSize = bufferSize;

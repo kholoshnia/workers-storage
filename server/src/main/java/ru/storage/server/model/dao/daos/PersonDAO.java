@@ -95,8 +95,8 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long id = resultSet.getObject(PersonDTO.ID_COLUMN, Long.class);
-        Long ownerId = resultSet.getObject(PersonDTO.OWNER_ID_COLUMN, Long.class);
+        long id = resultSet.getLong(PersonDTO.ID_COLUMN);
+        long ownerId = resultSet.getLong(PersonDTO.OWNER_ID_COLUMN);
         String name = resultSet.getObject(PersonDTO.NAME_COLUMN, String.class);
         String passportId = resultSet.getObject(PersonDTO.PASSPORT_ID_COLUMN, String.class);
 
@@ -127,7 +127,7 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long ownerId = resultSet.getLong(PersonDTO.OWNER_ID_COLUMN);
+        long ownerId = resultSet.getLong(PersonDTO.OWNER_ID_COLUMN);
         String name = resultSet.getString(PersonDTO.NAME_COLUMN);
         String passportId = resultSet.getString(PersonDTO.PASSPORT_ID_COLUMN);
 

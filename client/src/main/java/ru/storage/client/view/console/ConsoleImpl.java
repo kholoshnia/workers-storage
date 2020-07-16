@@ -197,7 +197,7 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
     List<String> arguments;
 
     if (words.size() > 1) {
-      arguments = words.subList(1, words.size() - 1);
+      arguments = words.subList(1, words.size());
     } else {
       arguments = new ArrayList<>();
     }

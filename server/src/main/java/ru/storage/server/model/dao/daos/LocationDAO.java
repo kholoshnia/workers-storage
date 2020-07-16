@@ -94,8 +94,8 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long id = resultSet.getObject(LocationDTO.ID_COLUMN, Long.class);
-        Long ownerId = resultSet.getObject(LocationDTO.OWNER_ID_COLUMN, Long.class);
+        long id = resultSet.getLong(LocationDTO.ID_COLUMN);
+        long ownerId = resultSet.getLong(LocationDTO.OWNER_ID_COLUMN);
         String address = resultSet.getObject(LocationDTO.ADDRESS_COLUMN, String.class);
         Double latitude = resultSet.getObject(LocationDTO.LATITUDE_COLUMN, Double.class);
         Double longitude = resultSet.getObject(LocationDTO.LONGITUDE_COLUMN, Double.class);
@@ -124,7 +124,7 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long ownerId = resultSet.getObject(LocationDTO.OWNER_ID_COLUMN, Long.class);
+        long ownerId = resultSet.getLong(LocationDTO.OWNER_ID_COLUMN);
         String address = resultSet.getObject(LocationDTO.ADDRESS_COLUMN, String.class);
         Double latitude = resultSet.getObject(LocationDTO.LATITUDE_COLUMN, Double.class);
         Double longitude = resultSet.getObject(LocationDTO.LONGITUDE_COLUMN, Double.class);

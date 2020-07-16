@@ -81,6 +81,8 @@ public final class RegisterFormer extends ArgumentFormer {
       } catch (ValidationException e) {
         console.writeLine(e.getMessage());
       }
+
+      allArguments.put(argument, input);
     }
 
     logger.info(() -> "All arguments were formed.");

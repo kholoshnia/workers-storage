@@ -58,7 +58,6 @@ public final class UserRepository implements Repository<User> {
    */
   private List<User> initUsersList() throws UserRepositoryException {
     List<User> users = new CopyOnWriteArrayList<>();
-
     List<UserDTO> allUserDTOs;
 
     try {

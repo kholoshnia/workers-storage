@@ -97,8 +97,8 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long id = resultSet.getObject(CoordinatesDTO.ID_COLUMN, Long.class);
-        Long ownerId = resultSet.getObject(CoordinatesDTO.OWNER_ID_COLUMN, Long.class);
+        long id = resultSet.getLong(CoordinatesDTO.ID_COLUMN);
+        long ownerId = resultSet.getLong(CoordinatesDTO.OWNER_ID_COLUMN);
         Double x = resultSet.getObject(CoordinatesDTO.X_COLUMN, Double.class);
         Double y = resultSet.getObject(CoordinatesDTO.Y_COLUMN, Double.class);
         Double z = resultSet.getObject(CoordinatesDTO.Z_COLUMN, Double.class);
@@ -127,7 +127,7 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long ownerId = resultSet.getObject(CoordinatesDTO.OWNER_ID_COLUMN, Long.class);
+        long ownerId = resultSet.getLong(CoordinatesDTO.OWNER_ID_COLUMN);
         Double x = resultSet.getObject(CoordinatesDTO.X_COLUMN, Double.class);
         Double y = resultSet.getObject(CoordinatesDTO.Y_COLUMN, Double.class);
         Double z = resultSet.getObject(CoordinatesDTO.Z_COLUMN, Double.class);

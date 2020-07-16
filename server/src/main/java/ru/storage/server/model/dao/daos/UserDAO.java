@@ -92,7 +92,7 @@ public class UserDAO implements DAO<String, UserDTO> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long id = resultSet.getObject(UserDTO.ID_COLUMN, Long.class);
+        long id = resultSet.getLong(UserDTO.ID_COLUMN);
         String name = resultSet.getObject(UserDTO.NAME_COLUMN, String.class);
         String login = resultSet.getObject(UserDTO.LOGIN_COLUMN, String.class);
         String password = resultSet.getObject(UserDTO.PASSWORD_COLUMN, String.class);
@@ -122,7 +122,7 @@ public class UserDAO implements DAO<String, UserDTO> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long id = resultSet.getObject(UserDTO.ID_COLUMN, Long.class);
+        long id = resultSet.getLong(UserDTO.ID_COLUMN);
         String name = resultSet.getObject(UserDTO.NAME_COLUMN, String.class);
         String password = resultSet.getObject(UserDTO.PASSWORD_COLUMN, String.class);
         Role role = Role.getRole(resultSet.getObject(UserDTO.ROLE_COLUMN, String.class));

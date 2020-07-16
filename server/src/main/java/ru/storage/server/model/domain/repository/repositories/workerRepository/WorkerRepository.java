@@ -82,7 +82,6 @@ public final class WorkerRepository implements Repository<Worker> {
    */
   private List<Worker> initWorkersList() throws WorkerRepositoryException {
     List<Worker> workers = new CopyOnWriteArrayList<>();
-
     List<WorkerDTO> allWorkerDTOs;
 
     try {

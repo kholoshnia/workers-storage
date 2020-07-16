@@ -117,8 +117,8 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long id = resultSet.getObject(WorkerDTO.ID_COLUMN, Long.class);
-        Long ownerId = resultSet.getObject(WorkerDTO.OWNER_ID_COLUMN, Long.class);
+        long id = resultSet.getLong(WorkerDTO.ID_COLUMN);
+        long ownerId = resultSet.getLong(WorkerDTO.OWNER_ID_COLUMN);
         ZonedDateTime creationDate =
             resultSet
                 .getTimestamp(WorkerDTO.CREATION_DATE_COLUMN)
@@ -178,7 +178,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
-        Long ownerId = resultSet.getObject(WorkerDTO.OWNER_ID_COLUMN, Long.class);
+        long ownerId = resultSet.getLong(WorkerDTO.OWNER_ID_COLUMN);
         ZonedDateTime creationDate =
             resultSet
                 .getTimestamp(WorkerDTO.CREATION_DATE_COLUMN)

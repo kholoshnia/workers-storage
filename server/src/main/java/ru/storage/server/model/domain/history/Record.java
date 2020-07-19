@@ -1,4 +1,4 @@
-package ru.storage.server.controller.services.history;
+package ru.storage.server.model.domain.history;
 
 import ru.storage.common.transfer.response.Response;
 

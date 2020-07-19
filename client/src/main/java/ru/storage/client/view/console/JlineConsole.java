@@ -72,16 +72,9 @@ public final class JlineConsole implements LocaleListener {
   public LineReader getLineReader() {
     return LineReaderBuilder.builder()
         .terminal(terminal)
-        .completer(
-            (reader, line, candidates) ->
-                candidates.addAll(
-                    new ArrayList<Candidate>() {
-                      {
-                        addAll(getCommandCandidates());
-                        add(getCurrentDateCandidate());
-                        addAll(getStatusCandidates());
-                      }
-                    }))
+        .completer((reader, line, candidates) -> candidates.addAll(getCommandCandidates()))
+        .completer((reader, line, candidates) -> candidates.add(getCurrentDateCandidate()))
+        .completer((reader, line, candidates) -> candidates.addAll(getStatusCandidates()))
         .build();
   }
 

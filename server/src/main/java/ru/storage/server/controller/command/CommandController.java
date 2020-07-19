@@ -12,8 +12,8 @@ import ru.storage.server.controller.Controller;
 import ru.storage.server.controller.command.factory.CommandFactory;
 import ru.storage.server.controller.command.factory.CommandFactoryMediator;
 import ru.storage.server.controller.command.factory.exceptions.CommandFactoryException;
-import ru.storage.server.controller.services.history.History;
-import ru.storage.server.controller.services.history.Record;
+import ru.storage.server.model.domain.history.History;
+import ru.storage.server.model.domain.history.Record;
 
 import java.util.ResourceBundle;
 

@@ -19,6 +19,7 @@ public final class CommandMediator {
   public final String HELP;
   public final String INFO;
   public final String SHOW;
+  public final String EXECUTE_SCRIPT;
 
   private final List<String> commands;
 
@@ -36,6 +37,7 @@ public final class CommandMediator {
     HELP = configuration.getString("commands.help");
     INFO = configuration.getString("commands.info");
     SHOW = configuration.getString("commands.show");
+    EXECUTE_SCRIPT = configuration.getString("commands.executeScript");
 
     commands = initCommandList();
   }
@@ -78,6 +80,9 @@ public final class CommandMediator {
         }
         if (SHOW != null) {
           add(SHOW);
+        }
+        if (EXECUTE_SCRIPT != null) {
+          add(EXECUTE_SCRIPT);
         }
       }
     };

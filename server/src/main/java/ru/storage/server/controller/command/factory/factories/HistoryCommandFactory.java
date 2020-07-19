@@ -10,7 +10,7 @@ import ru.storage.server.controller.command.commands.history.HistoryCommand;
 import ru.storage.server.controller.command.commands.history.ShowHistoryCommand;
 import ru.storage.server.controller.command.factory.CommandFactory;
 import ru.storage.server.controller.command.factory.exceptions.CommandFactoryException;
-import ru.storage.server.controller.services.history.History;
+import ru.storage.server.model.domain.history.History;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

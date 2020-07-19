@@ -11,6 +11,9 @@ import ru.storage.server.controller.command.commands.special.HelpCommand;
 import ru.storage.server.controller.command.commands.special.SpecialCommand;
 import ru.storage.server.controller.command.factory.CommandFactory;
 import ru.storage.server.controller.command.factory.exceptions.CommandFactoryException;
+import ru.storage.server.controller.services.script.ScriptExecutor;
+import ru.storage.server.model.domain.entity.entities.user.User;
+import ru.storage.server.model.domain.repository.Repository;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -20,6 +23,8 @@ import java.util.Map;
 
 public final class SpecialCommandFactory extends CommandFactory {
   private final CommandMediator commandMediator;
+  private final Repository<User> userRepository;
+  private final ScriptExecutor scriptExecutor;
   private final ExitManager exitManager;
   private final Map<String, Class<? extends SpecialCommand>> specialCommandMap;
 
@@ -28,9 +33,13 @@ public final class SpecialCommandFactory extends CommandFactory {
       Configuration configuration,
       ArgumentMediator argumentMediator,
       CommandMediator commandMediator,
+      Repository<User> userRepository,
+      ScriptExecutor scriptExecutor,
       ExitManager exitManager) {
     super(configuration, argumentMediator);
     this.commandMediator = commandMediator;
+    this.userRepository = userRepository;
+    this.scriptExecutor = scriptExecutor;
     this.exitManager = exitManager;
     specialCommandMap = initSpecialCommandMap(commandMediator);
   }
@@ -57,10 +66,19 @@ public final class SpecialCommandFactory extends CommandFactory {
               CommandMediator.class,
               ArgumentMediator.class,
               Map.class,
+              User.class,
               Locale.class,
+              ScriptExecutor.class,
               ExitManager.class);
       return constructor.newInstance(
-          configuration, commandMediator, argumentMediator, arguments, locale, exitManager);
+          configuration,
+          commandMediator,
+          argumentMediator,
+          arguments,
+          getUser(userRepository, login),
+          locale,
+          scriptExecutor,
+          exitManager);
     } catch (NoSuchMethodException
         | InstantiationException
         | IllegalAccessException

@@ -1,4 +1,4 @@
-package ru.storage.server.controller.services.history;
+package ru.storage.server.model.domain.history;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

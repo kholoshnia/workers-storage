@@ -3,7 +3,7 @@ package ru.storage.server.controller.command.commands.history;
 import org.apache.commons.configuration2.Configuration;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.server.controller.command.Command;
-import ru.storage.server.controller.services.history.History;
+import ru.storage.server.model.domain.history.History;
 
 import java.util.Locale;
 import java.util.Map;

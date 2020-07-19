@@ -63,6 +63,7 @@ public final class ClientModule extends AbstractModule {
     bind(NewWorkerIdFormer.class).in(Scopes.SINGLETON);
     bind(NoArgumentsFormer.class).in(Scopes.SINGLETON);
     bind(RegisterFormer.class).in(Scopes.SINGLETON);
+    bind(ScriptFormer.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Formers were configured.");
 
     bind(WorkerValidator.class).in(Scopes.SINGLETON);
@@ -180,7 +181,8 @@ public final class ClientModule extends AbstractModule {
       NewWorkerFormer newWorkerFormer,
       NewWorkerIdFormer newWorkerId,
       NoArgumentsFormer noArgumentsFormer,
-      RegisterFormer registerFormer) {
+      RegisterFormer registerFormer,
+      ScriptFormer scriptFormer) {
     Map<String, ArgumentFormer> argumentFormerMap =
         new HashMap<String, ArgumentFormer>() {
           {
@@ -196,6 +198,7 @@ public final class ClientModule extends AbstractModule {
             put(commandMediator.HELP, noArgumentsFormer);
             put(commandMediator.INFO, noArgumentsFormer);
             put(commandMediator.SHOW, noArgumentsFormer);
+            put(commandMediator.EXECUTE_SCRIPT, scriptFormer);
           }
         };
 

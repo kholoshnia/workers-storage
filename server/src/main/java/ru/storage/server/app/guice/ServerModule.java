@@ -11,7 +11,6 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
 import ru.storage.common.exitManager.ExitListener;
 import ru.storage.common.exitManager.ExitManager;
@@ -33,13 +32,13 @@ import ru.storage.server.controller.command.factory.CommandFactoryMediator;
 import ru.storage.server.controller.command.factory.factories.*;
 import ru.storage.server.controller.services.hash.HashGenerator;
 import ru.storage.server.controller.services.hash.SHA256Generator;
-import ru.storage.server.controller.services.history.History;
-import ru.storage.server.controller.services.parser.Parser;
+import ru.storage.server.controller.services.script.ScriptExecutor;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.daos.*;
 import ru.storage.server.model.domain.dto.dtos.*;
 import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
+import ru.storage.server.model.domain.history.History;
 import ru.storage.server.model.domain.repository.Repository;
 import ru.storage.server.model.domain.repository.repositories.userRepository.UserRepository;
 import ru.storage.server.model.domain.repository.repositories.workerRepository.WorkerRepository;
@@ -49,7 +48,6 @@ import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,6 +80,7 @@ public final class ServerModule extends AbstractModule {
     bind(SHA256Generator.class).in(Scopes.SINGLETON);
     bind(HashGenerator.class).to(SHA256Generator.class);
     bind(History.class).in(Scopes.SINGLETON);
+    bind(ScriptExecutor.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Services were configured.");
 
     bind(CheckController.class).in(Scopes.SINGLETON);
@@ -251,34 +250,12 @@ public final class ServerModule extends AbstractModule {
   @Provides
   @Singleton
   Map<String, CommandFactory> provideCommandFactoryMap(
-      Configuration configuration,
       CommandMediator commandMediator,
-      ArgumentMediator argumentMediator,
-      HashGenerator hashGenerator,
-      UserRepository userRepository,
-      Key key,
-      History history,
-      WorkerRepository workerRepository,
-      Parser parser,
-      ExitManager exitManager) {
-    CommandFactory entryCommandFactory =
-        new EntryCommandFactory(
-            configuration, argumentMediator, commandMediator, hashGenerator, userRepository, key);
-    CommandFactory historyCommandFactory =
-        new HistoryCommandFactory(configuration, argumentMediator, commandMediator, history);
-    CommandFactory modificationCommandFactory =
-        new ModificationCommandFactory(
-            configuration,
-            argumentMediator,
-            commandMediator,
-            userRepository,
-            workerRepository,
-            parser);
-    CommandFactory viewCommandFactory =
-        new ViewCommandFactory(configuration, argumentMediator, commandMediator, workerRepository);
-    CommandFactory specialCommandFactory =
-        new SpecialCommandFactory(configuration, argumentMediator, commandMediator, exitManager);
-
+      EntryCommandFactory entryCommandFactory,
+      HistoryCommandFactory historyCommandFactory,
+      ModificationCommandFactory modificationCommandFactory,
+      SpecialCommandFactory specialCommandFactory,
+      ViewCommandFactory viewCommandFactory) {
     Map<String, CommandFactory> commandFactoryMap =
         new HashMap<String, CommandFactory>() {
           {

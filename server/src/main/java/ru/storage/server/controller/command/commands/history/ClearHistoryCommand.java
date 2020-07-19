@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
-import ru.storage.server.controller.services.history.History;
+import ru.storage.server.model.domain.history.History;
 
 import java.util.Locale;
 import java.util.Map;

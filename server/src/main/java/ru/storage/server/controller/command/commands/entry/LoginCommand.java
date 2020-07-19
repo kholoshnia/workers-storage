@@ -84,7 +84,7 @@ public class LoginCommand extends EntryCommand {
     }
 
     String jws = Jwts.builder().setSubject(subject).signWith(key).compact();
-    logger.warn(() -> "Json web signature was created.");
+    logger.info(() -> "Json web signature was created.");
 
     return new Response(Status.OK, LOGGED_IN_ANSWER, jws);
   }

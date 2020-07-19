@@ -49,7 +49,7 @@ public class AuthController implements Controller {
     String unauthorizedAnswer = resourceBundle.getString("answers.unauthorized");
 
     if (authCommands.contains(request.getCommand())) {
-      logger.warn(() -> "Got an authentication command, skipping the token check.");
+      logger.info(() -> "Got an authentication command, skipping the token check.");
       return null;
     }
 
@@ -70,7 +70,7 @@ public class AuthController implements Controller {
         return new Response(Status.UNAUTHORIZED, unauthorizedAnswer);
       }
     } catch (JwtException e) {
-      logger.warn(() -> "User was not authorized", e);
+      logger.warn(() -> "Got wrong token", e);
       return new Response(Status.UNAUTHORIZED, unauthorizedAnswer);
     }
 

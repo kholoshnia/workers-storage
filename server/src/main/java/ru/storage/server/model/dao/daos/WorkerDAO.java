@@ -229,7 +229,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
 
   @Override
   public WorkerDTO insert(@Nonnull WorkerDTO workerDTO) throws DAOException, DataSourceException {
-    Long resultId;
+    long resultId;
     CoordinatesDTO coordinatesDTO;
     PersonDTO personDTO;
     PreparedStatement preparedStatement =
@@ -253,7 +253,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
 
       ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
       if (generatedKeys.next()) {
-        resultId = generatedKeys.getObject(1, Long.class);
+        resultId = generatedKeys.getLong(1);
       } else {
         logger.error(() -> "Cannot get generated worker id.");
         throw new DAOException(CANNOT_GET_GENERATED_WORKER_ID);

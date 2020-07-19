@@ -145,7 +145,7 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
   @Override
   public LocationDTO insert(@Nonnull LocationDTO locationDTO)
       throws DAOException, DataSourceException {
-    Long resultId;
+    long resultId;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 
@@ -159,7 +159,7 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
 
       ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
       if (generatedKeys.next()) {
-        resultId = generatedKeys.getObject(1, Long.class);
+        resultId = generatedKeys.getLong(1);
       } else {
         logger.error(() -> "Cannot get generated location id.");
         throw new DAOException(CANNOT_GET_GENERATED_LOCATION_ID);

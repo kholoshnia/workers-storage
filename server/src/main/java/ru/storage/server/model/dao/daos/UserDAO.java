@@ -142,7 +142,7 @@ public class UserDAO implements DAO<String, UserDTO> {
 
   @Override
   public UserDTO insert(@Nonnull UserDTO userDTO) throws DAOException, DataSourceException {
-    Long resultId;
+    long resultId;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 
@@ -156,7 +156,7 @@ public class UserDAO implements DAO<String, UserDTO> {
 
       ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
       if (generatedKeys.next()) {
-        resultId = generatedKeys.getObject(1, Long.class);
+        resultId = generatedKeys.getLong(1);
       } else {
         logger.error(() -> "Cannot get generated user id.");
         throw new DAOException(CANNOT_GET_GENERATED_USER_ID);

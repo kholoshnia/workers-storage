@@ -43,7 +43,9 @@ public final class App {
       server.start();
     } catch (Exception exception) {
       LOGGER.fatal(() -> "Got an exception during work of server.", exception);
+      System.err.println();
       System.err.println(FATAL_ERROR);
+      System.err.println();
       System.err.println(exception.getMessage());
       LOGGER.fatal(() -> "Application has been stopped with an error.");
       System.exit(1);

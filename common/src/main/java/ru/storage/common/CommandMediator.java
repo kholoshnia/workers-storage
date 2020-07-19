@@ -3,6 +3,9 @@ package ru.storage.common;
 import com.google.inject.Inject;
 import org.apache.commons.configuration2.Configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class CommandMediator {
   public final String LOGIN;
   public final String LOGOUT;
@@ -16,6 +19,8 @@ public final class CommandMediator {
   public final String HELP;
   public final String INFO;
   public final String SHOW;
+
+  private final List<String> commands;
 
   @Inject
   public CommandMediator(Configuration configuration) {
@@ -31,5 +36,34 @@ public final class CommandMediator {
     HELP = configuration.getString("commands.help");
     INFO = configuration.getString("commands.info");
     SHOW = configuration.getString("commands.show");
+
+    commands = initCommandList();
+  }
+
+  private List<String> initCommandList() {
+    return new ArrayList<String>() {
+      {
+        add(LOGIN);
+        add(LOGOUT);
+        add(REGISTER);
+        add(SHOW_HISTORY);
+        add(CLEAR_HISTORY);
+        add(ADD);
+        add(REMOVE);
+        add(UPDATE);
+        add(EXIT);
+        add(HELP);
+        add(INFO);
+        add(SHOW);
+      }
+    };
+  }
+
+  public List<String> getCommands() {
+    return new ArrayList<>(commands);
+  }
+
+  public boolean contains(String command) {
+    return commands.contains(command);
   }
 }

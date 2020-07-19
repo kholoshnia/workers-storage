@@ -19,6 +19,8 @@ public final class RegisterFormer extends ArgumentFormer {
 
   private Map<String, String> registerOffers;
 
+  private boolean wrong;
+
   private String wrongArgumentsNumberException;
 
   public RegisterFormer(
@@ -71,18 +73,21 @@ public final class RegisterFormer extends ArgumentFormer {
       String argument = offerEntry.getKey();
       String offer = offerEntry.getValue();
 
-      console.writeLine(offer);
-      logger.info("Offered user input: {}.", () -> offer);
+      wrong = true;
+      while (wrong) {
+        console.write(offer);
+        logger.info("Offered user input: {}.", () -> offer);
 
-      String input = console.readLine(null, null);
+        String input = console.readLine(null, null); // TODO: Ability to cancel
 
-      try {
-        checkArgument(argument, input);
-      } catch (ValidationException e) {
-        console.writeLine(e.getMessage());
+        try {
+          checkArgument(argument, input);
+          allArguments.put(argument, input);
+          wrong = false;
+        } catch (ValidationException e) {
+          console.writeLine(e.getMessage());
+        }
       }
-
-      allArguments.put(argument, input);
     }
 
     logger.info(() -> "All arguments were formed.");

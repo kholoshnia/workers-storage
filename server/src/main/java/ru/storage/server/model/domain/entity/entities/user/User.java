@@ -40,10 +40,10 @@ public final class User implements Entity {
     checkName(name);
     this.name = name;
 
-    checkLogin(name);
+    checkLogin(login);
     this.login = login;
 
-    checkPassword(name);
+    checkPassword(password);
     this.password = password;
 
     checkRole(role);

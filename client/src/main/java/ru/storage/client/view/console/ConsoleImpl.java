@@ -1,6 +1,5 @@
 package ru.storage.client.view.console;
 
-import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.reader.EndOfFileException;
@@ -67,7 +66,6 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
   private String buildingException;
 
   public ConsoleImpl(
-      Configuration configuration,
       ExitManager exitManager,
       InputStream inputStream,
       OutputStream outputStream,
@@ -87,7 +85,7 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
     this.localeManager = localeManager;
     localeManager.subscribe(this);
     this.formerMediator = formerMediator;
-    jlineConsole = new JlineConsole(configuration, inputStream, outputStream, commandMediator);
+    jlineConsole = new JlineConsole(inputStream, outputStream, commandMediator);
     reader = jlineConsole.getLineReader();
     writer = jlineConsole.getPrintWriter();
     prompt = " ~ $ ";
@@ -98,8 +96,7 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
 
   @Override
   public void changeLocale() {
-    ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("localized.Console", Locale.getDefault());
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.Console");
 
     connectedMessage = resourceBundle.getString("messages.connected");
     connectingMessage = resourceBundle.getString("messages.connecting");
@@ -147,7 +144,6 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
       logger.info("Request was created: {}.", () -> request);
 
       if (request == null) {
-        writeLine(noSuchCommandMessage);
         logger.info(() -> "Got null request, continuing.");
         continue;
       }
@@ -202,6 +198,11 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
       arguments = new ArrayList<>();
     }
 
+    if (!commandMediator.contains(command)) {
+      writeLine(noSuchCommandMessage);
+      return null;
+    }
+
     if (command.equals(commandMediator.EXIT)) {
       exitManager.exit();
       return null;
@@ -216,7 +217,11 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
           .build();
     } catch (BuildingException e) {
       logger.warn(() -> "Request building exception.", e);
-      writeLine(buildingException);
+
+      if (e.getMessage() != null) {
+        writeLine(buildingException);
+      }
+
       return null;
     }
   }
@@ -288,7 +293,7 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
 
     do {
       try {
-        Thread.sleep(100);
+        Thread.sleep(200);
       } catch (InterruptedException e) {
         logger.error(() -> "Cannot interrupt thread.", e);
       }
@@ -351,13 +356,17 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
   }
 
   /**
-   * Writes line to the output stream.
+   * Writes line to the output stream. NOTE: does not write null string.
    *
    * <p>Using the specified in the constructor output stream.
    *
    * @param string concrete string to write
    */
   public void write(String string) {
+    if (string == null) {
+      return;
+    }
+
     writer.write(string);
     writer.flush();
   }

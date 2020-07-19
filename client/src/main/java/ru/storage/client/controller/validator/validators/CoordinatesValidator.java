@@ -3,7 +3,6 @@ package ru.storage.client.controller.validator.validators;
 import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.controller.validator.exceptions.ValidationException;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class CoordinatesValidator implements LocaleListener {
@@ -13,8 +12,7 @@ public final class CoordinatesValidator implements LocaleListener {
 
   @Override
   public void changeLocale() {
-    ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("localized.CoordinatesValidator", Locale.getDefault());
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.CoordinatesValidator");
 
     wrongXException = resourceBundle.getString("exceptions.wrongX");
     wrongYException = resourceBundle.getString("exceptions.wrongY");

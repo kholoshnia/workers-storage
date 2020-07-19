@@ -24,6 +24,8 @@ public abstract class WorkerFormer extends ArgumentFormer {
   private Map<String, String> personOffers;
   private Map<String, String> locationOffers;
 
+  private boolean wrong;
+
   public WorkerFormer(
       Map<String, ArgumentValidator> argumentValidatorMap,
       ArgumentMediator argumentMediator,
@@ -37,12 +39,18 @@ public abstract class WorkerFormer extends ArgumentFormer {
   private Map<String, String> initWorkerOffers(ResourceBundle resourceBundle) {
     return new LinkedHashMap<String, String>() {
       {
-        put(argumentMediator.WORKER_SALARY, resourceBundle.getString("offers.worker.salary"));
-        put(argumentMediator.WORKER_STATUS, resourceBundle.getString("offers.worker.status"));
+        put(
+            argumentMediator.WORKER_SALARY,
+            String.format("%s: ", resourceBundle.getString("offers.worker.salary")));
+        put(
+            argumentMediator.WORKER_STATUS,
+            String.format("%s: ", resourceBundle.getString("offers.worker.status")));
         put(
             argumentMediator.WORKER_START_DATE,
-            resourceBundle.getString("offers.worker.startDate"));
-        put(argumentMediator.WORKER_END_DATE, resourceBundle.getString("offers.worker.endDate"));
+            String.format("%s: ", resourceBundle.getString("offers.worker.startDate")));
+        put(
+            argumentMediator.WORKER_END_DATE,
+            String.format("%s: ", resourceBundle.getString("offers.worker.endDate")));
       }
     };
   }
@@ -50,9 +58,15 @@ public abstract class WorkerFormer extends ArgumentFormer {
   private Map<String, String> initCoordinatesOffers(ResourceBundle resourceBundle) {
     return new LinkedHashMap<String, String>() {
       {
-        put(argumentMediator.COORDINATES_X, resourceBundle.getString("offers.coordinates.x"));
-        put(argumentMediator.COORDINATES_Y, resourceBundle.getString("offers.coordinates.y"));
-        put(argumentMediator.COORDINATES_Z, resourceBundle.getString("offers.coordinates.z"));
+        put(
+            argumentMediator.COORDINATES_X,
+            String.format("%s: ", resourceBundle.getString("offers.coordinates.x")));
+        put(
+            argumentMediator.COORDINATES_Y,
+            String.format("%s: ", resourceBundle.getString("offers.coordinates.y")));
+        put(
+            argumentMediator.COORDINATES_Z,
+            String.format("%s: ", resourceBundle.getString("offers.coordinates.z")));
       }
     };
   }
@@ -60,10 +74,12 @@ public abstract class WorkerFormer extends ArgumentFormer {
   private Map<String, String> initPersonOffers(ResourceBundle resourceBundle) {
     return new LinkedHashMap<String, String>() {
       {
-        put(argumentMediator.PERSON_NAME, resourceBundle.getString("offers.person.name"));
+        put(
+            argumentMediator.PERSON_NAME,
+            String.format("%s: ", resourceBundle.getString("offers.person.name")));
         put(
             argumentMediator.PERSON_PASSPORT_ID,
-            resourceBundle.getString("offers.person.passportId"));
+            String.format("%s: ", resourceBundle.getString("offers.person.passportId")));
       }
     };
   }
@@ -71,13 +87,15 @@ public abstract class WorkerFormer extends ArgumentFormer {
   private Map<String, String> initLocationOffers(ResourceBundle resourceBundle) {
     return new LinkedHashMap<String, String>() {
       {
-        put(argumentMediator.LOCATION_ADDRESS, resourceBundle.getString("offers.location.address"));
+        put(
+            argumentMediator.LOCATION_ADDRESS,
+            String.format("%s: ", resourceBundle.getString("offers.location.address")));
         put(
             argumentMediator.LOCATION_LATITUDE,
-            resourceBundle.getString("offers.location.latitude"));
+            String.format("%s: ", resourceBundle.getString("offers.location.latitude")));
         put(
             argumentMediator.LOCATION_LONGITUDE,
-            resourceBundle.getString("offers.location.longitude"));
+            String.format("%s: ", resourceBundle.getString("offers.location.longitude")));
       }
     };
   }
@@ -103,18 +121,21 @@ public abstract class WorkerFormer extends ArgumentFormer {
       String argument = offerEntry.getKey();
       String offer = offerEntry.getValue();
 
-      console.writeLine(offer);
-      logger.info("Offered user input: {}.", () -> offer);
+      wrong = true;
+      while (wrong) {
+        console.write(offer);
+        logger.info("Offered user input: {}.", () -> offer);
 
-      String input = console.readLine(null, null);
+        String input = console.readLine(null, null); // TODO: Ability to cancel
 
-      try {
-        checkArgument(argument, input);
-      } catch (ValidationException e) {
-        console.writeLine(e.getMessage());
+        try {
+          checkArgument(argument, input);
+          allArguments.put(argument, input);
+          wrong = false;
+        } catch (ValidationException e) {
+          console.writeLine(e.getMessage());
+        }
       }
-
-      allArguments.put(argument, input);
     }
 
     logger.info(() -> "All arguments were formed.");

@@ -1,6 +1,5 @@
 package ru.storage.client.view.console;
 
-import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.reader.Candidate;
@@ -20,13 +19,11 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 /** Setups Jline line reader with specified options. */
 public final class JlineConsole implements LocaleListener {
   private final Logger logger;
-  private final Configuration configuration;
   private final Terminal terminal;
   private final CommandMediator commandMediator;
 
@@ -39,21 +36,16 @@ public final class JlineConsole implements LocaleListener {
   private String statusDescription;
 
   public JlineConsole(
-      Configuration configuration,
-      InputStream inputStream,
-      OutputStream outputStream,
-      CommandMediator commandMediator)
+      InputStream inputStream, OutputStream outputStream, CommandMediator commandMediator)
       throws ConsoleException {
     logger = LogManager.getLogger(JlineConsole.class);
-    this.configuration = configuration;
     terminal = initTerminal(inputStream, outputStream);
     this.commandMediator = commandMediator;
   }
 
   @Override
   public void changeLocale() {
-    ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("localized.JlineConsole", Locale.getDefault());
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.JlineConsole");
 
     executableCommandsGroup = resourceBundle.getString("groups.executableCommand");
     datesGroup = resourceBundle.getString("groups.dates");
@@ -99,27 +91,23 @@ public final class JlineConsole implements LocaleListener {
 
   private List<Candidate> getCommandCandidates() {
     logger.info("Forming command candidates.");
-    return new ArrayList<Candidate>() {
-      {
-        add(newCommandCandidate(commandMediator.LOGIN));
-        add(newCommandCandidate(commandMediator.LOGOUT));
-        add(newCommandCandidate(commandMediator.REGISTER));
-        add(newCommandCandidate(commandMediator.SHOW_HISTORY));
-        add(newCommandCandidate(commandMediator.CLEAR_HISTORY));
-        add(newCommandCandidate(commandMediator.ADD));
-        add(newCommandCandidate(commandMediator.REMOVE));
-        add(newCommandCandidate(commandMediator.UPDATE));
-        add(newCommandCandidate(commandMediator.EXIT));
-        add(newCommandCandidate(commandMediator.HELP));
-        add(newCommandCandidate(commandMediator.INFO));
-        add(newCommandCandidate(commandMediator.SHOW));
-      }
-    };
-  }
+    List<Candidate> candidates = new ArrayList<>();
 
-  private Candidate newCommandCandidate(String command) {
-    return new Candidate(
-        command, command, executableCommandsGroup, executableCommandDescription, null, null, true);
+    commandMediator
+        .getCommands()
+        .forEach(
+            command ->
+                candidates.add(
+                    new Candidate(
+                        command,
+                        command,
+                        executableCommandsGroup,
+                        executableCommandDescription,
+                        null,
+                        null,
+                        true)));
+
+    return candidates;
   }
 
   private Candidate getCurrentDateCandidate() {

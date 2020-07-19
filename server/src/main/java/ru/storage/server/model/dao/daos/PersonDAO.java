@@ -149,7 +149,7 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
 
   @Override
   public PersonDTO insert(@Nonnull PersonDTO personDTO) throws DAOException, DataSourceException {
-    Long resultId;
+    long resultId;
     LocationDTO locationDTO;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
@@ -166,7 +166,7 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
 
       ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
       if (generatedKeys.next()) {
-        resultId = generatedKeys.getObject(1, Long.class);
+        resultId = generatedKeys.getLong(1);
       } else {
         logger.error(() -> "Cannot get generated person id.");
         throw new DAOException(CANNOT_GET_GENERATED_PERSON_ID);

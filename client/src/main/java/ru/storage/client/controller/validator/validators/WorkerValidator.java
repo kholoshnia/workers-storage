@@ -8,7 +8,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class WorkerValidator implements LocaleListener {
@@ -22,14 +21,7 @@ public final class WorkerValidator implements LocaleListener {
 
   @Override
   public void changeLocale() {
-    ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("localized.WorkerValidator", Locale.getDefault());
-
-    wrongIdException = resourceBundle.getString("exceptions.wrongId");
-    wrongSalaryException = resourceBundle.getString("exceptions.wrongSalary");
-    wrongStatusException = resourceBundle.getString("exceptions.wrongStatus");
-    wrongStartDateException = resourceBundle.getString("exceptions.wrongStartDate");
-    wrongEndDateException = resourceBundle.getString("exceptions.wrongEndDate");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.WorkerValidator");
 
     statusMap =
         new ArrayList<String>() {
@@ -39,6 +31,13 @@ public final class WorkerValidator implements LocaleListener {
             add(resourceBundle.getString("constants.promotion"));
           }
         };
+
+    wrongIdException = resourceBundle.getString("exceptions.wrongId");
+    wrongSalaryException = resourceBundle.getString("exceptions.wrongSalary");
+    wrongStatusException =
+        String.format("%s %s", resourceBundle.getString("exceptions.wrongStatus"), statusMap);
+    wrongStartDateException = resourceBundle.getString("exceptions.wrongStartDate");
+    wrongEndDateException = resourceBundle.getString("exceptions.wrongEndDate");
   }
 
   public void checkId(String idString) throws ValidationException {

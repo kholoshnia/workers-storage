@@ -22,13 +22,12 @@ public final class ServerWorker implements ExitListener {
   private final Logger logger;
   private final int bufferSize;
   private final Serializer serializer;
-  private final Socket server;
   private final InetSocketAddress socketAddress;
 
+  private Socket server;
   private ByteBuffer buffer;
 
-  public ServerWorker(InetAddress address, int port, int bufferSize, Serializer serializer)
-      throws ClientConnectionException {
+  public ServerWorker(InetAddress address, int port, int bufferSize, Serializer serializer) {
     logger = LogManager.getLogger(ServerWorker.class);
     this.bufferSize = bufferSize;
     buffer = ByteBuffer.allocate(bufferSize);
@@ -42,8 +41,13 @@ public final class ServerWorker implements ExitListener {
       server.connect(socketAddress);
       server.setSoTimeout(5000);
     } catch (IOException e) {
-      logger.warn(() -> "Cannot connect to the server.", e);
-      throw new ClientConnectionException(e);
+      server = new Socket();
+      try {
+        server.connect(socketAddress);
+      } catch (IOException ex) {
+        logger.warn(() -> "Cannot connect to the server.", e);
+        throw new ClientConnectionException(e);
+      }
     }
   }
 

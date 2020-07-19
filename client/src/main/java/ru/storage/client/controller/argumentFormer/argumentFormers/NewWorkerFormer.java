@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import ru.storage.client.controller.argumentFormer.ArgumentValidator;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 import ru.storage.client.view.console.Console;
-import ru.storage.client.view.console.ConsoleImpl;
 import ru.storage.common.ArgumentMediator;
 
 import java.util.List;

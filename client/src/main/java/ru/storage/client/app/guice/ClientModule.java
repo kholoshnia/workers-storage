@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.app.Client;
 import ru.storage.client.app.connection.ServerWorker;
-import ru.storage.client.app.connection.exceptions.ClientConnectionException;
 import ru.storage.client.app.guice.exceptions.ProvidingException;
 import ru.storage.client.controller.argumentFormer.ArgumentFormer;
 import ru.storage.client.controller.argumentFormer.ArgumentValidator;
@@ -58,6 +57,13 @@ public final class ClientModule extends AbstractModule {
     install(new CommonModule());
     logger.debug(() -> "Common module has been installed.");
 
+    bind(WorkerValidator.class).in(Scopes.SINGLETON);
+    bind(CoordinatesValidator.class).in(Scopes.SINGLETON);
+    bind(PersonValidator.class).in(Scopes.SINGLETON);
+    bind(LocationValidator.class).in(Scopes.SINGLETON);
+    bind(RegisterValidator.class).in(Scopes.SINGLETON);
+    logger.debug(() -> "Validators has been configured.");
+
     bind(MessageMediator.class).in(Scopes.SINGLETON);
     bind(FormerMediator.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Controller has been configured.");
@@ -71,7 +77,6 @@ public final class ClientModule extends AbstractModule {
   @Provides
   @Singleton
   ConsoleImpl provideConsole(
-      Configuration configuration,
       ExitManager exitManager,
       ServerWorker serverWorker,
       CommandMediator commandMediator,
@@ -84,7 +89,6 @@ public final class ClientModule extends AbstractModule {
     try {
       console =
           new ConsoleImpl(
-              configuration,
               exitManager,
               System.in,
               System.out,
@@ -261,7 +265,7 @@ public final class ClientModule extends AbstractModule {
       int bufferSize = configuration.getInt("server.bufferSize");
       int port = configuration.getInt("server.port");
       serverWorker = new ServerWorker(address, port, bufferSize, serializer);
-    } catch (UnknownHostException | ClientConnectionException e) {
+    } catch (UnknownHostException e) {
       logger.fatal(() -> "Cannot provide Server.", e);
       throw new ProvidingException(e);
     }

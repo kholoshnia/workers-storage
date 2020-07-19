@@ -148,7 +148,7 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
   @Override
   public CoordinatesDTO insert(@Nonnull CoordinatesDTO coordinatesDTO)
       throws DAOException, DataSourceException {
-    Long resultId;
+    long resultId;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 
@@ -162,7 +162,7 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
 
       ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
       if (generatedKeys.next()) {
-        resultId = generatedKeys.getObject(1, Long.class);
+        resultId = generatedKeys.getLong(1);
       } else {
         logger.error(() -> "Cannot get generated coordinates id.");
         throw new DAOException(CANNOT_GET_GENERATED_COORDINATES_ID);

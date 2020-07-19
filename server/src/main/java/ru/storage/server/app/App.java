@@ -27,19 +27,19 @@ public final class App {
       LOGGER.debug(() -> "Launching application...");
 
       if (args.length != 3) {
-        LOGGER.fatal(() -> "Wrong arguments number. App has not been started.");
+        LOGGER.fatal(() -> "Wrong arguments number. App was not started.");
         System.err.println(WRONG_ARGUMENTS_NUMBER_ERROR);
         System.exit(1);
       }
 
       LOGGER.debug(() -> "Creating Guice injector...");
       Injector injector = Guice.createInjector(new ServerModule(args));
-      LOGGER.debug(() -> "Guice injector has been created.");
+      LOGGER.debug(() -> "Guice injector was created.");
 
       Server server = injector.getInstance(Server.class);
-      LOGGER.debug(() -> "Server has been created.");
+      LOGGER.debug(() -> "Server was created.");
 
-      LOGGER.debug(() -> "Server has been started.");
+      LOGGER.debug(() -> "Server was started.");
       server.start();
     } catch (Exception exception) {
       LOGGER.fatal(() -> "Got an exception during work of server.", exception);
@@ -47,7 +47,7 @@ public final class App {
       System.err.println(FATAL_ERROR);
       System.err.println();
       System.err.println(exception.getMessage());
-      LOGGER.fatal(() -> "Application has been stopped with an error.");
+      LOGGER.fatal(() -> "Application was stopped with an error.");
       System.exit(1);
     }
   }

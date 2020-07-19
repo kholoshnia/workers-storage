@@ -26,7 +26,7 @@ public final class StatusLocaleFormat extends StatusFormat {
           }
         };
 
-    logger.debug(() -> "Status localized map has been created.");
+    logger.debug(() -> "Status localized map was created.");
   }
 
   @Override

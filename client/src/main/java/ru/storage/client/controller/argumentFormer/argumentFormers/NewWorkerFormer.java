@@ -17,10 +17,10 @@ public final class NewWorkerFormer extends WorkerFormer {
   private String wrongArgumentsNumberException;
 
   public NewWorkerFormer(
-      Map<String, ArgumentValidator> argumentValidatorMap,
-      ArgumentMediator argumentMediator,
-      Console console) {
-    super(argumentValidatorMap, argumentMediator, console);
+      Console console,
+      Map<String, ArgumentValidator> validatorMap,
+      ArgumentMediator argumentMediator) {
+    super(console, validatorMap, argumentMediator);
     logger = LogManager.getLogger(NewWorkerFormer.class);
   }
 

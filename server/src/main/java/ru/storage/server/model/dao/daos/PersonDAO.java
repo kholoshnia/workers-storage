@@ -178,7 +178,7 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Person has been inserted.");
+    logger.info(() -> "Person was inserted.");
     return new PersonDTO(
         resultId, personDTO.ownerId, personDTO.name, personDTO.passportId, locationDTO);
   }
@@ -206,7 +206,7 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Person has been updated.");
+    logger.info(() -> "Person was updated.");
     return personDTO;
   }
 
@@ -228,6 +228,6 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Person has been deleted.");
+    logger.info(() -> "Person was deleted.");
   }
 }

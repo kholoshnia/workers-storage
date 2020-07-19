@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ResourceBundle;
 
-/** Database class that is used to initialize tables. */
+/** Database class is used to initialize tables. */
 public final class Database extends DataSource {
   private static final String INIT_USERS_TABLE_EXCEPTION;
   private static final String INIT_WORKERS_TABLE_EXCEPTION;
@@ -249,7 +249,7 @@ public final class Database extends DataSource {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug(() -> "Users table has been initialized.");
+    logger.debug(() -> "Users table was initialized.");
   }
 
   /**
@@ -273,7 +273,7 @@ public final class Database extends DataSource {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug(() -> "CoordinatesDTO table has been initialized.");
+    logger.debug(() -> "CoordinatesDTO table was initialized.");
   }
 
   /**
@@ -297,7 +297,7 @@ public final class Database extends DataSource {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug(() -> "Persons table has been initialized.");
+    logger.debug(() -> "Persons table was initialized.");
   }
 
   /**
@@ -321,13 +321,13 @@ public final class Database extends DataSource {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug(() -> "Locations table has been initialized.");
+    logger.debug(() -> "Locations table was initialized.");
   }
 
   /**
    * Initializes workers table. Creates new one if not exists.
    *
-   * @throws DatabaseException if initialization is incorrect
+   * @throws DatabaseException - if initialization is incorrect
    */
   private void initWorkersTable() throws DataSourceException {
     PreparedStatement preparedStatement =
@@ -345,6 +345,6 @@ public final class Database extends DataSource {
       closePrepareStatement(preparedStatement);
     }
 
-    logger.debug(() -> "Workers table has been initialized.");
+    logger.debug(() -> "Workers table was initialized.");
   }
 }

@@ -1,6 +1,6 @@
 package ru.storage.common.serizliser.exceptions;
 
-public class DeserializationException extends Exception {
+public final class DeserializationException extends Exception {
   public DeserializationException() {
     super();
   }

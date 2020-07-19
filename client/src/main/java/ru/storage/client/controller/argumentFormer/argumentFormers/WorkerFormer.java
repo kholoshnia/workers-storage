@@ -2,9 +2,8 @@ package ru.storage.client.controller.argumentFormer.argumentFormers;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.client.controller.argumentFormer.ArgumentFormer;
 import ru.storage.client.controller.argumentFormer.ArgumentValidator;
-import ru.storage.client.controller.validator.exceptions.ValidationException;
+import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
 
@@ -13,27 +12,23 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public abstract class WorkerFormer extends ArgumentFormer {
+public abstract class WorkerFormer extends Former implements LocaleListener {
   protected final ArgumentMediator argumentMediator;
 
   private final Logger logger;
-  private final Console console;
 
   private Map<String, String> workerOffers;
   private Map<String, String> coordinatesOffers;
   private Map<String, String> personOffers;
   private Map<String, String> locationOffers;
 
-  private boolean wrong;
-
   public WorkerFormer(
-      Map<String, ArgumentValidator> argumentValidatorMap,
-      ArgumentMediator argumentMediator,
-      Console console) {
-    super(argumentValidatorMap);
+      Console console,
+      Map<String, ArgumentValidator> validatorMap,
+      ArgumentMediator argumentMediator) {
+    super(console, validatorMap);
     logger = LogManager.getLogger(WorkerFormer.class);
     this.argumentMediator = argumentMediator;
-    this.console = console;
   }
 
   private Map<String, String> initWorkerOffers(ResourceBundle resourceBundle) {
@@ -111,32 +106,23 @@ public abstract class WorkerFormer extends ArgumentFormer {
   }
 
   protected final Map<String, String> formWorker() {
-    Map<String, String> allArguments = new HashMap<>();
+    Map<String, String> allArguments = new HashMap<>(); // TODO: Ability not to enter field
 
-    workerOffers.putAll(coordinatesOffers); // TODO: Ability not to enter field
-    workerOffers.putAll(personOffers);
-    workerOffers.putAll(locationOffers);
+    Map<String, String> workerArguments = readArguments(workerOffers, null, null);
+    logger.info(() -> "Worker arguments were formed.");
+    allArguments.putAll(workerArguments);
 
-    for (Map.Entry<String, String> offerEntry : workerOffers.entrySet()) {
-      String argument = offerEntry.getKey();
-      String offer = offerEntry.getValue();
+    Map<String, String> coordinatesArguments = readArguments(coordinatesOffers, null, null);
+    logger.info(() -> "Coordinates arguments were formed.");
+    allArguments.putAll(coordinatesArguments);
 
-      wrong = true;
-      while (wrong) {
-        console.write(offer);
-        logger.info("Offered user input: {}.", () -> offer);
+    Map<String, String> personArguments = readArguments(personOffers, null, null);
+    logger.info(() -> "Person arguments were formed.");
+    allArguments.putAll(personArguments);
 
-        String input = console.readLine(null, null); // TODO: Ability to cancel
-
-        try {
-          checkArgument(argument, input);
-          allArguments.put(argument, input);
-          wrong = false;
-        } catch (ValidationException e) {
-          console.writeLine(e.getMessage());
-        }
-      }
-    }
+    Map<String, String> locationArguments = readArguments(locationOffers, null, null);
+    logger.info(() -> "Location arguments were formed.");
+    allArguments.putAll(locationArguments);
 
     logger.info(() -> "All arguments were formed.");
     return allArguments;

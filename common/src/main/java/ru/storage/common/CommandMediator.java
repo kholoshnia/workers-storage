@@ -43,18 +43,42 @@ public final class CommandMediator {
   private List<String> initCommandList() {
     return new ArrayList<String>() {
       {
-        add(LOGIN);
-        add(LOGOUT);
-        add(REGISTER);
-        add(SHOW_HISTORY);
-        add(CLEAR_HISTORY);
-        add(ADD);
-        add(REMOVE);
-        add(UPDATE);
-        add(EXIT);
-        add(HELP);
-        add(INFO);
-        add(SHOW);
+        if (LOGIN != null) {
+          add(LOGIN);
+        }
+        if (LOGOUT != null) {
+          add(LOGOUT);
+        }
+        if (REGISTER != null) {
+          add(REGISTER);
+        }
+        if (SHOW_HISTORY != null) {
+          add(SHOW_HISTORY);
+        }
+        if (CLEAR_HISTORY != null) {
+          add(CLEAR_HISTORY);
+        }
+        if (ADD != null) {
+          add(ADD);
+        }
+        if (REMOVE != null) {
+          add(REMOVE);
+        }
+        if (UPDATE != null) {
+          add(UPDATE);
+        }
+        if (EXIT != null) {
+          add(EXIT);
+        }
+        if (HELP != null) {
+          add(HELP);
+        }
+        if (INFO != null) {
+          add(INFO);
+        }
+        if (SHOW != null) {
+          add(SHOW);
+        }
       }
     };
   }

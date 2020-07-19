@@ -171,7 +171,7 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Location has been inserted.");
+    logger.info(() -> "Location was inserted.");
     return new LocationDTO(
         resultId,
         locationDTO.ownerId,
@@ -202,7 +202,7 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Location has been updated.");
+    logger.info(() -> "Location was updated.");
     return locationDTO;
   }
 
@@ -222,6 +222,6 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Location has been deleted.");
+    logger.info(() -> "Location was deleted.");
   }
 }

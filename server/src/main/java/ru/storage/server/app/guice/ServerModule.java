@@ -77,18 +77,18 @@ public final class ServerModule extends AbstractModule {
   @Override
   public void configure() {
     install(new CommonModule());
-    logger.debug("Common module has been installed.");
+    logger.debug("Common module was installed.");
 
     bind(SHA256Generator.class).in(Scopes.SINGLETON);
     bind(HashGenerator.class).to(SHA256Generator.class);
     bind(History.class).in(Scopes.SINGLETON);
-    logger.debug(() -> "Services have been configured.");
+    logger.debug(() -> "Services were configured.");
 
     bind(CheckController.class).in(Scopes.SINGLETON);
     bind(AuthController.class).in(Scopes.SINGLETON);
     bind(CommandController.class).in(Scopes.SINGLETON);
     bind(CommandFactoryMediator.class).in(Scopes.SINGLETON);
-    logger.debug(() -> "Controllers have been configured.");
+    logger.debug(() -> "Controllers were configured.");
 
     bind(UserDAO.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<DAO<String, UserDTO>>() {}).to(UserDAO.class);
@@ -100,16 +100,16 @@ public final class ServerModule extends AbstractModule {
     bind(new TypeLiteral<DAO<Long, PersonDTO>>() {}).to(PersonDAO.class);
     bind(LocationDAO.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<DAO<Long, LocationDTO>>() {}).to(LocationDAO.class);
-    logger.debug(() -> "DAOs have been configured.");
+    logger.debug(() -> "DAOs were configured.");
 
     bind(UserRepository.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<Repository<User>>() {}).to(UserRepository.class);
     bind(WorkerRepository.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<Repository<Worker>>() {}).to(WorkerRepository.class);
-    logger.debug(() -> "Repositories have been configured.");
+    logger.debug(() -> "Repositories were configured.");
 
     bind(ServerProcessor.class).to(Server.class);
-    logger.debug(() -> "Server module has been configured.");
+    logger.debug(() -> "Server module was configured.");
   }
 
   @Provides

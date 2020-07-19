@@ -2,7 +2,9 @@ package ru.storage.server.model.domain.entity;
 
 import ru.storage.server.model.domain.dto.DTO;
 
-/** DTO entities with ability to be converted to the entity type must implement Entity interface. */
+/**
+ * DTO entities with the ability to be converted to the entity type must implement Entity interface.
+ */
 public interface Entity {
   /**
    * Returns DTO from current object.

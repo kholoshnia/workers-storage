@@ -17,7 +17,7 @@ public interface DAO<Key, Entity> {
    *
    * @return All entities from database
    * @throws DAOException - in case of incorrect statement execution
-   * @throws DataSourceException - in case of data source exceptions
+   * @throws DataSourceException - in case of getting all entities errors
    */
   List<Entity> getAll() throws DAOException, DataSourceException;
 
@@ -27,7 +27,7 @@ public interface DAO<Key, Entity> {
    * @param key concrete entity key
    * @return Entity with specified key
    * @throws DAOException - in case of incorrect statement execution
-   * @throws DataSourceException - in case of data source exceptions
+   * @throws DataSourceException - in case of getting by key errors
    */
   Entity getByKey(@Nonnull Key key) throws DAOException, DataSourceException;
 
@@ -37,7 +37,7 @@ public interface DAO<Key, Entity> {
    * @param entity concrete entity
    * @return Entity with generated id
    * @throws DAOException - in case of incorrect statement execution
-   * @throws DataSourceException - in case of data source exceptions
+   * @throws DataSourceException - in case of inserting errors
    */
   Entity insert(@Nonnull Entity entity) throws DAOException, DataSourceException;
 
@@ -47,7 +47,7 @@ public interface DAO<Key, Entity> {
    * @param entity new entity
    * @return updated entity
    * @throws DAOException - in case of incorrect statement execution
-   * @throws DataSourceException - in case of data source exceptions
+   * @throws DataSourceException - in case of updating errors
    */
   Entity update(@Nonnull Entity entity) throws DAOException, DataSourceException;
 
@@ -56,7 +56,7 @@ public interface DAO<Key, Entity> {
    *
    * @param entity concrete entity
    * @throws DAOException - in case of incorrect statement execution
-   * @throws DataSourceException - in case of data source exceptions
+   * @throws DataSourceException - in case of deleting errors
    */
   void delete(@Nonnull Entity entity) throws DAOException, DataSourceException;
 }

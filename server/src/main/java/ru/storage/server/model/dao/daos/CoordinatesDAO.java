@@ -174,7 +174,7 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Coordinates have been inserted.");
+    logger.info(() -> "Coordinates were inserted.");
     return new CoordinatesDTO(
         resultId, coordinatesDTO.ownerId, coordinatesDTO.x, coordinatesDTO.y, coordinatesDTO.z);
   }
@@ -201,7 +201,7 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Coordinates have been updated.");
+    logger.info(() -> "Coordinates were updated.");
     return coordinatesDTO;
   }
 
@@ -222,6 +222,6 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Coordinates have been deleted.");
+    logger.info(() -> "Coordinates were deleted.");
   }
 }

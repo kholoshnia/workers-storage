@@ -26,7 +26,7 @@ public final class JsonSerializer implements Serializer {
     String json = gson.toJson(serializable);
     byte[] result = json.getBytes(StandardCharsets.UTF_8);
 
-    logger.info("Object has been serialized.");
+    logger.info("Object was serialized.");
     return result;
   }
 
@@ -43,7 +43,7 @@ public final class JsonSerializer implements Serializer {
       throw new DeserializationException(e);
     }
 
-    logger.info(() -> "Object has been deserialized.");
+    logger.info(() -> "Object was deserialized.");
     return result;
   }
 }

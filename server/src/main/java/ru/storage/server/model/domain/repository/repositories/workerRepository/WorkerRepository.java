@@ -112,7 +112,7 @@ public final class WorkerRepository implements Repository<Worker> {
   public synchronized List<Worker> get(@Nonnull Query<Worker> query) throws RepositoryException {
     List<Worker> result = query.execute(workers);
 
-    logger.debug("Worker query: {} has been executed.", () -> query);
+    logger.debug("Worker query: {} was executed.", () -> query);
     return result;
   }
 
@@ -136,7 +136,7 @@ public final class WorkerRepository implements Repository<Worker> {
     }
 
     size = workers.size();
-    logger.info(() -> "Worker has been added to the collection.");
+    logger.info(() -> "Worker was added to the collection.");
   }
 
   @Override
@@ -152,7 +152,7 @@ public final class WorkerRepository implements Repository<Worker> {
       }
 
       workerDAO.update(worker.toDTO());
-      logger.info(() -> "Worker has been updated in DAO.");
+      logger.info(() -> "Worker was updated in DAO.");
     } catch (DAOException | DataSourceException e) {
       logger.error("Cannot update worker in DAO, target worker: %s." + worker, e);
       throw new WorkerRepositoryException(e);
@@ -167,7 +167,7 @@ public final class WorkerRepository implements Repository<Worker> {
 
     workers.add(worker);
 
-    logger.info(() -> "Worker has been updated in the collection.");
+    logger.info(() -> "Worker was updated in the collection.");
   }
 
   @Override
@@ -183,7 +183,7 @@ public final class WorkerRepository implements Repository<Worker> {
       }
 
       workerDAO.delete(worker.toDTO());
-      logger.info("Worker has been deleted from DAO.");
+      logger.info("Worker was deleted from DAO.");
     } catch (DAOException | DataSourceException e) {
       logger.error(
           "Cannot delete worker using DAO, target worker: {}.", (Supplier<?>) () -> worker, e);
@@ -198,6 +198,6 @@ public final class WorkerRepository implements Repository<Worker> {
     }
 
     size = workers.size();
-    logger.info(() -> "Worker has been deleted from the collection.");
+    logger.info(() -> "Worker was deleted from the collection.");
   }
 }

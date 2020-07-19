@@ -34,7 +34,7 @@ public final class SHA256Generator extends HashGenerator {
       throw new HashGeneratorException(e);
     }
 
-    logger.info(() -> "SHA-256 hash generated.");
+    logger.info(() -> "SHA-256 hash was generated.");
     return sha256;
   }
 }

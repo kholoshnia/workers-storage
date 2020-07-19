@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 /**
- * Abstract class that encapsulates all methods for working with statements of a specific SQL
+ * Abstract class that encapsulates all methods for working with statements of a specified SQL
  * database.
  *
  * @see Connection
@@ -56,7 +56,7 @@ public abstract class DataSource implements ExitListener {
    * @param user database user
    * @param password database password
    * @return new connection (session) with database
-   * @throws DataSourceException - if connection is incorrect
+   * @throws DataSourceException - in case of establishing connection errors
    * @see Connection
    * @see DriverManager
    */
@@ -71,7 +71,7 @@ public abstract class DataSource implements ExitListener {
       throw new DataSourceException(SETUP_CONNECTION_EXCEPTION, e);
     }
 
-    logger.debug(() -> "Connection setup has been completed.");
+    logger.debug(() -> "Connection setup was established.");
     return connection;
   }
 
@@ -91,11 +91,11 @@ public abstract class DataSource implements ExitListener {
       preparedStatement = connection.prepareStatement(statement, type);
     } catch (SQLException e) {
       logger.error(
-          "Statement for request: \"{}\" has not been prepared", (Supplier<?>) () -> statement, e);
+          "Statement for request: \"{}\" was not prepared", (Supplier<?>) () -> statement, e);
       throw new DataSourceException(GET_PREPARED_STATEMENT_EXCEPTION, e);
     }
 
-    logger.info("Statement for request: \"{}\" has been prepared", () -> statement);
+    logger.info("Statement for request: \"{}\" was prepared", () -> statement);
     return preparedStatement;
   }
 
@@ -106,7 +106,7 @@ public abstract class DataSource implements ExitListener {
    * {@code finally} block.
    *
    * @param preparedStatement concrete prepared statement
-   * @throws DataSourceException - if closure is incorrect
+   * @throws DataSourceException - in case of errors while closing prepared statement
    */
   public final void closePrepareStatement(PreparedStatement preparedStatement)
       throws DataSourceException {
@@ -114,12 +114,12 @@ public abstract class DataSource implements ExitListener {
       try {
         preparedStatement.close();
       } catch (SQLException e) {
-        logger.error(() -> "Statement has not been closed.", e);
+        logger.error(() -> "Statement was not closed.", e);
         throw new DataSourceException(CLOSE_PREPARED_STATEMENT_EXCEPTION, e);
       }
     }
 
-    logger.debug(() -> "Statement has been closed.");
+    logger.debug(() -> "Statement was closed.");
   }
 
   /**
@@ -127,7 +127,7 @@ public abstract class DataSource implements ExitListener {
    *
    * <p>NOTE: all database connections must be closed on program exit.
    *
-   * @throws DataSourceException - in case of SQLException while closing connection
+   * @throws DataSourceException - in case of errors while closing connection
    */
   public final void closeConnection() throws DataSourceException {
     if (connection != null) {
@@ -139,7 +139,7 @@ public abstract class DataSource implements ExitListener {
       }
     }
 
-    logger.debug(() -> "Connection has been closed.");
+    logger.debug(() -> "Connection was closed.");
   }
 
   @Override
@@ -151,6 +151,6 @@ public abstract class DataSource implements ExitListener {
       throw new ExitingException(e);
     }
 
-    logger.debug(() -> "Connection with database has been closed.");
+    logger.debug(() -> "Connection with database was closed.");
   }
 }

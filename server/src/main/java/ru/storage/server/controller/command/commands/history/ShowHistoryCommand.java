@@ -49,11 +49,14 @@ public final class ShowHistoryCommand extends HistoryCommand {
             .append(System.lineSeparator())
             .append(SHOW_HISTORY_PREFIX)
             .append(System.lineSeparator())
-            .append(SEPARATOR)
-            .append(System.lineSeparator());
+            .append(SEPARATOR);
 
     for (Record record : records) {
-      result.append(record.getCommand()).append(System.lineSeparator());
+      result
+          .append(System.lineSeparator())
+          .append(record.getCommand())
+          .append(System.lineSeparator());
+
       record
           .getArguments()
           .forEach(
@@ -61,14 +64,11 @@ public final class ShowHistoryCommand extends HistoryCommand {
                   result
                       .append(String.format("%s: %s", key, value))
                       .append(System.lineSeparator()));
-      result.append(SEPARATOR).append(System.lineSeparator());
+
+      result.append(SEPARATOR);
     }
 
-    if (result.length() > 0) {
-      result.setLength(result.length() - 1); // TODO: Kostyl'
-    }
-
-    logger.info(() -> "History has been formed.");
+    logger.info(() -> "History was formed.");
     return new Response(Status.OK, result.toString());
   }
 }

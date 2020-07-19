@@ -51,22 +51,54 @@ public final class ArgumentMediator {
   private List<String> initArgumentsList() {
     return new ArrayList<String>() {
       {
-        add(WORKER_ID);
-        add(WORKER_SALARY);
-        add(WORKER_STATUS);
-        add(WORKER_START_DATE);
-        add(WORKER_END_DATE);
-        add(COORDINATES_X);
-        add(COORDINATES_Y);
-        add(COORDINATES_Z);
-        add(PERSON_NAME);
-        add(PERSON_PASSPORT_ID);
-        add(LOCATION_ADDRESS);
-        add(LOCATION_LATITUDE);
-        add(LOCATION_LONGITUDE);
-        add(USER_NAME);
-        add(USER_LOGIN);
-        add(USER_PASSWORD);
+        if (WORKER_ID != null) {
+          add(WORKER_ID);
+        }
+        if (WORKER_SALARY != null) {
+          add(WORKER_SALARY);
+        }
+        if (WORKER_STATUS != null) {
+          add(WORKER_STATUS);
+        }
+        if (WORKER_START_DATE != null) {
+          add(WORKER_START_DATE);
+        }
+        if (WORKER_END_DATE != null) {
+          add(WORKER_END_DATE);
+        }
+        if (COORDINATES_X != null) {
+          add(COORDINATES_X);
+        }
+        if (COORDINATES_Y != null) {
+          add(COORDINATES_Y);
+        }
+        if (COORDINATES_Z != null) {
+          add(COORDINATES_Z);
+        }
+        if (PERSON_NAME != null) {
+          add(PERSON_NAME);
+        }
+        if (PERSON_PASSPORT_ID != null) {
+          add(PERSON_PASSPORT_ID);
+        }
+        if (LOCATION_ADDRESS != null) {
+          add(LOCATION_ADDRESS);
+        }
+        if (LOCATION_LATITUDE != null) {
+          add(LOCATION_LATITUDE);
+        }
+        if (LOCATION_LONGITUDE != null) {
+          add(LOCATION_LONGITUDE);
+        }
+        if (USER_NAME != null) {
+          add(USER_NAME);
+        }
+        if (USER_LOGIN != null) {
+          add(USER_LOGIN);
+        }
+        if (USER_PASSWORD != null) {
+          add(USER_PASSWORD);
+        }
       }
     };
   }

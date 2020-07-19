@@ -92,7 +92,7 @@ public final class UserRepository implements Repository<User> {
 
     List<User> result = query.execute(users);
 
-    logger.debug("User query: {} has been executed.", () -> query);
+    logger.debug("User query: {} was executed.", () -> query);
     return result;
   }
 
@@ -115,7 +115,7 @@ public final class UserRepository implements Repository<User> {
       throw new UserRepositoryException(e);
     }
 
-    logger.info(() -> "User has been added to the collection.");
+    logger.info(() -> "User was added to the collection.");
   }
 
   @Override
@@ -129,7 +129,7 @@ public final class UserRepository implements Repository<User> {
       }
 
       userDAO.update(user.toDTO());
-      logger.info(() -> "User has been updated in DAO.");
+      logger.info(() -> "User was updated in DAO.");
     } catch (DAOException | DataSourceException e) {
       logger.error(() -> "Cannot update user in DAO.", e);
       throw new UserRepositoryException(e);
@@ -142,7 +142,7 @@ public final class UserRepository implements Repository<User> {
 
     users.add(user);
 
-    logger.info(() -> "User has been updated in the collection.");
+    logger.info(() -> "User was updated in the collection.");
   }
 
   @Override
@@ -156,7 +156,7 @@ public final class UserRepository implements Repository<User> {
       }
 
       userDAO.delete(user.toDTO());
-      logger.info(() -> "User has been deleted from DAO.");
+      logger.info(() -> "User was deleted from DAO.");
     } catch (DAOException | DataSourceException e) {
       logger.error(() -> "Cannot delete user using DAO.");
       throw new UserRepositoryException(e);
@@ -167,6 +167,6 @@ public final class UserRepository implements Repository<User> {
       throw new UserRepositoryException(USER_NOT_FOUND_IN_COLLECTION_EXCEPTION);
     }
 
-    logger.info(() -> "User has been deleted from the collection.");
+    logger.info(() -> "User was deleted from the collection.");
   }
 }

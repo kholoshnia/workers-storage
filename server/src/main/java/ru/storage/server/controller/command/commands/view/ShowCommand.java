@@ -62,13 +62,12 @@ public final class ShowCommand extends ViewCommand {
         new StringBuilder(BEGINNING)
             .append(System.lineSeparator())
             .append(SHOW_PREFIX)
-            .append(SEPARATOR)
-            .append(System.lineSeparator());
+            .append(SEPARATOR);
 
     for (Worker worker : allWorkers) {
-      appendWorker(result, worker);
       result.append(System.lineSeparator());
-      result.append(SEPARATOR);
+      appendWorker(result, worker);
+      result.append(System.lineSeparator()).append(SEPARATOR);
     }
 
     logger.info(() -> "All workers were converted.");

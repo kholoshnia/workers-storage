@@ -1,6 +1,6 @@
 package ru.storage.client.controller.requestBuilder.exceptions;
 
-public class BuildingException extends Exception {
+public final class BuildingException extends Exception {
   public BuildingException() {
     super();
   }

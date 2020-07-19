@@ -63,7 +63,7 @@ public abstract class ModificationCommand extends Command {
 
     CoordinatesDTO coordinatesDTO =
         new CoordinatesDTO(Coordinates.DEFAULT_ID, Coordinates.DEFAULT_OWNER_ID, x, y, z);
-    logger.info(() -> "CoordinatesDTO hsa been created.");
+    logger.info(() -> "Coordinates DTO was created.");
     return coordinatesDTO;
   }
 
@@ -76,7 +76,7 @@ public abstract class ModificationCommand extends Command {
     LocationDTO locationDTO =
         new LocationDTO(
             Location.DEFAULT_ID, Location.DEFAULT_OWNER_ID, address, latitude, longitude);
-    logger.info(() -> "LocationDTO has been created.");
+    logger.info(() -> "Location DTO was created.");
     return locationDTO;
   }
 
@@ -87,7 +87,7 @@ public abstract class ModificationCommand extends Command {
 
     PersonDTO personDTO =
         new PersonDTO(Person.DEFAULT_ID, Person.DEFAULT_OWNER_ID, name, passportId, locationDTO);
-    logger.info(() -> "PersonDTO has been created.");
+    logger.info(() -> "Person DTO was created.");
     return personDTO;
   }
 
@@ -112,7 +112,7 @@ public abstract class ModificationCommand extends Command {
             endDate,
             coordinatesDTO,
             personDTO);
-    logger.info(() -> "WorkerDTO has been created.");
+    logger.info(() -> "Worker DTO was created.");
     return workerDTO;
   }
 }

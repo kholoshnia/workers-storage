@@ -13,10 +13,11 @@ import java.util.ResourceBundle;
 
 public class HelpCommand extends SpecialCommand {
   public static final String BEGINNING =
-      "---------------------------------------------< HELP >---------------------------------------------";
+      "--------------------------------------------------< HELP >--------------------------------------------------";
   public static final String SEPARATOR =
-      "--------------------------------------------------------------------------------------------------";
-  private static final String PATTERN = "%-20s- %s";
+      "------------------------------------------------------------------------------------------------------------";
+  private static final String NO_ARGUMENTS = "%-20s- %s";
+  private static final String WITH_ARGUMENTS = "%-20s <%s> - %s";
 
   private final String HELP_PREFIX;
   private final String LOGIN_INFO;
@@ -31,6 +32,10 @@ public class HelpCommand extends SpecialCommand {
   private final String HELP_INFO;
   private final String INFO_INFO;
   private final String SHOW_INFO;
+
+  private final String LOGIN_ARGUMENT;
+  private final String REMOVE_ARGUMENT;
+  private final String UPDATE_ARGUMENT;
 
   public HelpCommand(
       Configuration configuration,
@@ -56,6 +61,10 @@ public class HelpCommand extends SpecialCommand {
     HELP_INFO = resourceBundle.getString("infos.help");
     INFO_INFO = resourceBundle.getString("infos.info");
     SHOW_INFO = resourceBundle.getString("infos.show");
+
+    LOGIN_ARGUMENT = resourceBundle.getString("arguments.login");
+    REMOVE_ARGUMENT = resourceBundle.getString("arguments.remove");
+    UPDATE_ARGUMENT = resourceBundle.getString("arguments.update");
   }
 
   @Override
@@ -67,29 +76,29 @@ public class HelpCommand extends SpecialCommand {
             + System.lineSeparator()
             + SEPARATOR
             + System.lineSeparator()
-            + String.format(PATTERN, commandMediator.LOGIN, LOGIN_INFO)
+            + String.format(WITH_ARGUMENTS, commandMediator.LOGIN, LOGIN_ARGUMENT, LOGIN_INFO)
             + System.lineSeparator()
-            + String.format(PATTERN, commandMediator.LOGOUT, LOGOUT_INFO)
+            + String.format(NO_ARGUMENTS, commandMediator.LOGOUT, LOGOUT_INFO)
             + System.lineSeparator()
-            + String.format(PATTERN, commandMediator.REGISTER, REGISTER_INFO)
+            + String.format(NO_ARGUMENTS, commandMediator.REGISTER, REGISTER_INFO)
             + System.lineSeparator()
-            + String.format(PATTERN, commandMediator.SHOW_HISTORY, SHOW_HISTORY_INFO)
+            + String.format(NO_ARGUMENTS, commandMediator.SHOW_HISTORY, SHOW_HISTORY_INFO)
             + System.lineSeparator()
-            + String.format(PATTERN, commandMediator.CLEAR_HISTORY, CLEAR_HISTORY_INFO)
+            + String.format(NO_ARGUMENTS, commandMediator.CLEAR_HISTORY, CLEAR_HISTORY_INFO)
             + System.lineSeparator()
-            + String.format(PATTERN, commandMediator.ADD, ADD_INFO)
+            + String.format(NO_ARGUMENTS, commandMediator.ADD, ADD_INFO)
             + System.lineSeparator()
-            + String.format(PATTERN, commandMediator.REMOVE, REMOVE_INFO)
+            + String.format(WITH_ARGUMENTS, commandMediator.REMOVE, REMOVE_ARGUMENT, REMOVE_INFO)
             + System.lineSeparator()
-            + String.format(PATTERN, commandMediator.UPDATE, UPDATE_INFO)
+            + String.format(WITH_ARGUMENTS, commandMediator.UPDATE, UPDATE_ARGUMENT, UPDATE_INFO)
             + System.lineSeparator()
-            + String.format(PATTERN, commandMediator.EXIT, EXIT_INFO)
+            + String.format(NO_ARGUMENTS, commandMediator.EXIT, EXIT_INFO)
             + System.lineSeparator()
-            + String.format(PATTERN, commandMediator.HELP, HELP_INFO)
+            + String.format(NO_ARGUMENTS, commandMediator.HELP, HELP_INFO)
             + System.lineSeparator()
-            + String.format(PATTERN, commandMediator.INFO, INFO_INFO)
+            + String.format(NO_ARGUMENTS, commandMediator.INFO, INFO_INFO)
             + System.lineSeparator()
-            + String.format(PATTERN, commandMediator.SHOW, SHOW_INFO)
+            + String.format(NO_ARGUMENTS, commandMediator.SHOW, SHOW_INFO)
             + System.lineSeparator()
             + SEPARATOR;
 

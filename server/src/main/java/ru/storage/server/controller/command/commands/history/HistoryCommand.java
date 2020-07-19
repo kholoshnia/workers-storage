@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public abstract class HistoryCommand extends Command {
-  protected final String SEPARATOR = "----------------------";
   protected final String HISTORY_IS_EMPTY_ANSWER;
 
   protected final History history;

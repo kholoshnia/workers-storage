@@ -265,7 +265,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Worker has been inserted.");
+    logger.info(() -> "Worker was inserted.");
     return new WorkerDTO(
         resultId,
         workerDTO.ownerId,
@@ -307,7 +307,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Worker has been updated.");
+    logger.info(() -> "Worker was updated.");
     return workerDTO;
   }
 
@@ -330,6 +330,6 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "Worker has been deleted.");
+    logger.info(() -> "Worker was deleted.");
   }
 }

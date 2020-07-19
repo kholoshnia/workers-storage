@@ -17,6 +17,15 @@ public abstract class CommandFactory {
     this.argumentMediator = argumentMediator;
   }
 
+  /**
+   * Creates new command instance.
+   *
+   * @param command concrete command
+   * @param arguments command arguments
+   * @param locale command response locale
+   * @return new command instance
+   * @throws CommandFactoryException - in case of command creation errors
+   */
   public abstract Command createCommand(
       String command, Map<String, String> arguments, Locale locale) throws CommandFactoryException;
 }

@@ -55,7 +55,7 @@ public final class ClientWorker {
 
       return serializer.deserialize(bytes, Request.class);
     } catch (ClosedChannelException e) {
-      logger.info(() -> "Client has closed connection.");
+      logger.info(() -> "Client closed connection.");
       return null;
     } catch (IOException | DeserializationException e) {
       try {
@@ -76,7 +76,7 @@ public final class ClientWorker {
       byte[] bytes = serializer.serialize(response);
       client.write(ByteBuffer.wrap(bytes));
     } catch (ClosedChannelException e) {
-      logger.info(() -> "Client has closed connection.");
+      logger.info(() -> "Client closed connection.");
     } catch (IOException e) {
       try {
         client.close();

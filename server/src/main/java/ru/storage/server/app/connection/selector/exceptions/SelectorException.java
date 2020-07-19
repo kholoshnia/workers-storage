@@ -1,6 +1,6 @@
 package ru.storage.server.app.connection.selector.exceptions;
 
-public class SelectorException extends Exception {
+public final class SelectorException extends Exception {
   public SelectorException() {
     super();
   }

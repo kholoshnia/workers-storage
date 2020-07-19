@@ -4,8 +4,8 @@ import ru.storage.server.model.domain.entity.Entity;
 import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 
 /**
- * Entities with ability to be converted to the DTO type must implement DTO interface. DTO is used
- * to transfer data between software application subsystems or layers.
+ * Entities with the ability to be converted to the DTO type must implement DTO interface. DTO is
+ * used to transfer data between software application subsystems or layers.
  *
  * @param <T> Entity
  */

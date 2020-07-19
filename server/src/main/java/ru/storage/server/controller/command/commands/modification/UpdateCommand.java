@@ -88,7 +88,7 @@ public final class UpdateCommand extends ModificationCommand {
       }
     }
 
-    logger.info(() -> "Worker has been updated.");
+    logger.info(() -> "Worker was updated.");
     return new Response(Status.OK, UPDATED_SUCCESSFULLY_ANSWER);
   }
 }

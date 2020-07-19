@@ -168,7 +168,7 @@ public class UserDAO implements DAO<String, UserDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "User has been inserted.");
+    logger.info(() -> "User was inserted.");
     return new UserDTO(resultId, userDTO.name, userDTO.login, userDTO.password, userDTO.role);
   }
 
@@ -193,7 +193,7 @@ public class UserDAO implements DAO<String, UserDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "User has been updated.");
+    logger.info(() -> "User was updated.");
     return userDTO;
   }
 
@@ -213,6 +213,6 @@ public class UserDAO implements DAO<String, UserDTO> {
       dataSource.closePrepareStatement(preparedStatement);
     }
 
-    logger.info(() -> "User has been deleted.");
+    logger.info(() -> "User was deleted.");
   }
 }

@@ -26,8 +26,8 @@ import ru.storage.client.controller.responseHandler.formatter.StringFormatter;
 import ru.storage.client.controller.responseHandler.responseHandlers.*;
 import ru.storage.client.controller.validator.validators.*;
 import ru.storage.client.view.console.Console;
-import ru.storage.client.view.console.ConsoleImpl;
 import ru.storage.client.view.console.MessageMediator;
+import ru.storage.client.view.console.Terminal;
 import ru.storage.client.view.console.exceptions.ConsoleException;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
@@ -55,28 +55,28 @@ public final class ClientModule extends AbstractModule {
   @Override
   protected void configure() {
     install(new CommonModule());
-    logger.debug(() -> "Common module has been installed.");
+    logger.debug(() -> "Common module was installed.");
 
     bind(WorkerValidator.class).in(Scopes.SINGLETON);
     bind(CoordinatesValidator.class).in(Scopes.SINGLETON);
     bind(PersonValidator.class).in(Scopes.SINGLETON);
     bind(LocationValidator.class).in(Scopes.SINGLETON);
     bind(RegisterValidator.class).in(Scopes.SINGLETON);
-    logger.debug(() -> "Validators has been configured.");
+    logger.debug(() -> "Validators was configured.");
 
     bind(MessageMediator.class).in(Scopes.SINGLETON);
     bind(FormerMediator.class).in(Scopes.SINGLETON);
-    logger.debug(() -> "Controller has been configured.");
+    logger.debug(() -> "Controller was configured.");
 
-    bind(Console.class).to(ConsoleImpl.class);
+    bind(Console.class).to(Terminal.class);
 
     bind(Client.class).in(Scopes.SINGLETON);
-    logger.debug(() -> "Client has been configured.");
+    logger.debug(() -> "Client was configured.");
   }
 
   @Provides
   @Singleton
-  ConsoleImpl provideConsole(
+  Terminal provideConsole(
       ExitManager exitManager,
       ServerWorker serverWorker,
       CommandMediator commandMediator,
@@ -84,11 +84,11 @@ public final class ClientModule extends AbstractModule {
       FormerMediator formerMediator,
       List<ResponseHandler> responseHandlers)
       throws ProvidingException {
-    ConsoleImpl console;
+    Terminal console;
 
     try {
       console =
-          new ConsoleImpl(
+          new Terminal(
               exitManager,
               System.in,
               System.out,
@@ -108,7 +108,6 @@ public final class ClientModule extends AbstractModule {
   @Provides
   @Singleton
   LocaleManager provideLocaleManager(
-      FormerMediator formerMediator,
       MessageMediator messageMediator,
       WorkerValidator workerValidator,
       CoordinatesValidator coordinatesValidator,
@@ -118,7 +117,6 @@ public final class ClientModule extends AbstractModule {
     List<LocaleListener> entities =
         new ArrayList<LocaleListener>() {
           {
-            add(formerMediator);
             add(messageMediator);
             add(workerValidator);
             add(coordinatesValidator);
@@ -138,17 +136,14 @@ public final class ClientModule extends AbstractModule {
   Map<String, ArgumentFormer> provideArgumentFormerMap(
       CommandMediator commandMediator,
       ArgumentMediator argumentMediator,
-      Map<String, ArgumentValidator> argumentValidatorMap,
-      Console console) {
-    ArgumentFormer idFormer = new IdFormer(argumentValidatorMap, argumentMediator);
-    ArgumentFormer loginFormer = new LoginFormer(argumentValidatorMap, argumentMediator, console);
-    ArgumentFormer newWorkerFormer =
-        new NewWorkerFormer(argumentValidatorMap, argumentMediator, console);
-    ArgumentFormer newWorkerId =
-        new NewWorkerIdFormer(argumentValidatorMap, argumentMediator, console);
-    ArgumentFormer noArgumentsFormer = new NoArgumentsFormer(argumentValidatorMap);
-    ArgumentFormer registerFormer =
-        new RegisterFormer(argumentValidatorMap, console, argumentMediator);
+      Console console,
+      Map<String, ArgumentValidator> validatorMap) {
+    ArgumentFormer idFormer = new IdFormer(console, validatorMap, argumentMediator);
+    ArgumentFormer loginFormer = new LoginFormer(console, validatorMap, argumentMediator);
+    ArgumentFormer newWorkerFormer = new NewWorkerFormer(console, validatorMap, argumentMediator);
+    ArgumentFormer newWorkerId = new NewWorkerIdFormer(console, validatorMap, argumentMediator);
+    ArgumentFormer noArgumentsFormer = new NoArgumentsFormer();
+    ArgumentFormer registerFormer = new RegisterFormer(console, validatorMap, argumentMediator);
 
     Map<String, ArgumentFormer> argumentFormerMap =
         new HashMap<String, ArgumentFormer>() {

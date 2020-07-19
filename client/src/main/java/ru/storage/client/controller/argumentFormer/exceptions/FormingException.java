@@ -1,8 +1,6 @@
 package ru.storage.client.controller.argumentFormer.exceptions;
 
-import ru.storage.client.controller.requestBuilder.exceptions.BuildingException;
-
-public final class FormingException extends BuildingException {
+public final class FormingException extends Exception {
   public FormingException() {
     super();
   }

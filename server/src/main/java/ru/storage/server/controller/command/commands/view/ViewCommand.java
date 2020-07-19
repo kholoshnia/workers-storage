@@ -190,6 +190,6 @@ public abstract class ViewCommand extends Command {
                 LOCATION_LONGITUDE_PREFIX,
                 numberFormat.format(worker.getPerson().getLocation().getLongitude())));
 
-    logger.info(() -> "Worker has been appended.");
+    logger.info(() -> "Worker was appended.");
   }
 }

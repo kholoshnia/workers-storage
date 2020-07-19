@@ -2,32 +2,33 @@ package ru.storage.client.controller.argumentFormer.argumentFormers;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.client.controller.argumentFormer.ArgumentFormer;
 import ru.storage.client.controller.argumentFormer.ArgumentValidator;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
-import ru.storage.client.controller.validator.exceptions.ValidationException;
+import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 // TODO: Check password and login using regex.
-public final class RegisterFormer extends ArgumentFormer {
+public final class RegisterFormer extends Former implements LocaleListener {
   private final Logger logger;
   private final Console console;
   private final ArgumentMediator argumentMediator;
 
   private Map<String, String> registerOffers;
-
-  private boolean wrong;
+  private String passwordOffer;
 
   private String wrongArgumentsNumberException;
 
   public RegisterFormer(
-      Map<String, ArgumentValidator> argumentValidatorMap,
       Console console,
+      Map<String, ArgumentValidator> validatorMap,
       ArgumentMediator argumentMediator) {
-    super(argumentValidatorMap);
+    super(console, validatorMap);
     logger = LogManager.getLogger(RegisterFormer.class);
     this.console = console;
     this.argumentMediator = argumentMediator;
@@ -42,9 +43,6 @@ public final class RegisterFormer extends ArgumentFormer {
         put(
             argumentMediator.USER_LOGIN,
             String.format("%s: ", resourceBundle.getString("offers.login")));
-        put(
-            argumentMediator.USER_PASSWORD,
-            String.format("%s: ", resourceBundle.getString("offers.password")));
       }
     };
   }
@@ -55,6 +53,7 @@ public final class RegisterFormer extends ArgumentFormer {
 
     wrongArgumentsNumberException = resourceBundle.getString("exceptions.wrongArgumentsNumber");
     registerOffers = initRegisterOffers(resourceBundle);
+    passwordOffer = String.format("%s: ", resourceBundle.getString("offers.password"));
   }
 
   @Override
@@ -67,28 +66,11 @@ public final class RegisterFormer extends ArgumentFormer {
 
   @Override
   public Map<String, String> form(List<String> arguments) {
-    Map<String, String> allArguments = new HashMap<>();
+    Map<String, String> allArguments = readArguments(registerOffers, null, null);
 
-    for (Map.Entry<String, String> offerEntry : registerOffers.entrySet()) {
-      String argument = offerEntry.getKey();
-      String offer = offerEntry.getValue();
-
-      wrong = true;
-      while (wrong) {
-        console.write(offer);
-        logger.info("Offered user input: {}.", () -> offer);
-
-        String input = console.readLine(null, null); // TODO: Ability to cancel
-
-        try {
-          checkArgument(argument, input);
-          allArguments.put(argument, input);
-          wrong = false;
-        } catch (ValidationException e) {
-          console.writeLine(e.getMessage());
-        }
-      }
-    }
+    String input =
+        readArgument(argumentMediator.USER_PASSWORD, passwordOffer, null, Character.MIN_VALUE);
+    allArguments.put(argumentMediator.USER_LOGIN, input);
 
     logger.info(() -> "All arguments were formed.");
     return allArguments;

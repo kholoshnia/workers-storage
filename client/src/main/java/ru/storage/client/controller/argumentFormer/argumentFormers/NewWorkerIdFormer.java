@@ -19,10 +19,10 @@ public final class NewWorkerIdFormer extends WorkerFormer {
   private String wrongArgumentsNumberException;
 
   public NewWorkerIdFormer(
-      Map<String, ArgumentValidator> argumentValidatorMap,
-      ArgumentMediator argumentMediator,
-      Console console) {
-    super(argumentValidatorMap, argumentMediator, console);
+      Console console,
+      Map<String, ArgumentValidator> validatorMap,
+      ArgumentMediator argumentMediator) {
+    super(console, validatorMap, argumentMediator);
     logger = LogManager.getLogger(NewWorkerIdFormer.class);
   }
 

@@ -18,18 +18,18 @@ public class ExitManager {
 
   public void subscribe(ExitListener listener) {
     listeners.add(listener);
-    logger.debug("A {} has been subscribed.", () -> listener.getClass().getSimpleName());
+    logger.debug("A {} wasibed.", () -> listener.getClass().getSimpleName());
   }
 
   public void unsubscribe(ExitListener listener) {
     listeners.remove(listener);
-    logger.debug("A {} has been unsubscribed.", () -> listener.getClass().getSimpleName());
+    logger.debug("A {} was unsubscribed.", () -> listener.getClass().getSimpleName());
   }
 
   public void exit() throws ExitingException {
     for (ExitListener listener : listeners) {
       listener.exit();
-      logger.debug("A {} has been notified.", () -> listener.getClass().getSimpleName());
+      logger.debug("A {} was notified.", () -> listener.getClass().getSimpleName());
     }
 
     logger.debug(() -> "All listeners of exiting manager were notified.");

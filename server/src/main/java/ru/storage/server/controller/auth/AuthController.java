@@ -73,7 +73,7 @@ public class AuthController implements Controller {
       return new Response(Status.UNAUTHORIZED, unauthorizedAnswer);
     }
 
-    logger.info(() -> "User has been authorized.");
+    logger.info(() -> "User was authorized.");
     return null;
   }
 }

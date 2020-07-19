@@ -1,8 +1,6 @@
 package ru.storage.client.controller.argumentFormer.exceptions;
 
-import ru.storage.client.controller.requestBuilder.exceptions.BuildingException;
-
-public final class WrongArgumentsException extends BuildingException {
+public final class WrongArgumentsException extends Exception {
   public WrongArgumentsException() {
     super();
   }

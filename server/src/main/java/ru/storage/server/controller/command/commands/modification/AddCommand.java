@@ -45,7 +45,7 @@ public final class AddCommand extends ModificationCommand {
     try {
       workerDTO = createWorkerDTO(arguments);
     } catch (ParserException e) {
-      logger.warn(() -> "Cannot create workerDTO.", e);
+      logger.warn(() -> "Cannot create worker DTO.", e);
       return new Response(Status.BAD_REQUEST, WRONG_WORKER_FORMAT_ANSWER);
     }
 
@@ -59,7 +59,7 @@ public final class AddCommand extends ModificationCommand {
       return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
-    logger.info(() -> "Worker has been added.");
+    logger.info(() -> "Worker was added.");
     return new Response(Status.CREATED, ADDED_SUCCESSFULLY_ANSWER);
   }
 }

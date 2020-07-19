@@ -2,6 +2,7 @@ package ru.storage.client.controller.requestBuilder;
 
 import ru.storage.client.controller.argumentFormer.ArgumentFormer;
 import ru.storage.client.controller.argumentFormer.FormerMediator;
+import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 import ru.storage.client.controller.requestBuilder.exceptions.BuildingException;
 import ru.storage.common.transfer.request.Request;
 
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/** Class is responsible for requests building. */
+/** Class is responsible for building requests. */
 public final class RequestBuilder {
   private String command = "";
   private Map<String, String> arguments = new HashMap<>();
@@ -65,7 +66,12 @@ public final class RequestBuilder {
       throw new BuildingException();
     }
 
-    argumentFormer.check(arguments);
+    try {
+      argumentFormer.check(arguments);
+    } catch (WrongArgumentsException e) {
+      throw new BuildingException(e);
+    }
+
     this.arguments = argumentFormer.form(arguments);
 
     return this;

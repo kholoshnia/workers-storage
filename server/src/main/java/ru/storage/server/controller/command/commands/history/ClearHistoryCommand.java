@@ -41,7 +41,7 @@ public final class ClearHistoryCommand extends HistoryCommand {
 
     history.clear();
 
-    logger.info(() -> "History has been cleared.");
+    logger.info(() -> "History was cleared.");
     return new Response(Status.OK, CLEARED_SUCCESSFULLY_ANSWER);
   }
 }

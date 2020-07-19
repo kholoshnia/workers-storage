@@ -74,7 +74,7 @@ public final class RemoveCommand extends ModificationCommand {
       }
     }
 
-    logger.info(() -> "Worker has been removed.");
+    logger.info(() -> "Worker was removed.");
     return new Response(Status.OK, REMOVED_SUCCESSFULLY_ANSWER);
   }
 }

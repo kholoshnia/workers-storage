@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class ConsoleImpl implements Console, ExitListener, LocaleListener {
+public final class Terminal implements Console, ExitListener, LocaleListener {
   private final Logger logger;
   private final ExitManager exitManager;
   private final ServerWorker serverWorker;
@@ -65,7 +65,7 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
   private String deserializationException;
   private String buildingException;
 
-  public ConsoleImpl(
+  public Terminal(
       ExitManager exitManager,
       InputStream inputStream,
       OutputStream outputStream,
@@ -75,7 +75,7 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
       FormerMediator formerMediator,
       List<ResponseHandler> responseHandlers)
       throws ConsoleException {
-    logger = LogManager.getLogger(ConsoleImpl.class);
+    logger = LogManager.getLogger(Terminal.class);
     this.exitManager = exitManager;
     exitManager.subscribe(this);
     this.serverWorker = serverWorker;
@@ -228,7 +228,7 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
 
   /**
    * Handles response from the server. Prints message to the console using {@link
-   * ConsoleImpl#write(String)}.
+   * Terminal#write(String)}.
    *
    * @param response response from server
    * @see ResponseHandler
@@ -267,8 +267,7 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
   }
 
   /**
-   * Sets user login. Used on auth command. Login is used later to update prompt prefix if
-   * authentication was correct.
+   * Sets user login. Used on auth command. Login is used later to update prompt prefix.
    *
    * @param login new login
    */
@@ -372,32 +371,32 @@ public final class ConsoleImpl implements Console, ExitListener, LocaleListener 
   }
 
   /**
-   * Writes line and {@link System#lineSeparator()}.
-   *
-   * <p>Using the specified in the constructor output stream.
-   *
-   * @param string concrete string to write
-   * @see ConsoleImpl#write(String)
-   */
-  public void writeLine(String string) {
-    write(string);
-    write(System.lineSeparator());
-  }
-
-  /**
    * Writes {@link System#lineSeparator()}.
    *
    * <p>Using the specified in the constructor output stream.
    *
-   * @see ConsoleImpl#write(String)
+   * @see Terminal#write(String)
    */
   public void writeLine() {
     write(System.lineSeparator());
   }
 
   /**
+   * Writes line and {@link System#lineSeparator()}.
+   *
+   * <p>Using the specified in the constructor output stream.
+   *
+   * @param string concrete string to write
+   * @see Terminal#write(String)
+   */
+  public void writeLine(String string) {
+    write(string);
+    writeLine();
+  }
+
+  /**
    * Parses string by words in a list of string. Words can be separated by spaces or can be
-   * surrounded by " and ' symbols. NOTE: if there is no words found returns null.
+   * surrounded by " and ' symbols. NOTE: returns null if there is no words found.
    *
    * @param string concrete string to parse
    * @return list of words from string

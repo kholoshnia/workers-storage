@@ -24,7 +24,7 @@ public final class InternalServerErrorResponseHandler extends ResponseHandler {
     return String.format(
         "%s (%s):\n%s",
         stringFormatter.makeRed(messageMediator.getStatusPrefix(status)),
-        stringFormatter.makeRed(messageMediator.getInternalServerErrorMessage()),
+        messageMediator.getInternalServerErrorMessage(),
         stringFormatter.makeRed(answer));
   }
 }

@@ -40,7 +40,7 @@ public final class Worker implements Cloneable, Entity {
   private long id;
   private long ownerId;
   private ZonedDateTime creationDate;
-  private Double salary;
+  private Float salary;
   private Status status;
   private ZonedDateTime startDate;
   private ZonedDateTime endDate;
@@ -51,7 +51,7 @@ public final class Worker implements Cloneable, Entity {
       long id,
       long ownerId,
       ZonedDateTime creationDate,
-      Double salary,
+      Float salary,
       Status status,
       ZonedDateTime startDate,
       ZonedDateTime endDate,
@@ -151,16 +151,16 @@ public final class Worker implements Cloneable, Entity {
     throw new ValidationException(WRONG_CREATION_DATE_EXCEPTION);
   }
 
-  public Double getSalary() {
+  public Float getSalary() {
     return salary;
   }
 
-  public void setSalary(Double salary) throws ValidationException {
+  public void setSalary(Float salary) throws ValidationException {
     checkSalary(salary);
     this.salary = salary;
   }
 
-  private void checkSalary(Double salary) throws ValidationException {
+  private void checkSalary(Float salary) throws ValidationException {
     if (salary != null && salary > 0.0) {
       return;
     }

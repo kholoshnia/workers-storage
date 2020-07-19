@@ -3,6 +3,8 @@ package ru.storage.server.controller.command;
 import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.storage.common.ArgumentMediator;
+import ru.storage.common.CommandMediator;
 import ru.storage.common.transfer.request.Request;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
@@ -27,14 +29,31 @@ public final class CommandController implements Controller {
   }
 
   private final Logger logger;
+  private final CommandMediator commandMediator;
+  private final ArgumentMediator argumentMediator;
   private final CommandFactoryMediator commandFactoryMediator;
   private final History history;
 
   @Inject
-  public CommandController(CommandFactoryMediator commandFactoryMediator, History history) {
+  public CommandController(
+      CommandMediator commandMediator,
+      ArgumentMediator argumentMediator,
+      CommandFactoryMediator commandFactoryMediator,
+      History history) {
     logger = LogManager.getLogger(CommandController.class);
+    this.commandMediator = commandMediator;
+    this.argumentMediator = argumentMediator;
     this.commandFactoryMediator = commandFactoryMediator;
     this.history = history;
+  }
+
+  private void addToHistory(Request request, Response response) {
+    if (request.getCommand().equals(commandMediator.LOGIN)
+        || request.getCommand().equals(commandMediator.REGISTER)) {
+      request.getArguments().replace(argumentMediator.USER_PASSWORD, "");
+    }
+
+    history.addRecord(new Record(request.getCommand(), request.getArguments(), response));
   }
 
   @Override
@@ -55,7 +74,10 @@ public final class CommandController implements Controller {
     try {
       command =
           commandFactory.createCommand(
-              request.getCommand(), request.getArguments(), request.getLocale());
+              request.getCommand(),
+              request.getArguments(),
+              request.getLocale(),
+              request.getLogin());
     } catch (CommandFactoryException exception) {
       return new Response(Status.INTERNAL_SERVER_ERROR, COMMAND_CREATION_ERROR_ANSWER);
     }
@@ -67,7 +89,7 @@ public final class CommandController implements Controller {
 
     Response response = command.executeCommand();
 
-    history.addRecord(new Record(request.getCommand(), request.getArguments(), response));
+    addToHistory(request, response);
     return response;
   }
 }

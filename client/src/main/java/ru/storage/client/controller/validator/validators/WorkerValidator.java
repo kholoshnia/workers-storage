@@ -4,6 +4,7 @@ import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.controller.validator.exceptions.ValidationException;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -41,11 +42,15 @@ public final class WorkerValidator implements LocaleListener {
   }
 
   public void checkId(String idString) throws ValidationException {
+    if (idString == null) {
+      throw new ValidationException(wrongIdException);
+    }
+
     long id;
 
     try {
       id = Long.parseLong(idString);
-    } catch (NumberFormatException | NullPointerException exception) {
+    } catch (NumberFormatException exception) {
       throw new ValidationException(wrongIdException);
     }
 
@@ -55,11 +60,15 @@ public final class WorkerValidator implements LocaleListener {
   }
 
   public void checkSalary(String salaryString) throws ValidationException {
-    double salary;
+    if (salaryString == null) {
+      throw new ValidationException(wrongSalaryException);
+    }
+
+    float salary;
 
     try {
-      salary = Double.parseDouble(salaryString);
-    } catch (NumberFormatException | NullPointerException e) {
+      salary = Float.parseFloat(salaryString);
+    } catch (NumberFormatException e) {
       throw new ValidationException(wrongSalaryException);
     }
 
@@ -75,14 +84,22 @@ public final class WorkerValidator implements LocaleListener {
   }
 
   public void checkStartDate(String startDateString) throws ValidationException {
+    if (startDateString == null) {
+      throw new ValidationException(wrongStartDateException);
+    }
+
     try {
-      LocalDateTime.parse(startDateString, DateTimeFormatter.ISO_DATE_TIME);
+      ZonedDateTime.parse(startDateString, DateTimeFormatter.ISO_DATE_TIME);
     } catch (DateTimeParseException e) {
       throw new ValidationException(wrongStartDateException);
     }
   }
 
   public void checkEndDate(String endDateString) throws ValidationException {
+    if (endDateString == null) {
+      throw new ValidationException(wrongEndDateException);
+    }
+
     try {
       LocalDateTime.parse(endDateString, DateTimeFormatter.ISO_DATE_TIME);
     } catch (DateTimeParseException e) {

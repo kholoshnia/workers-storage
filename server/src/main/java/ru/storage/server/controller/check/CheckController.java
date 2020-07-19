@@ -35,6 +35,7 @@ public final class CheckController implements Controller {
     String gotNullCommandAnswer = resourceBundle.getString("answers.gotNullCommand");
     String gotNullArgumentsAnswer = resourceBundle.getString("answers.gotNullArguments");
     String gotNullTokenAnswer = resourceBundle.getString("answers.gotNullToken");
+    String gotNullLoginAnswer = resourceBundle.getString("answers.gotNullLogin");
 
     if (request.getCommand() == null) {
       return new Response(Status.BAD_REQUEST, gotNullCommandAnswer);
@@ -42,6 +43,10 @@ public final class CheckController implements Controller {
 
     if (request.getArguments() == null) {
       return new Response(Status.BAD_REQUEST, gotNullArgumentsAnswer);
+    }
+
+    if (request.getLogin() == null) {
+      return new Response(Status.BAD_REQUEST, gotNullLoginAnswer);
     }
 
     if (request.getToken() == null) {

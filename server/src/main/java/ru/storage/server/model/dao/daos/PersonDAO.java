@@ -11,10 +11,7 @@ import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import javax.annotation.Nonnull;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -100,7 +97,7 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
         String name = resultSet.getObject(PersonDTO.NAME_COLUMN, String.class);
         String passportId = resultSet.getObject(PersonDTO.PASSPORT_ID_COLUMN, String.class);
 
-        Long locationId = resultSet.getObject(PersonDTO.LOCATION_COLUMN, Long.class);
+        long locationId = resultSet.getLong(PersonDTO.LOCATION_COLUMN);
         LocationDTO locationDTO = locationDAO.getByKey(locationId);
 
         PersonDTO personDTO = new PersonDTO(id, ownerId, name, passportId, locationDTO);
@@ -124,6 +121,7 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
         dataSource.getPrepareStatement(SELECT_BY_ID, Statement.NO_GENERATED_KEYS);
 
     try {
+      preparedStatement.setLong(1, id);
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
@@ -131,7 +129,7 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
         String name = resultSet.getString(PersonDTO.NAME_COLUMN);
         String passportId = resultSet.getString(PersonDTO.PASSPORT_ID_COLUMN);
 
-        Long locationId = resultSet.getObject(PersonDTO.LOCATION_COLUMN, Long.class);
+        long locationId = resultSet.getLong(PersonDTO.LOCATION_COLUMN);
         LocationDTO locationDTO = locationDAO.getByKey(locationId);
 
         personDTO = new PersonDTO(id, ownerId, name, passportId, locationDTO);
@@ -185,6 +183,8 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
 
   @Override
   public PersonDTO update(@Nonnull PersonDTO personDTO) throws DAOException, DataSourceException {
+    PersonDTO previous = getByKey(personDTO.id);
+    LocationDTO locationDTO;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(UPDATE, Statement.NO_GENERATED_KEYS);
 
@@ -193,8 +193,19 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
       preparedStatement.setString(2, personDTO.name);
       preparedStatement.setString(3, personDTO.passportId);
 
-      LocationDTO locationDTO = locationDAO.insert(personDTO.locationDTO);
-      preparedStatement.setDouble(4, locationDTO.id);
+      if (previous.locationDTO == null && personDTO.locationDTO != null) {
+        locationDTO = locationDAO.insert(personDTO.locationDTO);
+        preparedStatement.setLong(4, locationDTO.id);
+      } else if (previous.locationDTO != null && personDTO.locationDTO == null) {
+        locationDTO = null;
+        preparedStatement.setNull(4, Types.INTEGER);
+      } else if (previous.locationDTO != null) {
+        locationDTO = locationDAO.update(personDTO.locationDTO);
+        preparedStatement.setLong(4, locationDTO.id);
+      } else {
+        locationDTO = null;
+        preparedStatement.setNull(4, Types.INTEGER);
+      }
 
       preparedStatement.setLong(5, personDTO.id);
 
@@ -207,7 +218,8 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
     }
 
     logger.info(() -> "Person was updated.");
-    return personDTO;
+    return new PersonDTO(
+        personDTO.id, personDTO.ownerId, personDTO.name, personDTO.passportId, locationDTO);
   }
 
   @Override
@@ -218,9 +230,9 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
     try {
       preparedStatement.setLong(1, personDTO.id);
 
-      locationDAO.delete(personDTO.locationDTO);
-
       preparedStatement.execute();
+
+      locationDAO.delete(personDTO.locationDTO);
     } catch (SQLException e) {
       logger.error(() -> "Cannot delete person.", e);
       throw new DAOException(CANNOT_DELETE_PERSON_EXCEPTION, e);

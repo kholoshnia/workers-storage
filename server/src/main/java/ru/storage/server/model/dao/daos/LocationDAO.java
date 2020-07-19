@@ -121,6 +121,7 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
         dataSource.getPrepareStatement(SELECT_BY_ID, Statement.NO_GENERATED_KEYS);
 
     try {
+      preparedStatement.setLong(1, id);
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
@@ -203,7 +204,12 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
     }
 
     logger.info(() -> "Location was updated.");
-    return locationDTO;
+    return new LocationDTO(
+        locationDTO.id,
+        locationDTO.ownerId,
+        locationDTO.address,
+        locationDTO.latitude,
+        locationDTO.longitude);
   }
 
   @Override

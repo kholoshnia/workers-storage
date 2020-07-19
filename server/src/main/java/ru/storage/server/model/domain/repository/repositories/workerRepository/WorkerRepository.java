@@ -190,7 +190,7 @@ public final class WorkerRepository implements Repository<Worker> {
       throw new WorkerRepositoryException(e);
     }
 
-    if (workers.remove(worker)) {
+    if (!workers.remove(worker)) {
       logger.error(
           "Cannot delete worker, no such worker in the collection, target worker: {}.",
           () -> worker);

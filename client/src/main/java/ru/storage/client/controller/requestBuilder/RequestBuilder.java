@@ -17,6 +17,7 @@ public final class RequestBuilder {
   private String command = "";
   private Map<String, String> arguments = new HashMap<>();
   private Locale locale = Locale.ENGLISH;
+  private String login = "";
   private String token = "";
 
   /**
@@ -55,23 +56,19 @@ public final class RequestBuilder {
    * @param arguments command arguments
    * @param formerMediator concrete former mediator
    * @return this request builder
-   * @throws BuildingException - if specified arguments are wrong or got null {@link ArgumentFormer}
+   * @throws BuildingException - if got null {@link ArgumentFormer}
+   * @throws WrongArgumentsException - if specified arguments are wrong
    */
   public RequestBuilder setRawArguments(
       @Nonnull List<String> arguments, @Nonnull FormerMediator formerMediator)
-      throws BuildingException {
+      throws BuildingException, WrongArgumentsException {
     ArgumentFormer argumentFormer = formerMediator.getArgumentFormer(command);
 
     if (argumentFormer == null) {
       throw new BuildingException();
     }
 
-    try {
-      argumentFormer.check(arguments);
-    } catch (WrongArgumentsException e) {
-      throw new BuildingException(e);
-    }
-
+    argumentFormer.check(arguments);
     this.arguments = argumentFormer.form(arguments);
 
     return this;
@@ -86,6 +83,18 @@ public final class RequestBuilder {
    */
   public RequestBuilder setLocale(@Nonnull Locale locale) {
     this.locale = locale;
+    return this;
+  }
+
+  /**
+   * Sets login. NOTE: if not set uses default empty login. If is null on {@link #build} call,
+   * throws {@link BuildingException}.
+   *
+   * @param login concrete login
+   * @return this request builder.
+   */
+  public RequestBuilder setLogin(@Nonnull String login) {
+    this.login = login;
     return this;
   }
 
@@ -108,10 +117,10 @@ public final class RequestBuilder {
    * @throws BuildingException - if parameters were not set or required were empty
    */
   public Request build() throws BuildingException {
-    if (command == null || locale == null || arguments == null || token == null) {
+    if (command == null || locale == null || arguments == null || login == null || token == null) {
       throw new BuildingException();
     }
 
-    return new Request(command, arguments, locale, token);
+    return new Request(command, arguments, locale, login, token);
   }
 }

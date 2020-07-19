@@ -8,7 +8,9 @@ import ru.storage.common.ArgumentMediator;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.services.parser.Parser;
+import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.repository.Query;
 import ru.storage.server.model.domain.repository.Repository;
 import ru.storage.server.model.domain.repository.exceptions.RepositoryException;
@@ -30,8 +32,9 @@ public final class RemoveCommand extends ModificationCommand {
       Map<String, String> arguments,
       Locale locale,
       Repository<Worker> workerRepository,
-      Parser parser) {
-    super(configuration, argumentMediator, arguments, locale, workerRepository, parser);
+      Parser parser,
+      User user) {
+    super(configuration, argumentMediator, arguments, locale, workerRepository, parser, user);
     logger = LogManager.getLogger(RemoveCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.RemoveCommand");
@@ -67,8 +70,14 @@ public final class RemoveCommand extends ModificationCommand {
 
     for (Worker worker : equalIdWorkers) {
       try {
-        workerRepository.delete(worker);
-      } catch (RepositoryException e) {
+        if (worker.getOwnerId() == user.getId()) {
+          worker.setId(id);
+          setOwnerId(worker);
+          workerRepository.delete(worker);
+        } else {
+          return new Response(Status.FORBIDDEN, NOT_OWNER_ANSWER);
+        }
+      } catch (RepositoryException | ValidationException e) {
         logger.error("Cannot remove worker which id is equal to {}.", (Supplier<?>) () -> id, e);
         return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
       }

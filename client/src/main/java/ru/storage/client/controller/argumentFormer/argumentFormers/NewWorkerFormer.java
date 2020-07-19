@@ -1,5 +1,6 @@
 package ru.storage.client.controller.argumentFormer.argumentFormers;
 
+import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.controller.argumentFormer.ArgumentValidator;
@@ -16,6 +17,7 @@ public final class NewWorkerFormer extends WorkerFormer {
 
   private String wrongArgumentsNumberException;
 
+  @Inject
   public NewWorkerFormer(
       Console console,
       Map<String, ArgumentValidator> validatorMap,

@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public abstract class SpecialCommand extends Command {
+  protected final Locale locale;
   protected final ExitManager exitManager;
   protected final CommandMediator commandMediator;
 
@@ -21,6 +22,7 @@ public abstract class SpecialCommand extends Command {
       Locale locale,
       ExitManager exitManager) {
     super(configuration, argumentMediator, arguments);
+    this.locale = locale;
     this.exitManager = exitManager;
     this.commandMediator = commandMediator;
   }

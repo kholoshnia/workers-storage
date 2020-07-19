@@ -1,5 +1,6 @@
 package ru.storage.server.controller.command.factory.factories;
 
+import com.google.inject.Inject;
 import org.apache.commons.configuration2.Configuration;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
@@ -21,6 +22,7 @@ public final class HistoryCommandFactory extends CommandFactory {
   private final History history;
   private final Map<String, Class<? extends HistoryCommand>> historyCommandMap;
 
+  @Inject
   public HistoryCommandFactory(
       Configuration configuration,
       ArgumentMediator argumentMediator,
@@ -28,17 +30,22 @@ public final class HistoryCommandFactory extends CommandFactory {
       History history) {
     super(configuration, argumentMediator);
     this.history = history;
-    historyCommandMap =
-        new HashMap<String, Class<? extends HistoryCommand>>() {
-          {
-            put(commandMediator.SHOW_HISTORY, ShowHistoryCommand.class);
-            put(commandMediator.CLEAR_HISTORY, ClearHistoryCommand.class);
-          }
-        };
+    historyCommandMap = initHistoryCommandMap(commandMediator);
+  }
+
+  private Map<String, Class<? extends HistoryCommand>> initHistoryCommandMap(
+      CommandMediator commandMediator) {
+    return new HashMap<String, Class<? extends HistoryCommand>>() {
+      {
+        put(commandMediator.SHOW_HISTORY, ShowHistoryCommand.class);
+        put(commandMediator.CLEAR_HISTORY, ClearHistoryCommand.class);
+      }
+    };
   }
 
   @Override
-  public Command createCommand(String command, Map<String, String> arguments, Locale locale)
+  public Command createCommand(
+      String command, Map<String, String> arguments, Locale locale, String login)
       throws CommandFactoryException {
     Class<? extends HistoryCommand> clazz = historyCommandMap.get(command);
     try {

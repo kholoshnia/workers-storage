@@ -23,9 +23,11 @@ public abstract class CommandFactory {
    * @param command concrete command
    * @param arguments command arguments
    * @param locale command response locale
+   * @param login user login
    * @return new command instance
    * @throws CommandFactoryException - in case of command creation errors
    */
   public abstract Command createCommand(
-      String command, Map<String, String> arguments, Locale locale) throws CommandFactoryException;
+      String command, Map<String, String> arguments, Locale locale, String login)
+      throws CommandFactoryException;
 }

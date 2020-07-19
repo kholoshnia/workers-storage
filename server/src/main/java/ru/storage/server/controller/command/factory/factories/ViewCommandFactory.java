@@ -1,5 +1,6 @@
 package ru.storage.server.controller.command.factory.factories;
 
+import com.google.inject.Inject;
 import org.apache.commons.configuration2.Configuration;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
@@ -21,6 +22,7 @@ public final class ViewCommandFactory extends CommandFactory {
   private final WorkerRepository workerRepository;
   private final Map<String, Class<? extends ViewCommand>> viewCommandMap;
 
+  @Inject
   public ViewCommandFactory(
       Configuration configuration,
       ArgumentMediator argumentMediator,
@@ -28,17 +30,22 @@ public final class ViewCommandFactory extends CommandFactory {
       WorkerRepository workerRepository) {
     super(configuration, argumentMediator);
     this.workerRepository = workerRepository;
-    viewCommandMap =
-        new HashMap<String, Class<? extends ViewCommand>>() {
-          {
-            put(commandMediator.INFO, InfoCommand.class);
-            put(commandMediator.SHOW, ShowCommand.class);
-          }
-        };
+    viewCommandMap = initViewCommandMap(commandMediator);
+  }
+
+  private Map<String, Class<? extends ViewCommand>> initViewCommandMap(
+      CommandMediator commandMediator) {
+    return new HashMap<String, Class<? extends ViewCommand>>() {
+      {
+        put(commandMediator.INFO, InfoCommand.class);
+        put(commandMediator.SHOW, ShowCommand.class);
+      }
+    };
   }
 
   @Override
-  public Command createCommand(String command, Map<String, String> arguments, Locale locale)
+  public Command createCommand(
+      String command, Map<String, String> arguments, Locale locale, String login)
       throws CommandFactoryException {
     Class<? extends ViewCommand> clazz = viewCommandMap.get(command);
     try {

@@ -57,12 +57,20 @@ public final class ClientModule extends AbstractModule {
     install(new CommonModule());
     logger.debug(() -> "Common module was installed.");
 
+    bind(IdFormer.class).in(Scopes.SINGLETON);
+    bind(LoginFormer.class).in(Scopes.SINGLETON);
+    bind(NewWorkerFormer.class).in(Scopes.SINGLETON);
+    bind(NewWorkerIdFormer.class).in(Scopes.SINGLETON);
+    bind(NoArgumentsFormer.class).in(Scopes.SINGLETON);
+    bind(RegisterFormer.class).in(Scopes.SINGLETON);
+    logger.debug(() -> "Formers were configured.");
+
     bind(WorkerValidator.class).in(Scopes.SINGLETON);
     bind(CoordinatesValidator.class).in(Scopes.SINGLETON);
     bind(PersonValidator.class).in(Scopes.SINGLETON);
     bind(LocationValidator.class).in(Scopes.SINGLETON);
     bind(RegisterValidator.class).in(Scopes.SINGLETON);
-    logger.debug(() -> "Validators was configured.");
+    logger.debug(() -> "Validators were configured.");
 
     bind(MessageMediator.class).in(Scopes.SINGLETON);
     bind(FormerMediator.class).in(Scopes.SINGLETON);
@@ -107,13 +115,39 @@ public final class ClientModule extends AbstractModule {
 
   @Provides
   @Singleton
+  ServerWorker provideServerWorker(Configuration configuration, Serializer serializer)
+      throws ProvidingException {
+    ServerWorker serverWorker;
+
+    try {
+      InetAddress address = InetAddress.getByName(configuration.getString("server.address"));
+      int bufferSize = configuration.getInt("server.bufferSize");
+      int port = configuration.getInt("server.port");
+      serverWorker = new ServerWorker(address, port, bufferSize, serializer);
+    } catch (UnknownHostException e) {
+      logger.fatal(() -> "Cannot provide Server.", e);
+      throw new ProvidingException(e);
+    }
+
+    logger.debug(() -> "Provided ServerWorker.");
+    return serverWorker;
+  }
+
+  @Provides
+  @Singleton
   LocaleManager provideLocaleManager(
       MessageMediator messageMediator,
       WorkerValidator workerValidator,
       CoordinatesValidator coordinatesValidator,
       PersonValidator personValidator,
       LocationValidator locationValidator,
-      RegisterValidator registerValidator) {
+      RegisterValidator registerValidator,
+      IdFormer idFormer,
+      LoginFormer loginFormer,
+      NewWorkerFormer newWorkerFormer,
+      NewWorkerIdFormer newWorkerId,
+      NoArgumentsFormer noArgumentsFormer,
+      RegisterFormer registerFormer) {
     List<LocaleListener> entities =
         new ArrayList<LocaleListener>() {
           {
@@ -123,6 +157,12 @@ public final class ClientModule extends AbstractModule {
             add(personValidator);
             add(locationValidator);
             add(registerValidator);
+            add(idFormer);
+            add(loginFormer);
+            add(newWorkerFormer);
+            add(newWorkerId);
+            add(noArgumentsFormer);
+            add(registerFormer);
           }
         };
 
@@ -135,16 +175,12 @@ public final class ClientModule extends AbstractModule {
   @Singleton
   Map<String, ArgumentFormer> provideArgumentFormerMap(
       CommandMediator commandMediator,
-      ArgumentMediator argumentMediator,
-      Console console,
-      Map<String, ArgumentValidator> validatorMap) {
-    ArgumentFormer idFormer = new IdFormer(console, validatorMap, argumentMediator);
-    ArgumentFormer loginFormer = new LoginFormer(console, validatorMap, argumentMediator);
-    ArgumentFormer newWorkerFormer = new NewWorkerFormer(console, validatorMap, argumentMediator);
-    ArgumentFormer newWorkerId = new NewWorkerIdFormer(console, validatorMap, argumentMediator);
-    ArgumentFormer noArgumentsFormer = new NoArgumentsFormer();
-    ArgumentFormer registerFormer = new RegisterFormer(console, validatorMap, argumentMediator);
-
+      IdFormer idFormer,
+      LoginFormer loginFormer,
+      NewWorkerFormer newWorkerFormer,
+      NewWorkerIdFormer newWorkerId,
+      NoArgumentsFormer noArgumentsFormer,
+      RegisterFormer registerFormer) {
     Map<String, ArgumentFormer> argumentFormerMap =
         new HashMap<String, ArgumentFormer>() {
           {
@@ -247,26 +283,6 @@ public final class ClientModule extends AbstractModule {
 
     logger.debug(() -> "Provided Configuration: FileBasedConfiguration.");
     return configuration;
-  }
-
-  @Provides
-  @Singleton
-  ServerWorker provideConnection(Configuration configuration, Serializer serializer)
-      throws ProvidingException {
-    ServerWorker serverWorker;
-
-    try {
-      InetAddress address = InetAddress.getByName(configuration.getString("server.address"));
-      int bufferSize = configuration.getInt("server.bufferSize");
-      int port = configuration.getInt("server.port");
-      serverWorker = new ServerWorker(address, port, bufferSize, serializer);
-    } catch (UnknownHostException e) {
-      logger.fatal(() -> "Cannot provide Server.", e);
-      throw new ProvidingException(e);
-    }
-
-    logger.debug(() -> "Provided ServerWorker.");
-    return serverWorker;
   }
 
   @Provides

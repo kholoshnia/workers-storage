@@ -1,5 +1,6 @@
 package ru.storage.client.controller.argumentFormer.argumentFormers;
 
+import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.controller.argumentFormer.ArgumentValidator;
@@ -18,6 +19,7 @@ public final class NewWorkerIdFormer extends WorkerFormer {
 
   private String wrongArgumentsNumberException;
 
+  @Inject
   public NewWorkerIdFormer(
       Console console,
       Map<String, ArgumentValidator> validatorMap,
@@ -28,6 +30,7 @@ public final class NewWorkerIdFormer extends WorkerFormer {
 
   @Override
   public void changeLocale() {
+    super.changeLocale();
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.NewWorkerIdFormer");
 
     wrongArgumentsNumberException = resourceBundle.getString("exceptions.wrongArgumentsNumber");
@@ -44,7 +47,7 @@ public final class NewWorkerIdFormer extends WorkerFormer {
       checkArgument(argumentMediator.WORKER_ID, arguments.get(0));
     } catch (ValidationException e) {
       logger.warn(() -> "Got wrong argument.", e);
-      throw new WrongArgumentsException(e);
+      throw new WrongArgumentsException(e.getMessage());
     }
   }
 

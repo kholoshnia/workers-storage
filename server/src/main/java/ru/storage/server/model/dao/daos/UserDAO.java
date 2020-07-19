@@ -119,6 +119,7 @@ public class UserDAO implements DAO<String, UserDTO> {
         dataSource.getPrepareStatement(SELECT_BY_ID, Statement.NO_GENERATED_KEYS);
 
     try {
+      preparedStatement.setString(1, login);
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {

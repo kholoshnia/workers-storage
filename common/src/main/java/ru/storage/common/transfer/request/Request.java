@@ -8,12 +8,15 @@ public final class Request implements Serializable {
   private final String command;
   private final Map<String, String> arguments;
   private final Locale locale;
+  private final String login;
   private final String token;
 
-  public Request(String command, Map<String, String> arguments, Locale locale, String token) {
+  public Request(
+      String command, Map<String, String> arguments, Locale locale, String login, String token) {
     this.command = command;
     this.arguments = arguments;
     this.locale = locale;
+    this.login = login;
     this.token = token;
   }
 
@@ -27,6 +30,10 @@ public final class Request implements Serializable {
 
   public Locale getLocale() {
     return locale;
+  }
+
+  public String getLogin() {
+    return login;
   }
 
   public String getToken() {
@@ -43,6 +50,9 @@ public final class Request implements Serializable {
         + arguments
         + ", locale="
         + locale
+        + ", login='"
+        + login
+        + '\''
         + '}';
   }
 }

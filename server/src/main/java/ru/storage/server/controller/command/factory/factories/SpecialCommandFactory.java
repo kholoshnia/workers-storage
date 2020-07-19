@@ -1,5 +1,6 @@
 package ru.storage.server.controller.command.factory.factories;
 
+import com.google.inject.Inject;
 import org.apache.commons.configuration2.Configuration;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
@@ -22,6 +23,7 @@ public final class SpecialCommandFactory extends CommandFactory {
   private final ExitManager exitManager;
   private final Map<String, Class<? extends SpecialCommand>> specialCommandMap;
 
+  @Inject
   public SpecialCommandFactory(
       Configuration configuration,
       ArgumentMediator argumentMediator,
@@ -30,17 +32,22 @@ public final class SpecialCommandFactory extends CommandFactory {
     super(configuration, argumentMediator);
     this.commandMediator = commandMediator;
     this.exitManager = exitManager;
-    specialCommandMap =
-        new HashMap<String, Class<? extends SpecialCommand>>() {
-          {
-            put(commandMediator.EXIT, ExitCommand.class);
-            put(commandMediator.HELP, HelpCommand.class);
-          }
-        };
+    specialCommandMap = initSpecialCommandMap(commandMediator);
+  }
+
+  private Map<String, Class<? extends SpecialCommand>> initSpecialCommandMap(
+      CommandMediator commandMediator) {
+    return new HashMap<String, Class<? extends SpecialCommand>>() {
+      {
+        put(commandMediator.EXIT, ExitCommand.class);
+        put(commandMediator.HELP, HelpCommand.class);
+      }
+    };
   }
 
   @Override
-  public Command createCommand(String command, Map<String, String> arguments, Locale locale)
+  public Command createCommand(
+      String command, Map<String, String> arguments, Locale locale, String login)
       throws CommandFactoryException {
     Class<? extends SpecialCommand> clazz = specialCommandMap.get(command);
     try {

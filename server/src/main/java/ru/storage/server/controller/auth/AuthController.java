@@ -27,18 +27,19 @@ public class AuthController implements Controller {
   @Inject
   public AuthController(Configuration configuration, CommandMediator commandMediator, Key key) {
     logger = LogManager.getLogger(AuthController.class);
-
-    authCommands =
-        new ArrayList<String>() {
-          {
-            add(commandMediator.LOGIN);
-            add(commandMediator.REGISTER);
-            add(commandMediator.LOGOUT);
-          }
-        };
-
+    authCommands = initAuthCommands(commandMediator);
     this.key = key;
     subject = configuration.getString("jwt.subject");
+  }
+
+  private List<String> initAuthCommands(CommandMediator commandMediator) {
+    return new ArrayList<String>() {
+      {
+        add(commandMediator.LOGIN);
+        add(commandMediator.REGISTER);
+        add(commandMediator.LOGOUT);
+      }
+    };
   }
 
   @Override

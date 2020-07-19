@@ -162,7 +162,7 @@ public final class UserRepository implements Repository<User> {
       throw new UserRepositoryException(e);
     }
 
-    if (users.remove(user)) {
+    if (!users.remove(user)) {
       logger.error(() -> "Cannot delete user, no such user in the collection.");
       throw new UserRepositoryException(USER_NOT_FOUND_IN_COLLECTION_EXCEPTION);
     }

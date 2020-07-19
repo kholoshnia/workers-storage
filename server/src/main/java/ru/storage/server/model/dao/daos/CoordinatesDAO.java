@@ -124,6 +124,7 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
         dataSource.getPrepareStatement(SELECT_BY_ID, Statement.NO_GENERATED_KEYS);
 
     try {
+      preparedStatement.setLong(1, id);
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
@@ -202,7 +203,12 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
     }
 
     logger.info(() -> "Coordinates were updated.");
-    return coordinatesDTO;
+    return new CoordinatesDTO(
+        coordinatesDTO.id,
+        coordinatesDTO.ownerId,
+        coordinatesDTO.x,
+        coordinatesDTO.y,
+        coordinatesDTO.z);
   }
 
   @Override

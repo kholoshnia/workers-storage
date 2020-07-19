@@ -49,10 +49,10 @@ public abstract class Former implements ArgumentFormer {
   protected final String readArgument(
       String argument, String offer, String prompt, Character mask) {
     while (true) {
-      console.write(argument);
+      console.write(offer);
       logger.info("Offered user input: {}.", () -> offer);
 
-      String input = console.readLine(prompt, mask);
+      String input = console.readLine(prompt, mask).trim();
 
       try {
         checkArgument(argument, input);
@@ -64,21 +64,20 @@ public abstract class Former implements ArgumentFormer {
   }
 
   /**
-   * Reads a list of arguments.
+   * Reads a list of arguments. Uses null prompt and mask.
    *
    * @param offers argument name, offer map
    * @return ready arguments
    * @see #readArgument(String, String, String, Character)
    */
-  protected final Map<String, String> readArguments(
-      Map<String, String> offers, String prompt, Character mask) {
+  protected final Map<String, String> readArguments(Map<String, String> offers) {
     Map<String, String> allArguments = new HashMap<>();
 
     for (Map.Entry<String, String> offerEntry : offers.entrySet()) {
       String argument = offerEntry.getKey();
       String offer = offerEntry.getValue();
 
-      String input = readArgument(argument, offer, prompt, mask);
+      String input = readArgument(argument, offer, null, null);
       allArguments.put(argument, input);
     }
 

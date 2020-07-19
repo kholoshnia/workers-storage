@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 public abstract class HistoryCommand extends Command {
   protected final String HISTORY_IS_EMPTY_ANSWER;
 
+  protected final Locale locale;
   protected final History history;
 
   public HistoryCommand(
@@ -21,6 +22,7 @@ public abstract class HistoryCommand extends Command {
       Locale locale,
       History history) {
     super(configuration, argumentMediator, arguments);
+    this.locale = locale;
     this.history = history;
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.HistoryCommand", locale);

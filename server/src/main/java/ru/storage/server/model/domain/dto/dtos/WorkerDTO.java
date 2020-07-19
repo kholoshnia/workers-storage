@@ -22,7 +22,7 @@ public final class WorkerDTO implements DTO<Worker> {
   public final long id;
   public final long ownerId;
   public final ZonedDateTime creationDate;
-  public final Double salary;
+  public final Float salary;
   public final Status status;
   public final ZonedDateTime startDate;
   public final ZonedDateTime endDate;
@@ -33,7 +33,7 @@ public final class WorkerDTO implements DTO<Worker> {
       long id,
       long ownerId,
       ZonedDateTime creationDate,
-      Double salary,
+      Float salary,
       Status status,
       ZonedDateTime startDate,
       ZonedDateTime endDate,

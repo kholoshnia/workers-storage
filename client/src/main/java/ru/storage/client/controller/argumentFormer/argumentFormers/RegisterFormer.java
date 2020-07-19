@@ -1,5 +1,6 @@
 package ru.storage.client.controller.argumentFormer.argumentFormers;
 
+import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.controller.argumentFormer.ArgumentValidator;
@@ -13,10 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-// TODO: Check password and login using regex.
 public final class RegisterFormer extends Former implements LocaleListener {
   private final Logger logger;
-  private final Console console;
   private final ArgumentMediator argumentMediator;
 
   private Map<String, String> registerOffers;
@@ -24,13 +23,13 @@ public final class RegisterFormer extends Former implements LocaleListener {
 
   private String wrongArgumentsNumberException;
 
+  @Inject
   public RegisterFormer(
       Console console,
       Map<String, ArgumentValidator> validatorMap,
       ArgumentMediator argumentMediator) {
     super(console, validatorMap);
     logger = LogManager.getLogger(RegisterFormer.class);
-    this.console = console;
     this.argumentMediator = argumentMediator;
   }
 
@@ -66,11 +65,13 @@ public final class RegisterFormer extends Former implements LocaleListener {
 
   @Override
   public Map<String, String> form(List<String> arguments) {
-    Map<String, String> allArguments = readArguments(registerOffers, null, null);
+    Map<String, String> allArguments = readArguments(registerOffers);
 
-    String input =
-        readArgument(argumentMediator.USER_PASSWORD, passwordOffer, null, Character.MIN_VALUE);
-    allArguments.put(argumentMediator.USER_LOGIN, input);
+    String input = readArgument(argumentMediator.USER_PASSWORD, passwordOffer, null, '*');
+    allArguments.put(argumentMediator.USER_PASSWORD, input);
+
+    console.setLogin(allArguments.get(argumentMediator.USER_LOGIN));
+    logger.info(() -> "Set login for console prompt.");
 
     logger.info(() -> "All arguments were formed.");
     return allArguments;

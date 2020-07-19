@@ -1,29 +1,27 @@
 package ru.storage.server.controller.services.format.currency;
 
-import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-// TODO: Debug.
 public final class CurrencyCalculator extends CurrencyFormat {
+  private final Logger logger;
   private final NumberFormat numberFormat;
 
   CurrencyCalculator(Locale locale) {
-    numberFormat = NumberFormat.getCurrencyInstance(locale);
+    logger = LogManager.getLogger(CurrencyCalculator.class);
+
+    if (!locale.equals(Locale.US)) {
+      logger.info(() -> "Specified locale is not US, setting formatter as US locale formatter.");
+    }
+
+    numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
   }
 
   @Override
   public String format(double value) {
-    try {
-      Stock stock = YahooFinance.get(numberFormat.getCurrency().getCurrencyCode());
-      double price = stock.getQuote().getPrice().doubleValue();
-      value *= price;
-      return numberFormat.format(value);
-    } catch (IOException e) {
-      return NumberFormat.getCurrencyInstance(Locale.US).format(value);
-    }
+    return numberFormat.format(value);
   }
 }

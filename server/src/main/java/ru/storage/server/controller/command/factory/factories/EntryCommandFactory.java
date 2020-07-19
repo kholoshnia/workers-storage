@@ -1,5 +1,6 @@
 package ru.storage.server.controller.command.factory.factories;
 
+import com.google.inject.Inject;
 import org.apache.commons.configuration2.Configuration;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
@@ -27,6 +28,7 @@ public final class EntryCommandFactory extends CommandFactory {
   private final Key key;
   private final Map<String, Class<? extends EntryCommand>> entryCommandMap;
 
+  @Inject
   public EntryCommandFactory(
       Configuration configuration,
       ArgumentMediator argumentMediator,
@@ -38,18 +40,23 @@ public final class EntryCommandFactory extends CommandFactory {
     this.hashGenerator = hashGenerator;
     this.userRepository = userRepository;
     this.key = key;
-    entryCommandMap =
-        new HashMap<String, Class<? extends EntryCommand>>() {
-          {
-            put(commandMediator.LOGIN, LoginCommand.class);
-            put(commandMediator.REGISTER, RegisterCommand.class);
-            put(commandMediator.LOGOUT, LogoutCommand.class);
-          }
-        };
+    entryCommandMap = initEntryCommandMap(commandMediator);
+  }
+
+  private Map<String, Class<? extends EntryCommand>> initEntryCommandMap(
+      CommandMediator commandMediator) {
+    return new HashMap<String, Class<? extends EntryCommand>>() {
+      {
+        put(commandMediator.LOGIN, LoginCommand.class);
+        put(commandMediator.REGISTER, RegisterCommand.class);
+        put(commandMediator.LOGOUT, LogoutCommand.class);
+      }
+    };
   }
 
   @Override
-  public Command createCommand(String command, Map<String, String> arguments, Locale locale)
+  public Command createCommand(
+      String command, Map<String, String> arguments, Locale locale, String login)
       throws CommandFactoryException {
     Class<? extends EntryCommand> clazz = entryCommandMap.get(command);
     try {

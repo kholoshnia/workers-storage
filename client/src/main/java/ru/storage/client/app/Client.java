@@ -19,8 +19,8 @@ public final class Client {
   public void start() throws ClientException {
     try {
       console.process();
-    } catch (Throwable e) {
-      logger.fatal("Error while work of user interface.");
+    } catch (Exception e) {
+      logger.fatal("Exception was caught during work of the user interface.");
       throw new ClientException(e);
     }
   }

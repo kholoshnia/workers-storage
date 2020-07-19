@@ -124,7 +124,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
                 .getTimestamp(WorkerDTO.CREATION_DATE_COLUMN)
                 .toInstant()
                 .atZone(ZoneId.systemDefault());
-        Double salary = resultSet.getObject(WorkerDTO.SALARY_COLUMN, Double.class);
+        Float salary = resultSet.getObject(WorkerDTO.SALARY_COLUMN, Float.class);
         Status status =
             Status.getStatus(resultSet.getObject(WorkerDTO.STATUS_COLUMN, String.class));
         ZonedDateTime startDate =
@@ -138,10 +138,10 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
                 .toInstant()
                 .atZone(ZoneId.systemDefault());
 
-        Long coordinatesId = resultSet.getObject(WorkerDTO.COORDINATES_COLUMN, Long.class);
+        long coordinatesId = resultSet.getLong(WorkerDTO.COORDINATES_COLUMN);
         CoordinatesDTO coordinatesDTO = coordinatesDAO.getByKey(coordinatesId);
 
-        Long personId = resultSet.getObject(WorkerDTO.PERSON_COLUMN, Long.class);
+        long personId = resultSet.getLong(WorkerDTO.PERSON_COLUMN);
         PersonDTO personDTO = personDAO.getByKey(personId);
 
         WorkerDTO workerDTO =
@@ -175,6 +175,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
         dataSource.getPrepareStatement(SELECT_BY_ID, Statement.NO_GENERATED_KEYS);
 
     try {
+      preparedStatement.setLong(1, id);
       ResultSet resultSet = preparedStatement.executeQuery();
 
       while (resultSet.next()) {
@@ -184,7 +185,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
                 .getTimestamp(WorkerDTO.CREATION_DATE_COLUMN)
                 .toInstant()
                 .atZone(ZoneId.systemDefault());
-        Double salary = resultSet.getObject(WorkerDTO.SALARY_COLUMN, Double.class);
+        Float salary = resultSet.getObject(WorkerDTO.SALARY_COLUMN, Float.class);
         Status status =
             Status.getStatus(resultSet.getObject(WorkerDTO.STATUS_COLUMN, String.class));
         ZonedDateTime startDate =
@@ -198,10 +199,10 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
                 .toInstant()
                 .atZone(ZoneId.systemDefault());
 
-        Long coordinatesId = resultSet.getObject(WorkerDTO.COORDINATES_COLUMN, Long.class);
+        long coordinatesId = resultSet.getLong(WorkerDTO.COORDINATES_COLUMN);
         CoordinatesDTO coordinatesDTO = coordinatesDAO.getByKey(coordinatesId);
 
-        Long personId = resultSet.getObject(WorkerDTO.PERSON_COLUMN, Long.class);
+        long personId = resultSet.getLong(WorkerDTO.PERSON_COLUMN);
         PersonDTO personDTO = personDAO.getByKey(personId);
 
         workerDTO =
@@ -244,10 +245,10 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       preparedStatement.setTimestamp(6, Timestamp.from(workerDTO.endDate.toInstant()));
 
       coordinatesDTO = coordinatesDAO.insert(workerDTO.coordinatesDTO);
-      preparedStatement.setLong(6, coordinatesDTO.id);
+      preparedStatement.setLong(7, coordinatesDTO.id);
 
       personDTO = personDAO.insert(workerDTO.personDTO);
-      preparedStatement.setLong(6, personDTO.id);
+      preparedStatement.setLong(8, personDTO.id);
 
       preparedStatement.execute();
 
@@ -280,6 +281,9 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
 
   @Override
   public WorkerDTO update(@Nonnull WorkerDTO workerDTO) throws DAOException, DataSourceException {
+    WorkerDTO previous = getByKey(workerDTO.id);
+    CoordinatesDTO coordinatesDTO;
+    PersonDTO personDTO;
     PreparedStatement preparedStatement =
         dataSource.getPrepareStatement(UPDATE, Statement.NO_GENERATED_KEYS);
 
@@ -291,13 +295,35 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       preparedStatement.setTimestamp(5, Timestamp.from(workerDTO.startDate.toInstant()));
       preparedStatement.setTimestamp(6, Timestamp.from(workerDTO.endDate.toInstant()));
 
-      CoordinatesDTO coordinatesDTO = coordinatesDAO.insert(workerDTO.coordinatesDTO);
-      preparedStatement.setLong(6, coordinatesDTO.id);
+      if (previous.coordinatesDTO == null && workerDTO.coordinatesDTO != null) {
+        coordinatesDTO = coordinatesDAO.insert(workerDTO.coordinatesDTO);
+        preparedStatement.setLong(7, coordinatesDTO.id);
+      } else if (previous.coordinatesDTO != null && workerDTO.coordinatesDTO == null) {
+        coordinatesDTO = null;
+        preparedStatement.setNull(7, Types.INTEGER);
+      } else if (previous.coordinatesDTO != null) {
+        coordinatesDTO = coordinatesDAO.update(workerDTO.coordinatesDTO);
+        preparedStatement.setLong(7, coordinatesDTO.id);
+      } else {
+        coordinatesDTO = null;
+        preparedStatement.setNull(7, Types.INTEGER);
+      }
 
-      PersonDTO personDTO = personDAO.insert(workerDTO.personDTO);
-      preparedStatement.setLong(6, personDTO.id);
+      if (previous.personDTO == null && workerDTO.personDTO != null) {
+        personDTO = personDAO.insert(workerDTO.personDTO);
+        preparedStatement.setLong(8, personDTO.id);
+      } else if (previous.personDTO != null && workerDTO.personDTO == null) {
+        personDTO = null;
+        preparedStatement.setNull(8, Types.INTEGER);
+      } else if (previous.personDTO != null) {
+        personDTO = personDAO.update(workerDTO.personDTO);
+        preparedStatement.setLong(8, personDTO.id);
+      } else {
+        personDTO = null;
+        preparedStatement.setNull(8, Types.INTEGER);
+      }
 
-      preparedStatement.setLong(7, workerDTO.id);
+      preparedStatement.setLong(9, workerDTO.id);
 
       preparedStatement.execute();
     } catch (SQLException e) {
@@ -308,7 +334,16 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
     }
 
     logger.info(() -> "Worker was updated.");
-    return workerDTO;
+    return new WorkerDTO(
+        workerDTO.id,
+        workerDTO.ownerId,
+        workerDTO.creationDate,
+        workerDTO.salary,
+        workerDTO.status,
+        workerDTO.startDate,
+        workerDTO.endDate,
+        coordinatesDTO,
+        personDTO);
   }
 
   @Override
@@ -319,10 +354,10 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
     try {
       preparedStatement.setLong(1, workerDTO.id);
 
+      preparedStatement.execute();
+
       coordinatesDAO.delete(workerDTO.coordinatesDTO);
       personDAO.delete(workerDTO.personDTO);
-
-      preparedStatement.execute();
     } catch (SQLException e) {
       logger.error(() -> "Cannot delete worker.", e);
       throw new DAOException(CANNOT_DELETE_WORKER_EXCEPTION, e);

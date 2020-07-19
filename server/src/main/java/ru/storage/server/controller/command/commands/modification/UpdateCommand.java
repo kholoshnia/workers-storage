@@ -10,6 +10,7 @@ import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.services.parser.Parser;
 import ru.storage.server.controller.services.parser.exceptions.ParserException;
 import ru.storage.server.model.domain.dto.dtos.WorkerDTO;
+import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.repository.Query;
@@ -33,8 +34,9 @@ public final class UpdateCommand extends ModificationCommand {
       Map<String, String> arguments,
       Locale locale,
       Repository<Worker> workerRepository,
-      Parser parser) {
-    super(configuration, argumentMediator, arguments, locale, workerRepository, parser);
+      Parser parser,
+      User user) {
+    super(configuration, argumentMediator, arguments, locale, workerRepository, parser, user);
     logger = LogManager.getLogger(UpdateCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.UpdateCommand");
@@ -79,9 +81,14 @@ public final class UpdateCommand extends ModificationCommand {
 
     for (Worker worker : equalIdWorkers) {
       try {
-        Worker newWorker = workerDTO.toEntity();
-        newWorker.setId(worker.getId());
-        workerRepository.update(newWorker);
+        if (worker.getOwnerId() == user.getId()) {
+          Worker newWorker = workerDTO.toEntity();
+          setId(worker, newWorker);
+          setOwnerId(newWorker);
+          workerRepository.update(newWorker);
+        } else {
+          return new Response(Status.FORBIDDEN, NOT_OWNER_ANSWER);
+        }
       } catch (RepositoryException | ValidationException e) {
         logger.error("Cannot update worker which id is equal to {}.", (Supplier<?>) () -> id, e);
         return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());

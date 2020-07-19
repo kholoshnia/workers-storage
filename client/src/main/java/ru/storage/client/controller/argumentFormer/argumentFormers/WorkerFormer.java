@@ -7,7 +7,6 @@ import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -42,10 +41,16 @@ public abstract class WorkerFormer extends Former implements LocaleListener {
             String.format("%s: ", resourceBundle.getString("offers.worker.status")));
         put(
             argumentMediator.WORKER_START_DATE,
-            String.format("%s: ", resourceBundle.getString("offers.worker.startDate")));
+            String.format(
+                "%s: (%s): ",
+                resourceBundle.getString("offers.worker.startDate"),
+                resourceBundle.getString("offers.dateFormat")));
         put(
             argumentMediator.WORKER_END_DATE,
-            String.format("%s: ", resourceBundle.getString("offers.worker.endDate")));
+            String.format(
+                "%s: (%s): ",
+                resourceBundle.getString("offers.worker.endDate"),
+                resourceBundle.getString("offers.dateFormat")));
       }
     };
   }
@@ -106,21 +111,18 @@ public abstract class WorkerFormer extends Former implements LocaleListener {
   }
 
   protected final Map<String, String> formWorker() {
-    Map<String, String> allArguments = new HashMap<>(); // TODO: Ability not to enter field
+    Map<String, String> allArguments = readArguments(workerOffers);
+    logger.info(() -> "Worker arguments were formed."); // TODO: Ability not to enter field
 
-    Map<String, String> workerArguments = readArguments(workerOffers, null, null);
-    logger.info(() -> "Worker arguments were formed.");
-    allArguments.putAll(workerArguments);
-
-    Map<String, String> coordinatesArguments = readArguments(coordinatesOffers, null, null);
+    Map<String, String> coordinatesArguments = readArguments(coordinatesOffers);
     logger.info(() -> "Coordinates arguments were formed.");
     allArguments.putAll(coordinatesArguments);
 
-    Map<String, String> personArguments = readArguments(personOffers, null, null);
+    Map<String, String> personArguments = readArguments(personOffers);
     logger.info(() -> "Person arguments were formed.");
     allArguments.putAll(personArguments);
 
-    Map<String, String> locationArguments = readArguments(locationOffers, null, null);
+    Map<String, String> locationArguments = readArguments(locationOffers);
     logger.info(() -> "Location arguments were formed.");
     allArguments.putAll(locationArguments);
 

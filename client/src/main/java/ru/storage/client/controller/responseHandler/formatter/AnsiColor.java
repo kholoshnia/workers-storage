@@ -2,7 +2,7 @@ package ru.storage.client.controller.responseHandler.formatter;
 
 public enum AnsiColor {
   BLACK("\u001b[30m"),
-  RED("\u001b[31"),
+  RED("\u001b[31m"),
   GREEN("\u001b[32m"),
   YELLOW("\u001b[33m"),
   BLUE("\u001b[34m"),

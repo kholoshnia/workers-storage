@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public abstract class ViewCommand extends Command {
+  protected final Locale locale;
   protected final WorkerRepository workerRepository;
   protected final DateTimeFormatter dateFormat;
   protected final NumberFormat numberFormat;
@@ -61,6 +62,7 @@ public abstract class ViewCommand extends Command {
       WorkerRepository workerRepository) {
     super(configuration, argumentMediator, arguments);
     logger = LogManager.getLogger(ViewCommand.class);
+    this.locale = locale;
     this.workerRepository = workerRepository;
     numberFormat = NumberFormat.getNumberInstance(locale);
     dateFormat =
@@ -132,7 +134,7 @@ public abstract class ViewCommand extends Command {
         .append(System.lineSeparator())
         .append(String.format("\t\t%s: %d", COORDINATES_ID_PREFIX, worker.getCoordinates().getId()))
         .append(System.lineSeparator())
-        .append(String.format("\t%s: %d", COORDINATES_OWNER_ID_PREFIX, worker.getOwnerId()))
+        .append(String.format("\t\t%s: %d", COORDINATES_OWNER_ID_PREFIX, worker.getOwnerId()))
         .append(System.lineSeparator())
         .append(
             String.format(

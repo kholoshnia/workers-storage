@@ -8,6 +8,7 @@ import org.jline.reader.UserInterruptException;
 import ru.storage.client.app.connection.ServerWorker;
 import ru.storage.client.app.connection.exceptions.ClientConnectionException;
 import ru.storage.client.controller.argumentFormer.FormerMediator;
+import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.controller.localeManager.LocaleManager;
 import ru.storage.client.controller.requestBuilder.RequestBuilder;
@@ -39,6 +40,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
   private final ExitManager exitManager;
   private final ServerWorker serverWorker;
   private final CommandMediator commandMediator;
+  private final List<String> authCommands;
   private final Pattern regex;
   private final List<ResponseHandler> responseHandlers;
   private final LocaleManager localeManager;
@@ -59,6 +61,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
   private String noSuchCommandMessage;
   private String emptyResponseMessage;
   private String wrongResponseMessage;
+  private String notAuthenticatedMessage;
 
   private String notYetConnectedException;
   private String connectionException;
@@ -80,6 +83,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
     exitManager.subscribe(this);
     this.serverWorker = serverWorker;
     this.commandMediator = commandMediator;
+    authCommands = initAuthCommandsList();
     regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
     this.responseHandlers = responseHandlers;
     this.localeManager = localeManager;
@@ -94,6 +98,23 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
     token = "";
   }
 
+  /**
+   * Initializes a list of authentication commands. If the token is empty and the user enters one of
+   * the specified commands, then the request will not be sent to the server as user is not
+   * authenticated.
+   *
+   * @return list of authentication commands
+   */
+  private List<String> initAuthCommandsList() {
+    return new ArrayList<String>() {
+      {
+        add(commandMediator.LOGIN);
+        add(commandMediator.REGISTER);
+        add(commandMediator.EXIT);
+      }
+    };
+  }
+
   @Override
   public void changeLocale() {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.Console");
@@ -101,9 +122,10 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
     connectedMessage = resourceBundle.getString("messages.connected");
     connectingMessage = resourceBundle.getString("messages.connecting");
     greetingsMessage = resourceBundle.getString("messages.greetings");
-    noSuchCommandMessage = resourceBundle.getString("exceptions.noSuchCommand");
-    emptyResponseMessage = resourceBundle.getString("exceptions.emptyResponse");
-    wrongResponseMessage = resourceBundle.getString("exceptions.wrongResponse");
+    noSuchCommandMessage = resourceBundle.getString("messages.noSuchCommand");
+    emptyResponseMessage = resourceBundle.getString("messages.emptyResponse");
+    wrongResponseMessage = resourceBundle.getString("messages.wrongResponse");
+    notAuthenticatedMessage = resourceBundle.getString("messages.notAuthenticated");
 
     notYetConnectedException = resourceBundle.getString("exceptions.notYetConnected");
     connectionException = resourceBundle.getString("exceptions.Connection");
@@ -136,7 +158,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
       logger.info("Got user input: {}.", () -> words);
 
       if (words == null) {
-        logger.info(() -> "User input is null, continuing.");
+        logger.info(() -> "User input is empty, continuing.");
         continue;
       }
 
@@ -198,6 +220,12 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
       arguments = new ArrayList<>();
     }
 
+    if (!authCommands.contains(command) && token.isEmpty()) {
+      writeLine(notAuthenticatedMessage);
+      logger.info(() -> "User token is empty, continuing.");
+      return null;
+    }
+
     if (!commandMediator.contains(command)) {
       writeLine(noSuchCommandMessage);
       return null;
@@ -213,14 +241,17 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
           .setCommand(command)
           .setRawArguments(arguments, formerMediator)
           .setLocale(Locale.getDefault())
+          .setLogin(login)
           .setToken(token)
           .build();
     } catch (BuildingException e) {
       logger.warn(() -> "Request building exception.", e);
+      writeLine(buildingException);
 
-      if (e.getMessage() != null) {
-        writeLine(buildingException);
-      }
+      return null;
+    } catch (WrongArgumentsException e) {
+      logger.warn(() -> "Got wrong arguments.", e);
+      writeLine(e.getMessage());
 
       return null;
     }

@@ -20,6 +20,10 @@ public final class CoordinatesValidator implements LocaleListener {
   }
 
   public void checkX(String xString) throws ValidationException {
+    if (xString == null) {
+      throw new ValidationException(wrongXException);
+    }
+
     double x;
 
     try {
@@ -34,11 +38,15 @@ public final class CoordinatesValidator implements LocaleListener {
   }
 
   public void checkY(String yString) throws ValidationException {
+    if (yString == null) {
+      throw new ValidationException(wrongYException);
+    }
+
     double y;
 
     try {
       y = Double.parseDouble(yString);
-    } catch (NumberFormatException | NullPointerException e) {
+    } catch (NumberFormatException e) {
       throw new ValidationException(wrongYException);
     }
 
@@ -48,11 +56,15 @@ public final class CoordinatesValidator implements LocaleListener {
   }
 
   public void checkZ(String zString) throws ValidationException {
+    if (zString == null) {
+      throw new ValidationException(wrongZException);
+    }
+
     double z;
 
     try {
       z = Double.parseDouble(zString);
-    } catch (NumberFormatException | NullPointerException e) {
+    } catch (NumberFormatException e) {
       throw new ValidationException(wrongZException);
     }
 

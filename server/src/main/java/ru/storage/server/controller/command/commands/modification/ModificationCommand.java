@@ -11,11 +11,13 @@ import ru.storage.server.model.domain.dto.dtos.CoordinatesDTO;
 import ru.storage.server.model.domain.dto.dtos.LocationDTO;
 import ru.storage.server.model.domain.dto.dtos.PersonDTO;
 import ru.storage.server.model.domain.dto.dtos.WorkerDTO;
+import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.domain.entity.entities.worker.Status;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import ru.storage.server.model.domain.repository.Repository;
 
 import java.time.ZonedDateTime;
@@ -29,8 +31,13 @@ public abstract class ModificationCommand extends Command {
   protected final String COLLECTION_IS_EMPTY_ANSWER;
   protected final String WRONG_WORKER_FORMAT_ANSWER;
   protected final String WRONG_WORKER_DATA_ANSWER;
+  protected final String NOT_OWNER_ANSWER;
+
+  protected final Locale locale;
   protected final Repository<Worker> workerRepository;
   protected final Parser parser;
+  protected final User user;
+
   private final Logger logger;
 
   public ModificationCommand(
@@ -39,11 +46,14 @@ public abstract class ModificationCommand extends Command {
       Map<String, String> arguments,
       Locale locale,
       Repository<Worker> workerRepository,
-      Parser parser) {
+      Parser parser,
+      User user) {
     super(configuration, argumentMediator, arguments);
     logger = LogManager.getLogger(ModificationCommand.class);
+    this.locale = locale;
     this.workerRepository = workerRepository;
     this.parser = parser;
+    this.user = user;
 
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.ModificationCommand", locale);
@@ -53,6 +63,7 @@ public abstract class ModificationCommand extends Command {
     COLLECTION_IS_EMPTY_ANSWER = resourceBundle.getString("answers.collectionIsEmpty");
     WRONG_WORKER_FORMAT_ANSWER = resourceBundle.getString("answers.wrongWorkerFormat");
     WRONG_WORKER_DATA_ANSWER = resourceBundle.getString("answers.wrongWorkerData");
+    NOT_OWNER_ANSWER = resourceBundle.getString("answers.notOwner");
   }
 
   protected final CoordinatesDTO createCoordinatesDTO(Map<String, String> arguments)
@@ -91,9 +102,19 @@ public abstract class ModificationCommand extends Command {
     return personDTO;
   }
 
+  /**
+   * Creates new worker DTO instance using specified arguments.
+   *
+   * @param arguments user arguments
+   * @return new worker DTO instance
+   * @throws ParserException - in case of user arguments parse errors
+   * @see #createCoordinatesDTO(Map)
+   * @see #createLocationDTO(Map)
+   * @see #createPersonDTO(Map)
+   */
   protected final WorkerDTO createWorkerDTO(Map<String, String> arguments) throws ParserException {
-    Double salary = parser.parseDouble(arguments.get(argumentMediator.WORKER_SALARY));
-    Status status = parser.parseStatus(arguments.get(argumentMediator.WORKER_STATUS));
+    Float salary = parser.parseFloat(arguments.get(argumentMediator.WORKER_SALARY));
+    Status status = parser.parseStatus(arguments.get(argumentMediator.WORKER_STATUS), locale);
     ZonedDateTime startDate =
         parser.parseLocalDateTime(arguments.get(argumentMediator.WORKER_START_DATE));
     ZonedDateTime endDate =
@@ -114,5 +135,50 @@ public abstract class ModificationCommand extends Command {
             personDTO);
     logger.info(() -> "Worker DTO was created.");
     return workerDTO;
+  }
+
+  /**
+   * Sets worker owner id.
+   *
+   * @param worker concrete worker
+   * @throws ValidationException - in case of id validation errors
+   */
+  protected final void setOwnerId(Worker worker) throws ValidationException {
+    worker.setOwnerId(user.getId());
+
+    if (worker.getCoordinates() != null) {
+      worker.getCoordinates().setOwnerId(user.getId());
+    }
+
+    if (worker.getPerson() != null) {
+      worker.getPerson().setOwnerId(user.getId());
+
+      if (worker.getPerson().getLocation() != null) {
+        worker.getPerson().getLocation().setOwnerId(user.getId());
+      }
+    }
+  }
+
+  /**
+   * Sets new id for worker based on the old worker.
+   *
+   * @param oldWorker old worker
+   * @param newWorker new worker
+   * @throws ValidationException - in case of id validation errors
+   */
+  protected final void setId(Worker oldWorker, Worker newWorker) throws ValidationException {
+    newWorker.setId(oldWorker.getId());
+
+    if (newWorker.getCoordinates() != null) {
+      newWorker.getCoordinates().setId(oldWorker.getId());
+    }
+
+    if (newWorker.getPerson() != null) {
+      newWorker.getPerson().setId(oldWorker.getId());
+
+      if (newWorker.getPerson().getLocation() != null) {
+        newWorker.getPerson().getLocation().setId(oldWorker.getId());
+      }
+    }
   }
 }

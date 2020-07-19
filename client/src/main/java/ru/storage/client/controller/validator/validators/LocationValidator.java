@@ -26,11 +26,15 @@ public final class LocationValidator implements LocaleListener {
   }
 
   public void checkLatitude(String latitudeString) throws ValidationException {
+    if (latitudeString == null) {
+      throw new ValidationException(wrongLatitudeException);
+    }
+
     double latitude;
 
     try {
       latitude = Double.parseDouble(latitudeString);
-    } catch (NumberFormatException | NullPointerException e) {
+    } catch (NumberFormatException e) {
       throw new ValidationException(wrongLatitudeException);
     }
 
@@ -40,11 +44,15 @@ public final class LocationValidator implements LocaleListener {
   }
 
   public void checkLongitude(String longitudeString) throws ValidationException {
+    if (longitudeString == null) {
+      throw new ValidationException(wrongLongitudeException);
+    }
+
     double longitude;
 
     try {
       longitude = Double.parseDouble(longitudeString);
-    } catch (NumberFormatException | NullPointerException e) {
+    } catch (NumberFormatException e) {
       throw new ValidationException(wrongLongitudeException);
     }
 

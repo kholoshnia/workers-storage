@@ -90,6 +90,13 @@ public final class ServerModule extends AbstractModule {
     bind(CommandFactoryMediator.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Controllers were configured.");
 
+    bind(EntryCommandFactory.class).in(Scopes.SINGLETON);
+    bind(HistoryCommandFactory.class).in(Scopes.SINGLETON);
+    bind(ModificationCommandFactory.class).in(Scopes.SINGLETON);
+    bind(ViewCommandFactory.class).in(Scopes.SINGLETON);
+    bind(SpecialCommandFactory.class).in(Scopes.SINGLETON);
+    logger.debug(() -> "Command factories were configured.");
+
     bind(UserDAO.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<DAO<String, UserDTO>>() {}).to(UserDAO.class);
     bind(WorkerDAO.class).in(Scopes.SINGLETON);
@@ -261,7 +268,12 @@ public final class ServerModule extends AbstractModule {
         new HistoryCommandFactory(configuration, argumentMediator, commandMediator, history);
     CommandFactory modificationCommandFactory =
         new ModificationCommandFactory(
-            configuration, argumentMediator, commandMediator, workerRepository, parser);
+            configuration,
+            argumentMediator,
+            commandMediator,
+            userRepository,
+            workerRepository,
+            parser);
     CommandFactory viewCommandFactory =
         new ViewCommandFactory(configuration, argumentMediator, commandMediator, workerRepository);
     CommandFactory specialCommandFactory =

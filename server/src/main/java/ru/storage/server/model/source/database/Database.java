@@ -68,19 +68,19 @@ public final class Database extends DataSource {
           + CoordinatesDTO.OWNER_ID_COLUMN
           + " SERIAL NOT NULL, "
           + CoordinatesDTO.X_COLUMN
-          + " REAL NOT NULL CHECK("
+          + " DOUBLE PRECISION NOT NULL CHECK("
           + CoordinatesDTO.X_COLUMN
           + ">=-500) CHECK("
           + CoordinatesDTO.X_COLUMN
           + "<=500), "
           + CoordinatesDTO.Y_COLUMN
-          + " REAL NOT NULL CHECK("
+          + " DOUBLE PRECISION NOT NULL CHECK("
           + CoordinatesDTO.Y_COLUMN
           + ">=-500) CHECK("
           + CoordinatesDTO.Y_COLUMN
           + "<=500), "
           + CoordinatesDTO.Z_COLUMN
-          + " REAL NOT NULL CHECK("
+          + " DOUBLE PRECISION NOT NULL CHECK("
           + CoordinatesDTO.Z_COLUMN
           + ">=-500) CHECK("
           + CoordinatesDTO.Z_COLUMN
@@ -107,13 +107,13 @@ public final class Database extends DataSource {
           + LocationDTO.ADDRESS_COLUMN
           + ")<=100), "
           + LocationDTO.LATITUDE_COLUMN
-          + " REAL NOT NULL CHECK("
+          + " DOUBLE PRECISION NOT NULL CHECK("
           + LocationDTO.LATITUDE_COLUMN
           + ">=-85) CHECK("
           + LocationDTO.LATITUDE_COLUMN
           + "<=85), "
           + LocationDTO.LONGITUDE_COLUMN
-          + " REAL NOT NULL CHECK("
+          + " DOUBLE PRECISION NOT NULL CHECK("
           + LocationDTO.LONGITUDE_COLUMN
           + ">=-180) CHECK("
           + LocationDTO.LONGITUDE_COLUMN
@@ -136,7 +136,7 @@ public final class Database extends DataSource {
           + PersonDTO.NAME_COLUMN
           + " VARCHAR NOT NULL CHECK(LENGTH("
           + PersonDTO.NAME_COLUMN
-          + ")>=10) CHECK(LENGTH("
+          + ")>=2) CHECK(LENGTH("
           + PersonDTO.NAME_COLUMN
           + ")<=100), "
           + PersonDTO.PASSPORT_ID_COLUMN

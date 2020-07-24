@@ -10,7 +10,7 @@ import ru.storage.client.view.console.Console;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Former implements ArgumentFormer {
+public abstract class Former extends ArgumentFormer {
   protected final Console console;
 
   private final Logger logger;
@@ -35,6 +35,28 @@ public abstract class Former implements ArgumentFormer {
     logger.info(
         "Got argument validator: {}, for argument: {}.", () -> argumentValidator, () -> argument);
     argumentValidator.check(input);
+  }
+
+  /**
+   * Asks user whether to input next argument.
+   *
+   * @return true if user answer was "yes" else false if user answer was "no"
+   */
+  protected final boolean readArgumentQuestion(String question) {
+    String input; // TODO: Use
+
+    while (true) {
+      console.write(String.format("%s [y/n]: ", question));
+      input = console.readLine(null, null);
+
+      if (input.equalsIgnoreCase("y")) {
+        return true;
+      }
+
+      if (input.equalsIgnoreCase("n")) {
+        return false;
+      }
+    }
   }
 
   /**

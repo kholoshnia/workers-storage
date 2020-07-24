@@ -20,6 +20,27 @@ public final class Parser {
     logger = LogManager.getLogger(Parser.class);
   }
 
+  public Long parseLong(String longString) throws ParserException {
+    if (longString == null) {
+      logger.info(() -> "Got null long.");
+      return null;
+    }
+
+    long result;
+
+    try {
+      result = Long.parseLong(longString);
+    } catch (NumberFormatException e) {
+      logger.info(
+          "Exception was caught during parsing long string: \"{}\".",
+          (Supplier<?>) () -> longString,
+          e);
+      throw new ParserException(e);
+    }
+
+    return result;
+  }
+
   public Float parseFloat(String floatString) throws ParserException {
     if (floatString == null) {
       logger.info(() -> "Got null float.");

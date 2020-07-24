@@ -9,10 +9,7 @@ import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public final class RegisterFormer extends Former implements LocaleListener {
   private final Logger logger;
@@ -47,7 +44,7 @@ public final class RegisterFormer extends Former implements LocaleListener {
   }
 
   @Override
-  public void changeLocale() {
+  public void changeLocale(Locale locale) {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.RegisterFormer");
 
     wrongArgumentsNumberException = resourceBundle.getString("exceptions.wrongArgumentsNumber");

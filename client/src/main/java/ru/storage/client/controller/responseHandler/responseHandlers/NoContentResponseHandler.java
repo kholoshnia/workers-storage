@@ -21,7 +21,6 @@ public final class NoContentResponseHandler extends ResponseHandler {
       return null;
     }
 
-    return String.format(
-        "%s:\n%s", stringFormatter.makeCyan(messageMediator.getStatusPrefix(status)), answer);
+    return stringFormatter.makeCyan(answer);
   }
 }

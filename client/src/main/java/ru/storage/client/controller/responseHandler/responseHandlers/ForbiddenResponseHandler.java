@@ -22,6 +22,8 @@ public final class ForbiddenResponseHandler extends ResponseHandler {
     }
 
     return String.format(
-        "%s:\n%s", stringFormatter.makeMagenta(messageMediator.getStatusPrefix(status)), answer);
+            "%s:", stringFormatter.makeMagenta(status.toString()))
+        + System.lineSeparator()
+        + answer;
   }
 }

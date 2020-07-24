@@ -7,12 +7,9 @@ import ru.storage.client.controller.argumentFormer.ArgumentFormer;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 import ru.storage.client.controller.localeManager.LocaleListener;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
-public final class NoArgumentsFormer implements ArgumentFormer, LocaleListener {
+public final class NoArgumentsFormer extends ArgumentFormer implements LocaleListener {
   private final Logger logger;
 
   private String wrongArgumentsNumberException;
@@ -23,8 +20,8 @@ public final class NoArgumentsFormer implements ArgumentFormer, LocaleListener {
   }
 
   @Override
-  public void changeLocale() {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.NoArgumentsFormer");
+  public void changeLocale(Locale locale) {
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.NoArgumentsFormer", locale);
 
     wrongArgumentsNumberException = resourceBundle.getString("exceptions.wrongArgumentsNumber");
   }

@@ -23,6 +23,7 @@ public final class ArgumentMediator {
   public final String USER_NAME;
   public final String USER_LOGIN;
   public final String USER_PASSWORD;
+  public final String SCRIPT_LINE;
 
   private final List<String> arguments;
 
@@ -44,6 +45,7 @@ public final class ArgumentMediator {
     USER_NAME = configuration.getString("arguments.user.name");
     USER_LOGIN = configuration.getString("arguments.user.login");
     USER_PASSWORD = configuration.getString("arguments.user.password");
+    SCRIPT_LINE = configuration.getString("arguments.scriptLine");
 
     arguments = initArgumentsList();
   }
@@ -98,6 +100,9 @@ public final class ArgumentMediator {
         }
         if (USER_PASSWORD != null) {
           add(USER_PASSWORD);
+        }
+        if (SCRIPT_LINE != null) {
+          add(SCRIPT_LINE);
         }
       }
     };

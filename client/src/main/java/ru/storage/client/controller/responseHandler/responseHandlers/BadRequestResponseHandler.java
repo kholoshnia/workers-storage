@@ -22,9 +22,10 @@ public final class BadRequestResponseHandler extends ResponseHandler {
     }
 
     return String.format(
-        "%s (%s):\n%s",
-        stringFormatter.makeRed(messageMediator.getStatusPrefix(status)),
-        messageMediator.getBadRequestMessage(),
-        answer);
+            "%s (%s):",
+            stringFormatter.makeRed(status.toString()),
+            messageMediator.getBadRequestMessage())
+        + System.lineSeparator()
+        + answer;
   }
 }

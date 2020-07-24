@@ -2,6 +2,7 @@ package ru.storage.client.controller.requestBuilder;
 
 import ru.storage.client.controller.argumentFormer.ArgumentFormer;
 import ru.storage.client.controller.argumentFormer.FormerMediator;
+import ru.storage.client.controller.argumentFormer.exceptions.FormingException;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 import ru.storage.client.controller.requestBuilder.exceptions.BuildingException;
 import ru.storage.common.transfer.request.Request;
@@ -21,8 +22,7 @@ public final class RequestBuilder {
   private String token = "";
 
   /**
-   * Sets command. NOTE: if not set uses default empty arguments. If is null on {@link #build} call,
-   * throws {@link BuildingException}.
+   * Sets command. NOTE: if not set uses default empty arguments.
    *
    * @param command concrete command
    * @return this request builder
@@ -33,8 +33,7 @@ public final class RequestBuilder {
   }
 
   /**
-   * Sets command arguments. NOTE: if not set uses default empty command. If is null on {@link
-   * #build} call, throws {@link BuildingException}.
+   * Sets command arguments. NOTE: if not set uses default empty command.
    *
    * @param arguments command arguments
    * @return this request builder
@@ -49,8 +48,7 @@ public final class RequestBuilder {
    *
    * <ol>
    *   <li>Gets argument former using {@link FormerMediator};
-   *   <li>Checks arguments using {@link ArgumentFormer#check(List)};
-   *   <li>Forms additional arguments using {@link ArgumentFormer#form(List)}.
+   *   <li>Checks and forms arguments using {@link ArgumentFormer#formArguments(List)};
    * </ol>
    *
    * @param arguments command arguments
@@ -61,22 +59,19 @@ public final class RequestBuilder {
    */
   public RequestBuilder setRawArguments(
       @Nonnull List<String> arguments, @Nonnull FormerMediator formerMediator)
-      throws BuildingException, WrongArgumentsException {
+      throws BuildingException, WrongArgumentsException, FormingException {
     ArgumentFormer argumentFormer = formerMediator.getArgumentFormer(command);
 
     if (argumentFormer == null) {
       throw new BuildingException();
     }
 
-    argumentFormer.check(arguments);
-    this.arguments = argumentFormer.form(arguments);
-
+    this.arguments = argumentFormer.formArguments(arguments);
     return this;
   }
 
   /**
-   * Sets locale. NOTE: if not set uses default {@link Locale#ENGLISH}. If is null on {@link #build}
-   * call, throws {@link BuildingException}.
+   * Sets locale. NOTE: if not set uses default {@link Locale#ENGLISH}.
    *
    * @param locale concrete locale
    * @return this request builder
@@ -87,8 +82,7 @@ public final class RequestBuilder {
   }
 
   /**
-   * Sets login. NOTE: if not set uses default empty login. If is null on {@link #build} call,
-   * throws {@link BuildingException}.
+   * Sets login. NOTE: if not set uses default empty login.
    *
    * @param login concrete login
    * @return this request builder.
@@ -99,8 +93,7 @@ public final class RequestBuilder {
   }
 
   /**
-   * Sets java web token. NOTE: if not set uses default empty token. If is null on {@link #build}
-   * call, throws {@link BuildingException}.
+   * Sets java web token. NOTE: if not set uses default empty token.
    *
    * @param token concrete token
    * @return this request builder
@@ -114,13 +107,8 @@ public final class RequestBuilder {
    * Builds request from set parameters. NOTE: returns null if cannot build request.
    *
    * @return new request
-   * @throws BuildingException - if parameters were not set or required were empty
    */
-  public Request build() throws BuildingException {
-    if (command == null || locale == null || arguments == null || login == null || token == null) {
-      throw new BuildingException();
-    }
-
+  public Request build() {
     return new Request(command, arguments, locale, login, token);
   }
 }

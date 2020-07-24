@@ -3,6 +3,7 @@ package ru.storage.client.controller.validator.validators;
 import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.controller.validator.exceptions.ValidationException;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class LoginValidator implements LocaleListener {
@@ -10,7 +11,7 @@ public final class LoginValidator implements LocaleListener {
   private String wrongPasswordException;
 
   @Override
-  public void changeLocale() {
+  public void changeLocale(Locale locale) {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.LoginValidator");
 
     wrongLoginException = resourceBundle.getString("exceptions.wrongLogin");

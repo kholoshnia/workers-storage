@@ -20,7 +20,6 @@ public final class OkResponseHandler extends ResponseHandler {
       return null;
     }
 
-    return String.format(
-        "%s:\n%s", stringFormatter.makeGreen(messageMediator.getStatusPrefix(status)), answer);
+    return answer;
   }
 }

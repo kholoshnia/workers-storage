@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class WorkerValidator implements LocaleListener {
@@ -21,7 +22,7 @@ public final class WorkerValidator implements LocaleListener {
   private List<String> statusMap;
 
   @Override
-  public void changeLocale() {
+  public void changeLocale(Locale locale) {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.WorkerValidator");
 
     statusMap =

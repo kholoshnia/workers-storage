@@ -9,6 +9,7 @@ import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -27,8 +28,8 @@ public final class NewWorkerFormer extends WorkerFormer {
   }
 
   @Override
-  public void changeLocale() {
-    super.changeLocale();
+  public void changeLocale(Locale locale) {
+    super.changeLocale(locale);
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.NewWorkerFormer");
 
     wrongArgumentsNumberException = resourceBundle.getString("exceptions.wrongArgumentsNumber");

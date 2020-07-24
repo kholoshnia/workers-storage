@@ -21,9 +21,10 @@ public final class ConflictResponseHandler extends ResponseHandler {
     }
 
     return String.format(
-        "%s (%s):\n%s",
-        stringFormatter.makeYellow(messageMediator.getStatusPrefix(status)),
-        messageMediator.getConflictMessage(),
-        answer);
+            "%s (%s):",
+            stringFormatter.makeYellow(status.toString()),
+            messageMediator.getConflictMessage())
+        + System.lineSeparator()
+        + answer;
   }
 }

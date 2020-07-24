@@ -22,9 +22,10 @@ public final class InternalServerErrorResponseHandler extends ResponseHandler {
     }
 
     return String.format(
-        "%s (%s):\n%s",
-        stringFormatter.makeRed(messageMediator.getStatusPrefix(status)),
-        messageMediator.getInternalServerErrorMessage(),
-        stringFormatter.makeRed(answer));
+            "%s (%s):",
+            stringFormatter.makeRed(status.toString()),
+            messageMediator.getInternalServerErrorMessage())
+        + System.lineSeparator()
+        + stringFormatter.makeRed(answer);
   }
 }

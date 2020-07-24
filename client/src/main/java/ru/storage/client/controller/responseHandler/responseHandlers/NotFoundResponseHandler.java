@@ -20,7 +20,8 @@ public final class NotFoundResponseHandler extends ResponseHandler {
       return null;
     }
 
-    return String.format(
-        "%s:\n%s", stringFormatter.makeCyan(messageMediator.getStatusPrefix(status)), answer);
+    return String.format("%s:", stringFormatter.makeCyan(status.toString()))
+        + System.lineSeparator()
+        + answer;
   }
 }

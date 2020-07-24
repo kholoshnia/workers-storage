@@ -22,9 +22,9 @@ public final class UnauthorizedResponseHandler extends ResponseHandler {
     }
 
     return String.format(
-        "%s (%s):\n%s",
-        stringFormatter.makeYellow(messageMediator.getStatusPrefix(status)),
-        messageMediator.getUnauthorizedMessage(),
-        answer);
+            "%s (%s):",
+            stringFormatter.makeYellow(status.toString()), messageMediator.getUnauthorizedMessage())
+        + System.lineSeparator()
+        + answer;
   }
 }

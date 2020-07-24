@@ -8,6 +8,7 @@ import org.jline.reader.UserInterruptException;
 import ru.storage.client.app.connection.ServerWorker;
 import ru.storage.client.app.connection.exceptions.ClientConnectionException;
 import ru.storage.client.controller.argumentFormer.FormerMediator;
+import ru.storage.client.controller.argumentFormer.exceptions.FormingException;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.controller.localeManager.LocaleManager;
@@ -116,8 +117,8 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
   }
 
   @Override
-  public void changeLocale() {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.Console");
+  public void changeLocale(Locale locale) {
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.Console", locale);
 
     connectedMessage = resourceBundle.getString("messages.connected");
     connectingMessage = resourceBundle.getString("messages.connecting");
@@ -132,14 +133,14 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
     deserializationException = resourceBundle.getString("exceptions.deserialization");
     buildingException = resourceBundle.getString("exceptions.building");
 
-    jlineConsole.changeLocale();
+    jlineConsole.changeLocale(locale);
     reader = jlineConsole.getLineReader();
     writer = jlineConsole.getPrintWriter();
   }
 
   /** Processes client console */
   public void process() throws ExitingException {
-    localeManager.changeLocale();
+    localeManager.changeLocale(Locale.getDefault());
     writeLine(greetingsMessage);
 
     try {
@@ -157,7 +158,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
       List<String> words = parse(input);
       logger.info("Got user input: {}.", () -> words);
 
-      if (words == null) {
+      if (words.isEmpty()) {
         logger.info(() -> "User input is empty, continuing.");
         continue;
       }
@@ -244,14 +245,14 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
           .setLogin(login)
           .setToken(token)
           .build();
+    } catch (WrongArgumentsException | FormingException e) {
+      logger.warn(() -> "Got wrong arguments.", e);
+      writeLine(e.getMessage());
+
+      return null;
     } catch (BuildingException e) {
       logger.warn(() -> "Request building exception.", e);
       writeLine(buildingException);
-
-      return null;
-    } catch (WrongArgumentsException e) {
-      logger.warn(() -> "Got wrong arguments.", e);
-      writeLine(e.getMessage());
 
       return null;
     }
@@ -434,7 +435,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
    */
   private List<String> parse(String string) {
     if (string == null) {
-      return null;
+      return new ArrayList<>();
     }
 
     List<String> words = new ArrayList<>();
@@ -448,10 +449,6 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
       } else {
         words.add(matcher.group());
       }
-    }
-
-    if (words.isEmpty()) {
-      return null;
     }
 
     words.replaceAll(String::trim);

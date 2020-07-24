@@ -19,6 +19,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /** Setups Jline line reader with specified options. */
@@ -44,8 +45,8 @@ public final class JlineConsole implements LocaleListener {
   }
 
   @Override
-  public void changeLocale() {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.JlineConsole");
+  public void changeLocale(Locale locale) {
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.JlineConsole", locale);
 
     executableCommandsGroup = resourceBundle.getString("groups.executableCommand");
     datesGroup = resourceBundle.getString("groups.dates");

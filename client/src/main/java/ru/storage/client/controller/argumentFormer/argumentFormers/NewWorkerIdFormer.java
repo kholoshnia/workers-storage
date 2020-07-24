@@ -9,10 +9,7 @@ import ru.storage.client.controller.validator.exceptions.ValidationException;
 import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public final class NewWorkerIdFormer extends WorkerFormer {
   private final Logger logger;
@@ -29,8 +26,8 @@ public final class NewWorkerIdFormer extends WorkerFormer {
   }
 
   @Override
-  public void changeLocale() {
-    super.changeLocale();
+  public void changeLocale(Locale locale) {
+    super.changeLocale(locale);
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.NewWorkerIdFormer");
 
     wrongArgumentsNumberException = resourceBundle.getString("exceptions.wrongArgumentsNumber");

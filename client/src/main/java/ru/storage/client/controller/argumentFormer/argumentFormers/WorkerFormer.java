@@ -8,6 +8,7 @@ import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -101,7 +102,7 @@ public abstract class WorkerFormer extends Former implements LocaleListener {
   }
 
   @Override
-  public void changeLocale() {
+  public void changeLocale(Locale locale) {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.WorkerFormer");
 
     workerOffers = initWorkerOffers(resourceBundle);
@@ -112,7 +113,7 @@ public abstract class WorkerFormer extends Former implements LocaleListener {
 
   protected final Map<String, String> formWorker() {
     Map<String, String> allArguments = readArguments(workerOffers);
-    logger.info(() -> "Worker arguments were formed."); // TODO: Ability not to enter field
+    logger.info(() -> "Worker arguments were formed.");
 
     Map<String, String> coordinatesArguments = readArguments(coordinatesOffers);
     logger.info(() -> "Coordinates arguments were formed.");

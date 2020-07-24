@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Locale;
 
 /** Observer class that is used to call change locale method of all subscribed listeners. */
 public class LocaleManager {
@@ -23,9 +24,11 @@ public class LocaleManager {
     listeners.remove(listener);
   }
 
-  public void changeLocale() {
+  public void changeLocale(Locale locale) {
+    Locale.setDefault(locale);
+
     for (LocaleListener listener : listeners) {
-      listener.changeLocale();
+      listener.changeLocale(locale);
       logger.debug("A " + listener.getClass().getSimpleName() + " was notified.");
     }
 

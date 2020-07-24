@@ -24,15 +24,21 @@ import ru.storage.server.app.connection.exceptions.ServerException;
 import ru.storage.server.app.connection.selector.exceptions.SelectorException;
 import ru.storage.server.app.guice.exceptions.ProvidingException;
 import ru.storage.server.controller.Controller;
-import ru.storage.server.controller.auth.AuthController;
-import ru.storage.server.controller.check.CheckController;
-import ru.storage.server.controller.command.CommandController;
-import ru.storage.server.controller.command.factory.CommandFactory;
-import ru.storage.server.controller.command.factory.CommandFactoryMediator;
-import ru.storage.server.controller.command.factory.factories.*;
+import ru.storage.server.controller.controllers.AuthController;
+import ru.storage.server.controller.controllers.CheckController;
+import ru.storage.server.controller.controllers.argument.ArgumentController;
+import ru.storage.server.controller.controllers.argument.validator.ArgumentValidator;
+import ru.storage.server.controller.controllers.argument.validator.validators.*;
+import ru.storage.server.controller.controllers.command.CommandController;
+import ru.storage.server.controller.controllers.command.factory.CommandFactory;
+import ru.storage.server.controller.controllers.command.factory.CommandFactoryMediator;
+import ru.storage.server.controller.controllers.command.factory.factories.*;
 import ru.storage.server.controller.services.hash.HashGenerator;
 import ru.storage.server.controller.services.hash.SHA256Generator;
-import ru.storage.server.controller.services.script.ScriptExecutor;
+import ru.storage.server.controller.services.script.scriptExecutor.ScriptExecutor;
+import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.ArgumentFormer;
+import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.FormerMediator;
+import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.argumentFormers.*;
 import ru.storage.server.model.dao.DAO;
 import ru.storage.server.model.dao.daos.*;
 import ru.storage.server.model.domain.dto.dtos.*;
@@ -83,11 +89,29 @@ public final class ServerModule extends AbstractModule {
     bind(ScriptExecutor.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Services were configured.");
 
+    bind(IdFormer.class).in(Scopes.SINGLETON);
+    bind(NewWorkerFormer.class).in(Scopes.SINGLETON);
+    bind(NewWorkerIdFormer.class).in(Scopes.SINGLETON);
+    bind(NoArgumentsFormer.class).in(Scopes.SINGLETON);
+    bind(ScriptFormer.class).in(Scopes.SINGLETON);
+    logger.debug(() -> "Formers were configured.");
+
     bind(CheckController.class).in(Scopes.SINGLETON);
+    bind(ArgumentController.class).in(Scopes.SINGLETON);
     bind(AuthController.class).in(Scopes.SINGLETON);
     bind(CommandController.class).in(Scopes.SINGLETON);
     bind(CommandFactoryMediator.class).in(Scopes.SINGLETON);
+    bind(FormerMediator.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Controllers were configured.");
+
+    bind(AddValidator.class).in(Scopes.SINGLETON);
+    bind(IdValidator.class).in(Scopes.SINGLETON);
+    bind(LoginValidator.class).in(Scopes.SINGLETON);
+    bind(NoArgumentsValidator.class).in(Scopes.SINGLETON);
+    bind(RegisterValidator.class).in(Scopes.SINGLETON);
+    bind(ScriptValidator.class).in(Scopes.SINGLETON);
+    bind(UpdateValidator.class).in(Scopes.SINGLETON);
+    logger.debug(() -> "Argument validators were configured.");
 
     bind(EntryCommandFactory.class).in(Scopes.SINGLETON);
     bind(HistoryCommandFactory.class).in(Scopes.SINGLETON);
@@ -232,12 +256,14 @@ public final class ServerModule extends AbstractModule {
   @Singleton
   List<Controller> provideControllers(
       CheckController checkController,
+      ArgumentController argumentController,
       AuthController authController,
       CommandController commandController) {
     List<Controller> controllers =
         new ArrayList<Controller>() {
           {
             add(checkController);
+            add(argumentController);
             add(authController);
             add(commandController);
           }
@@ -271,11 +297,75 @@ public final class ServerModule extends AbstractModule {
             put(commandMediator.HELP, specialCommandFactory);
             put(commandMediator.INFO, viewCommandFactory);
             put(commandMediator.SHOW, viewCommandFactory);
+            put(commandMediator.EXECUTE_SCRIPT, specialCommandFactory);
           }
         };
 
     logger.debug(() -> "Provided command factory map.");
     return commandFactoryMap;
+  }
+
+  @Provides
+  @Singleton
+  Map<String, ArgumentFormer> provideArgumentFormerMap(
+      CommandMediator commandMediator,
+      IdFormer idFormer,
+      NewWorkerFormer newWorkerFormer,
+      NewWorkerIdFormer newWorkerIdFormer,
+      NoArgumentsFormer noArgumentsFormer,
+      ScriptFormer scriptFormer) {
+    Map<String, ArgumentFormer> argumentFormerMap =
+        new HashMap<String, ArgumentFormer>() {
+          {
+            put(commandMediator.SHOW_HISTORY, noArgumentsFormer);
+            put(commandMediator.CLEAR_HISTORY, noArgumentsFormer);
+            put(commandMediator.ADD, newWorkerFormer);
+            put(commandMediator.REMOVE, idFormer);
+            put(commandMediator.UPDATE, newWorkerIdFormer);
+            put(commandMediator.EXIT, noArgumentsFormer);
+            put(commandMediator.HELP, noArgumentsFormer);
+            put(commandMediator.INFO, noArgumentsFormer);
+            put(commandMediator.SHOW, noArgumentsFormer);
+            put(commandMediator.EXECUTE_SCRIPT, scriptFormer);
+          }
+        };
+
+    logger.debug(() -> "Provided argument former map.");
+    return argumentFormerMap;
+  }
+
+  @Provides
+  @Singleton
+  Map<String, ArgumentValidator> provideArgumentValidatorMap(
+      CommandMediator commandMediator,
+      AddValidator addValidator,
+      IdValidator idValidator,
+      LoginValidator loginValidator,
+      NoArgumentsValidator noArgumentsValidator,
+      RegisterValidator registerValidator,
+      ScriptValidator scriptValidator,
+      UpdateValidator updateValidator) {
+    Map<String, ArgumentValidator> validatorMap =
+        new HashMap<String, ArgumentValidator>() {
+          {
+            put(commandMediator.LOGIN, loginValidator);
+            put(commandMediator.LOGOUT, noArgumentsValidator);
+            put(commandMediator.REGISTER, registerValidator);
+            put(commandMediator.SHOW_HISTORY, noArgumentsValidator);
+            put(commandMediator.CLEAR_HISTORY, noArgumentsValidator);
+            put(commandMediator.ADD, addValidator);
+            put(commandMediator.REMOVE, idValidator);
+            put(commandMediator.UPDATE, updateValidator);
+            put(commandMediator.EXIT, noArgumentsValidator);
+            put(commandMediator.HELP, noArgumentsValidator);
+            put(commandMediator.INFO, noArgumentsValidator);
+            put(commandMediator.SHOW, noArgumentsValidator);
+            put(commandMediator.EXECUTE_SCRIPT, scriptValidator);
+          }
+        };
+
+    logger.debug(() -> "Provided argument validator map.");
+    return validatorMap;
   }
 
   @Provides

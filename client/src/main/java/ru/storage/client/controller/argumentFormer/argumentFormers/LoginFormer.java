@@ -11,12 +11,8 @@ import ru.storage.client.controller.validator.validators.LoginValidator;
 import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
-// TODO: Do not check password using regex.
 public final class LoginFormer extends Former implements LocaleListener {
   private final Logger logger;
   private final ArgumentMediator argumentMediator;
@@ -39,7 +35,7 @@ public final class LoginFormer extends Former implements LocaleListener {
   }
 
   @Override
-  public void changeLocale() {
+  public void changeLocale(Locale locale) {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.LoginFormer");
 
     wrongArgumentsNumberException = resourceBundle.getString("exceptions.wrongArgumentsNumber");

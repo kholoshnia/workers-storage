@@ -8,6 +8,32 @@ import java.util.Locale;
 
 /**
  * Script class implements {@link Iterable<String>}, contains necessary data for commands execution.
+ *
+ * <p>Script semantics:
+ *
+ * <ul>
+ *   <li>each command must start on a new line;
+ *   <li>if the command requires additional arguments, the following lines must contain them in the
+ *       form name:value, name:"value" or name:'value' in case of spaces.
+ * </ul>
+ *
+ * <p>List of available arguments:
+ *
+ * <ul>
+ *   <li>id
+ *   <li>workerSalary
+ *   <li>workerStatus
+ *   <li>workerStartDate
+ *   <li>workerEndDate
+ *   <li>coordinatesX
+ *   <li>coordinatesY
+ *   <li>coordinatesZ
+ *   <li>personName
+ *   <li>personPassportId
+ *   <li>personAddress
+ *   <li>personLatitude
+ *   <li>personLongitude
+ * </ul>
  */
 public final class Script implements Iterable<String> {
   private final Locale locale;

@@ -10,6 +10,7 @@ import ru.storage.client.controller.validator.exceptions.ValidationException;
 import ru.storage.client.controller.validator.validators.LoginValidator;
 import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
+import ru.storage.common.CommandMediator;
 
 import java.util.*;
 
@@ -24,11 +25,12 @@ public final class LoginFormer extends Former implements LocaleListener {
 
   @Inject
   public LoginFormer(
+      CommandMediator commandMediator,
       Console console,
       Map<String, ArgumentValidator> validatorMap,
       ArgumentMediator argumentMediator,
       LoginValidator loginValidator) {
-    super(console, validatorMap);
+    super(commandMediator, console, validatorMap);
     logger = LogManager.getLogger(LoginFormer.class);
     this.argumentMediator = argumentMediator;
     this.loginValidator = loginValidator;

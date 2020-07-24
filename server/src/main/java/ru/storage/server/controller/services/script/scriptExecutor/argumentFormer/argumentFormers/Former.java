@@ -3,7 +3,6 @@ package ru.storage.server.controller.services.script.scriptExecutor.argumentForm
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
-import ru.storage.server.controller.services.script.Script;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.ArgumentFormer;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.exceptions.WrongArgumentsException;
 
@@ -44,18 +43,17 @@ public abstract class Former extends ArgumentFormer {
    * @param script script to read argument from
    * @return ready argument
    */
-  protected final String readArgument(String argument, Script script)
+  protected final String readArgument(String argument, Iterator<String> script)
       throws WrongArgumentsException {
-    Iterator<String> iterator = script.iterator();
     String input;
 
-    if (iterator.hasNext()) {
-      input = iterator.next();
+    if (script.hasNext()) {
+      input = script.next();
     } else {
       throw new WrongArgumentsException();
     }
 
-    String[] words = input.split(":");
+    String[] words = input.split(":", 2);
 
     if (words.length != 2) {
       throw new WrongArgumentsException();
@@ -79,9 +77,9 @@ public abstract class Former extends ArgumentFormer {
    *
    * @param arguments argument names
    * @return ready arguments
-   * @see #readArgument(String, Script)
+   * @see #readArgument(String, Iterator)
    */
-  protected final Map<String, String> readArguments(List<String> arguments, Script script)
+  protected final Map<String, String> readArguments(List<String> arguments, Iterator<String> script)
       throws WrongArgumentsException {
     Map<String, String> allArguments = new HashMap<>();
 

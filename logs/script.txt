@@ -1,0 +1,20 @@
+update 6
+workerSalary:1
+workerStatus:fired
+workerStartDate:2020-07-24T21:31:53.771+03:00[Europe/Moscow]
+workerEndDate:2020-07-24T21:31:53.771+03:00[Europe/Moscow]
+coordinatesX:1
+coordinatesY:1
+coordinatesZ:1
+personName:asd
+personPassportId:asdklalskdjaksdsjdfksdfjks
+personAddress:alksdalksjdlkajsdlkasddfkj
+personLatitude:1
+personLongitude:1
+
+info
+show
+    info
+help
+
+show

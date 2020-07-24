@@ -8,6 +8,7 @@ import org.jline.reader.UserInterruptException;
 import ru.storage.client.app.connection.ServerWorker;
 import ru.storage.client.app.connection.exceptions.ClientConnectionException;
 import ru.storage.client.controller.argumentFormer.FormerMediator;
+import ru.storage.client.controller.argumentFormer.exceptions.CancelException;
 import ru.storage.client.controller.argumentFormer.exceptions.FormingException;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 import ru.storage.client.controller.localeManager.LocaleListener;
@@ -68,6 +69,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
   private String connectionException;
   private String deserializationException;
   private String buildingException;
+  private String cancelException;
 
   public Terminal(
       ExitManager exitManager,
@@ -132,6 +134,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
     connectionException = resourceBundle.getString("exceptions.Connection");
     deserializationException = resourceBundle.getString("exceptions.deserialization");
     buildingException = resourceBundle.getString("exceptions.building");
+    cancelException = resourceBundle.getString("exceptions.cancel");
 
     jlineConsole.changeLocale(locale);
     reader = jlineConsole.getLineReader();
@@ -245,6 +248,11 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
           .setLogin(login)
           .setToken(token)
           .build();
+    } catch (CancelException e) {
+      logger.warn(() -> "Forming was canceled.", e);
+      writeLine(cancelException);
+
+      return null;
     } catch (WrongArgumentsException | FormingException e) {
       logger.warn(() -> "Got wrong arguments.", e);
       writeLine(e.getMessage());

@@ -2,6 +2,7 @@ package ru.storage.client.controller.requestBuilder;
 
 import ru.storage.client.controller.argumentFormer.ArgumentFormer;
 import ru.storage.client.controller.argumentFormer.FormerMediator;
+import ru.storage.client.controller.argumentFormer.exceptions.CancelException;
 import ru.storage.client.controller.argumentFormer.exceptions.FormingException;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 import ru.storage.client.controller.requestBuilder.exceptions.BuildingException;
@@ -56,10 +57,12 @@ public final class RequestBuilder {
    * @return this request builder
    * @throws BuildingException - if got null {@link ArgumentFormer}
    * @throws WrongArgumentsException - if specified arguments are wrong
+   * @throws FormingException - in case of any exceptions during forming
+   * @throws CancelException - if forming was canceled
    */
   public RequestBuilder setRawArguments(
       @Nonnull List<String> arguments, @Nonnull FormerMediator formerMediator)
-      throws BuildingException, WrongArgumentsException, FormingException {
+      throws BuildingException, WrongArgumentsException, FormingException, CancelException {
     ArgumentFormer argumentFormer = formerMediator.getArgumentFormer(command);
 
     if (argumentFormer == null) {

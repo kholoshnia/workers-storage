@@ -69,7 +69,9 @@ public final class ScriptExecutor {
     String errorNear = resourceBundle.getString("answers.errorNear");
 
     StringBuilder answer =
-        new StringBuilder().append(resourceBundle.getString("prefixes.scriptStart"));
+        new StringBuilder()
+            .append(resourceBundle.getString("prefixes.scriptStart"))
+            .append(System.lineSeparator());
     Iterator<String> iterator = script.iterator();
 
     int counter = 0;
@@ -105,14 +107,14 @@ public final class ScriptExecutor {
       Map<String, String> allArguments;
 
       try {
-        allArguments = argumentFormer.formArguments(arguments, script);
+        allArguments = argumentFormer.formArguments(arguments, iterator);
       } catch (WrongArgumentsException | FormingException e) {
         return new Response(
             Status.BAD_REQUEST,
             String.format(ERROR_NEAR_PATTERN, errorNear, counter, line, e.getMessage()));
       }
 
-      CommandFactory commandFactory = commandFactoryMap.get(line);
+      CommandFactory commandFactory = commandFactoryMap.get(commandName);
 
       if (commandFactory == null) {
         logger.error(() -> "There is no such command, factory was not created.");
@@ -127,7 +129,7 @@ public final class ScriptExecutor {
       try {
         command =
             commandFactory.createCommand(
-                line, allArguments, script.getLocale(), script.getUser().getLogin());
+                commandName, allArguments, script.getLocale(), script.getUser().getLogin());
       } catch (CommandFactoryException exception) {
         return new Response(Status.INTERNAL_SERVER_ERROR, COMMAND_CREATION_ERROR_ANSWER);
       }
@@ -141,7 +143,7 @@ public final class ScriptExecutor {
 
       if (!stopStatuses.contains(response.getStatus())) {
         answer
-            .append(String.format("%s:", response.getStatus()))
+            .append(String.format("%s %s:", commandName, response.getStatus()))
             .append(System.lineSeparator())
             .append(response.getAnswer())
             .append(System.lineSeparator());

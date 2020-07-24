@@ -2,10 +2,10 @@ package ru.storage.server.controller.services.script.scriptExecutor.argumentForm
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.server.controller.services.script.Script;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.exceptions.FormingException;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.exceptions.WrongArgumentsException;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public abstract class ArgumentFormer {
    * @return formed arguments
    * @throws FormingException - in case of any exceptions during forming
    */
-  protected abstract Map<String, String> form(List<String> arguments, Script script)
+  protected abstract Map<String, String> form(List<String> arguments, Iterator<String> script)
       throws FormingException;
 
   /**
@@ -44,7 +44,7 @@ public abstract class ArgumentFormer {
    * @throws WrongArgumentsException - if arguments are incorrect
    * @throws FormingException - in case of any exceptions during forming
    */
-  public final Map<String, String> formArguments(List<String> arguments, Script script)
+  public final Map<String, String> formArguments(List<String> arguments, Iterator<String> script)
       throws WrongArgumentsException, FormingException {
     check(arguments);
     logger.info(() -> "Arguments were checked.");

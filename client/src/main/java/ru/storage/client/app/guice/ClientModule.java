@@ -148,7 +148,8 @@ public final class ClientModule extends AbstractModule {
       NewWorkerFormer newWorkerFormer,
       NewWorkerIdFormer newWorkerId,
       NoArgumentsFormer noArgumentsFormer,
-      RegisterFormer registerFormer) {
+      RegisterFormer registerFormer,
+      ScriptFormer scriptFormer) {
     List<LocaleListener> entities =
         new ArrayList<LocaleListener>() {
           {
@@ -164,6 +165,7 @@ public final class ClientModule extends AbstractModule {
             add(newWorkerId);
             add(noArgumentsFormer);
             add(registerFormer);
+            add(scriptFormer);
           }
         };
 

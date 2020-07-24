@@ -4,10 +4,12 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.controller.argumentFormer.ArgumentValidator;
+import ru.storage.client.controller.argumentFormer.exceptions.CancelException;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 import ru.storage.client.controller.validator.exceptions.ValidationException;
 import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
+import ru.storage.common.CommandMediator;
 
 import java.util.*;
 
@@ -18,10 +20,11 @@ public final class NewWorkerIdFormer extends WorkerFormer {
 
   @Inject
   public NewWorkerIdFormer(
+      CommandMediator commandMediator,
       Console console,
       Map<String, ArgumentValidator> validatorMap,
       ArgumentMediator argumentMediator) {
-    super(console, validatorMap, argumentMediator);
+    super(commandMediator, console, validatorMap, argumentMediator);
     logger = LogManager.getLogger(NewWorkerIdFormer.class);
   }
 
@@ -49,7 +52,7 @@ public final class NewWorkerIdFormer extends WorkerFormer {
   }
 
   @Override
-  public Map<String, String> form(List<String> arguments) {
+  public Map<String, String> form(List<String> arguments) throws CancelException {
     Map<String, String> allArguments = new HashMap<>();
     allArguments.put(argumentMediator.WORKER_ID, arguments.get(0));
 

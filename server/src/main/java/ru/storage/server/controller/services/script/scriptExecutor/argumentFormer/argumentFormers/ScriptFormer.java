@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
-import ru.storage.server.controller.services.script.Script;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.ArgumentFormer;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.exceptions.FormingException;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.exceptions.WrongArgumentsException;
@@ -26,7 +25,7 @@ public final class ScriptFormer extends ArgumentFormer {
           "https?://(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)");
 
   static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ScriptFormer");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.ScriptFormer");
 
     WRONG_ARGUMENTS_NUMBER_EXCEPTION = resourceBundle.getString("exceptions.wrongArgumentsNumber");
     WRONG_FILE_PATH_EXCEPTION = resourceBundle.getString("exceptions.wrongFilePath");
@@ -72,7 +71,7 @@ public final class ScriptFormer extends ArgumentFormer {
   }
 
   @Override
-  public Map<String, String> form(List<String> arguments, Script script) throws FormingException {
+  public Map<String, String> form(List<String> arguments, Iterator<String> script) throws FormingException {
     String path = arguments.get(0);
     Scanner scanner;
 

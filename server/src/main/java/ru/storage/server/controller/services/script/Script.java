@@ -14,7 +14,7 @@ import java.util.Locale;
  * <ul>
  *   <li>each command must start on a new line;
  *   <li>if the command requires additional arguments, the following lines must contain them in the
- *       form name:value, name:"value" or name:'value' in case of spaces.
+ *       form name:value, name:"value" or name:'value' in case of ":' symbols.
  * </ul>
  *
  * <p>List of available arguments:

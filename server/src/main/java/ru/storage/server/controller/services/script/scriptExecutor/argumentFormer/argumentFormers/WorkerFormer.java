@@ -3,10 +3,10 @@ package ru.storage.server.controller.services.script.scriptExecutor.argumentForm
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
-import ru.storage.server.controller.services.script.Script;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.exceptions.WrongArgumentsException;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +67,8 @@ public abstract class WorkerFormer extends Former {
     };
   }
 
-  protected final Map<String, String> formWorker(Script script) throws WrongArgumentsException {
+  protected final Map<String, String> formWorker(Iterator<String> script)
+      throws WrongArgumentsException {
     Map<String, String> allArguments = readArguments(workerOffers, script);
     logger.info(() -> "Worker arguments were formed.");
 

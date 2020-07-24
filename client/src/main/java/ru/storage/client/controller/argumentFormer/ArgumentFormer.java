@@ -2,6 +2,7 @@ package ru.storage.client.controller.argumentFormer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.storage.client.controller.argumentFormer.exceptions.CancelException;
 import ru.storage.client.controller.argumentFormer.exceptions.FormingException;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 
@@ -30,7 +31,8 @@ public abstract class ArgumentFormer {
    * @return formed arguments
    * @throws FormingException - in case of any exceptions during forming
    */
-  protected abstract Map<String, String> form(List<String> arguments) throws FormingException;
+  protected abstract Map<String, String> form(List<String> arguments)
+      throws FormingException, CancelException;
 
   /**
    * Checks the specified arguments and adds other required arguments.
@@ -39,9 +41,10 @@ public abstract class ArgumentFormer {
    * @return all arguments
    * @throws WrongArgumentsException - if arguments are incorrect
    * @throws FormingException - in case of any exceptions during forming
+   * @throws CancelException - if forming was canceled
    */
   public final Map<String, String> formArguments(List<String> arguments)
-      throws WrongArgumentsException, FormingException {
+      throws WrongArgumentsException, FormingException, CancelException {
     check(arguments);
     logger.info(() -> "Arguments were checked.");
 

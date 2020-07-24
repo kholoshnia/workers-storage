@@ -4,8 +4,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.controller.argumentFormer.ArgumentFormer;
 import ru.storage.client.controller.argumentFormer.ArgumentValidator;
+import ru.storage.client.controller.argumentFormer.exceptions.CancelException;
 import ru.storage.client.controller.validator.exceptions.ValidationException;
 import ru.storage.client.view.console.Console;
+import ru.storage.common.CommandMediator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,11 +16,16 @@ public abstract class Former extends ArgumentFormer {
   protected final Console console;
 
   private final Logger logger;
+  private final CommandMediator commandMediator;
   private final Map<String, ArgumentValidator> validatorMap;
 
-  public Former(Console console, Map<String, ArgumentValidator> validatorMap) {
+  public Former(
+      CommandMediator commandMediator,
+      Console console,
+      Map<String, ArgumentValidator> validatorMap) {
     logger = LogManager.getLogger(Former.class);
     this.console = console;
+    this.commandMediator = commandMediator;
     this.validatorMap = validatorMap;
   }
 
@@ -67,14 +74,19 @@ public abstract class Former extends ArgumentFormer {
    * @param prompt user prompt
    * @param mask input mask
    * @return ready argument
+   * @throws CancelException - if forming was canceled
    */
-  protected final String readArgument(
-      String argument, String offer, String prompt, Character mask) {
+  protected final String readArgument(String argument, String offer, String prompt, Character mask)
+      throws CancelException {
     while (true) {
       console.write(offer);
       logger.info("Offered user input: {}.", () -> offer);
 
       String input = console.readLine(prompt, mask).trim();
+
+      if (input.equals(commandMediator.EXIT)) {
+        throw new CancelException();
+      }
 
       try {
         checkArgument(argument, input);
@@ -91,8 +103,10 @@ public abstract class Former extends ArgumentFormer {
    * @param offers argument name, offer map
    * @return ready arguments
    * @see #readArgument(String, String, String, Character)
+   * @throws CancelException - if forming was canceled
    */
-  protected final Map<String, String> readArguments(Map<String, String> offers) {
+  protected final Map<String, String> readArguments(Map<String, String> offers)
+      throws CancelException {
     Map<String, String> allArguments = new HashMap<>();
 
     for (Map.Entry<String, String> offerEntry : offers.entrySet()) {

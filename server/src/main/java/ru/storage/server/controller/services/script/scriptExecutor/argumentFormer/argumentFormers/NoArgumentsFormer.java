@@ -3,20 +3,16 @@ package ru.storage.server.controller.services.script.scriptExecutor.argumentForm
 import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.server.controller.services.script.Script;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.ArgumentFormer;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.exceptions.WrongArgumentsException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public final class NoArgumentsFormer extends ArgumentFormer {
   private static final String WRONG_ARGUMENTS_NUMBER_EXCEPTION;
 
   static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.NoArgumentsFormer");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.NoArgumentsFormer");
 
     WRONG_ARGUMENTS_NUMBER_EXCEPTION = resourceBundle.getString("exceptions.wrongArgumentsNumber");
   }
@@ -37,7 +33,7 @@ public final class NoArgumentsFormer extends ArgumentFormer {
   }
 
   @Override
-  protected Map<String, String> form(List<String> arguments, Script script) {
+  protected Map<String, String> form(List<String> arguments, Iterator<String> script) {
     return new HashMap<>();
   }
 }

@@ -16,7 +16,7 @@ public final class ScriptValidator extends ArgumentValidator {
 
   @Inject
   public ScriptValidator(ArgumentMediator argumentMediator) {
-    scriptLinePattern = Pattern.compile(String.format("^%s\\d$", argumentMediator.SCRIPT_LINE));
+    scriptLinePattern = Pattern.compile(String.format("^%s\\d+$", argumentMediator.SCRIPT_LINE));
   }
 
   @Override

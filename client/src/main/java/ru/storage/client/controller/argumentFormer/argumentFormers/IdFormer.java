@@ -9,6 +9,7 @@ import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.controller.validator.exceptions.ValidationException;
 import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
+import ru.storage.common.CommandMediator;
 
 import java.util.*;
 
@@ -20,10 +21,11 @@ public final class IdFormer extends Former implements LocaleListener {
 
   @Inject
   public IdFormer(
+      CommandMediator commandMediator,
       Console console,
       Map<String, ArgumentValidator> validatorMap,
       ArgumentMediator argumentMediator) {
-    super(console, validatorMap);
+    super(commandMediator, console, validatorMap);
     logger = LogManager.getLogger(IdFormer.class);
     this.argumentMediator = argumentMediator;
   }

@@ -57,8 +57,8 @@ public final class ScriptFormer extends ArgumentFormer implements LocaleListener
     if (FILE_PATTERN.matcher(path).matches()) {
       File file = new File(path);
 
-      if (!file.exists() || !file.isFile() || !file.canRead()) {
-        throw new WrongArgumentsException(wrongFilePathException);
+      if (file.exists() && file.isFile() && file.canRead()) {
+        return;
       }
     } else if (URL_PATTERN.matcher(path).matches()) {
       try {
@@ -69,10 +69,7 @@ public final class ScriptFormer extends ArgumentFormer implements LocaleListener
       }
     }
 
-    if (!FILE_PATTERN.matcher(path).matches() && !URL_PATTERN.matcher(path).matches()) {
-      logger.warn(() -> "Got wrong argument.");
-      throw new WrongArgumentsException(wrongFilePathException);
-    }
+    throw new WrongArgumentsException(wrongFilePathException);
   }
 
   @Override
@@ -105,7 +102,7 @@ public final class ScriptFormer extends ArgumentFormer implements LocaleListener
     int counter = 0;
     while (scanner.hasNextLine()) {
       allArguments.put(
-          String.format("%s%d", argumentMediator.SCRIPT_LINE, counter), scanner.next());
+          String.format("%s%d", argumentMediator.SCRIPT_LINE, counter), scanner.nextLine());
       counter++;
     }
 

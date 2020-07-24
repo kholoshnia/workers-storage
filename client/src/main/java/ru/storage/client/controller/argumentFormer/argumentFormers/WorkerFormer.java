@@ -3,9 +3,11 @@ package ru.storage.client.controller.argumentFormer.argumentFormers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.controller.argumentFormer.ArgumentValidator;
+import ru.storage.client.controller.argumentFormer.exceptions.CancelException;
 import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
+import ru.storage.common.CommandMediator;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -23,10 +25,11 @@ public abstract class WorkerFormer extends Former implements LocaleListener {
   private Map<String, String> locationOffers;
 
   public WorkerFormer(
+      CommandMediator commandMediator,
       Console console,
       Map<String, ArgumentValidator> validatorMap,
       ArgumentMediator argumentMediator) {
-    super(console, validatorMap);
+    super(commandMediator, console, validatorMap);
     logger = LogManager.getLogger(WorkerFormer.class);
     this.argumentMediator = argumentMediator;
   }
@@ -111,7 +114,7 @@ public abstract class WorkerFormer extends Former implements LocaleListener {
     locationOffers = initLocationOffers(resourceBundle);
   }
 
-  protected final Map<String, String> formWorker() {
+  protected final Map<String, String> formWorker() throws CancelException {
     Map<String, String> allArguments = readArguments(workerOffers);
     logger.info(() -> "Worker arguments were formed.");
 

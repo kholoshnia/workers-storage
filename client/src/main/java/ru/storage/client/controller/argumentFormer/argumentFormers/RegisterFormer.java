@@ -4,10 +4,12 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.controller.argumentFormer.ArgumentValidator;
+import ru.storage.client.controller.argumentFormer.exceptions.CancelException;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
+import ru.storage.common.CommandMediator;
 
 import java.util.*;
 
@@ -22,10 +24,11 @@ public final class RegisterFormer extends Former implements LocaleListener {
 
   @Inject
   public RegisterFormer(
+      CommandMediator commandMediator,
       Console console,
       Map<String, ArgumentValidator> validatorMap,
       ArgumentMediator argumentMediator) {
-    super(console, validatorMap);
+    super(commandMediator, console, validatorMap);
     logger = LogManager.getLogger(RegisterFormer.class);
     this.argumentMediator = argumentMediator;
   }
@@ -61,7 +64,7 @@ public final class RegisterFormer extends Former implements LocaleListener {
   }
 
   @Override
-  public Map<String, String> form(List<String> arguments) {
+  public Map<String, String> form(List<String> arguments) throws CancelException {
     Map<String, String> allArguments = readArguments(registerOffers);
 
     String input = readArgument(argumentMediator.USER_PASSWORD, passwordOffer, null, '*');

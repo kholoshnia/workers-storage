@@ -4,9 +4,11 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.controller.argumentFormer.ArgumentValidator;
+import ru.storage.client.controller.argumentFormer.exceptions.CancelException;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 import ru.storage.client.view.console.Console;
 import ru.storage.common.ArgumentMediator;
+import ru.storage.common.CommandMediator;
 
 import java.util.List;
 import java.util.Locale;
@@ -20,10 +22,11 @@ public final class NewWorkerFormer extends WorkerFormer {
 
   @Inject
   public NewWorkerFormer(
+      CommandMediator commandMediator,
       Console console,
       Map<String, ArgumentValidator> validatorMap,
       ArgumentMediator argumentMediator) {
-    super(console, validatorMap, argumentMediator);
+    super(commandMediator, console, validatorMap, argumentMediator);
     logger = LogManager.getLogger(NewWorkerFormer.class);
   }
 
@@ -44,7 +47,7 @@ public final class NewWorkerFormer extends WorkerFormer {
   }
 
   @Override
-  public Map<String, String> form(List<String> arguments) {
+  public Map<String, String> form(List<String> arguments) throws CancelException {
     Map<String, String> allArguments = formWorker();
     logger.info(() -> "All arguments were formed.");
     return allArguments;

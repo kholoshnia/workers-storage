@@ -4,13 +4,9 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
-import ru.storage.server.controller.services.script.Script;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.exceptions.WrongArgumentsException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public final class IdFormer extends Former {
   private static final String WRONG_ARGUMENTS_NUMBER_EXCEPTION;
@@ -40,7 +36,7 @@ public final class IdFormer extends Former {
   }
 
   @Override
-  public Map<String, String> form(List<String> arguments, Script script) {
+  public Map<String, String> form(List<String> arguments, Iterator<String> script) {
     Map<String, String> allArguments = new HashMap<>();
     allArguments.put(argumentMediator.WORKER_ID, arguments.get(0));
 

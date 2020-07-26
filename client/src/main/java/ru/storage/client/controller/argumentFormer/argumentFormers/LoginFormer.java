@@ -80,7 +80,7 @@ public final class LoginFormer extends Former implements LocaleListener {
       }
     }
 
-    console.setLogin(allArguments.get(argumentMediator.USER_LOGIN));
+    console.setUser(allArguments.get(argumentMediator.USER_LOGIN));
     logger.info(() -> "Set login for console prompt.");
 
     logger.info(() -> "All arguments were formed.");

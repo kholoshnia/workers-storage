@@ -30,9 +30,9 @@ public interface Console extends View {
   void writeLine(String string);
 
   /**
-   * Sets user login to the use it as command prompt.
+   * Sets user to the use it as command prompt.
    *
-   * @param login concrete user login
+   * @param user new user
    */
-  void setLogin(String login);
+  void setUser(String user);
 }

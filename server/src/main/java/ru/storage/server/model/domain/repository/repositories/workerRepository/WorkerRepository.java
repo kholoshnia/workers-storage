@@ -141,6 +141,8 @@ public final class WorkerRepository implements Repository<Worker> {
 
   @Override
   public synchronized void update(@Nonnull Worker worker) throws WorkerRepositoryException {
+    Worker found;
+
     try {
       WorkerDTO result = workerDAO.getByKey(worker.getId());
 
@@ -152,13 +154,15 @@ public final class WorkerRepository implements Repository<Worker> {
       }
 
       workerDAO.update(worker.toDTO());
+      found = result.toEntity();
       logger.info(() -> "Worker was updated in DAO.");
-    } catch (DAOException | DataSourceException e) {
-      logger.error("Cannot update worker in DAO, target worker: %s." + worker, e);
+    } catch (DAOException | DataSourceException | ValidationException e) {
+      logger.error(
+          "Cannot update worker in DAO, target worker: {}.", (Supplier<?>) () -> worker, e);
       throw new WorkerRepositoryException(e);
     }
 
-    if (workers.remove(worker)) {
+    if (!workers.remove(found)) {
       logger.error(
           "Cannot delete worker, no such worker in the collection, target worker: {}.",
           () -> worker);

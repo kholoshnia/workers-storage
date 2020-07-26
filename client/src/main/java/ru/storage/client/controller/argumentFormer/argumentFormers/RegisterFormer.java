@@ -70,7 +70,7 @@ public final class RegisterFormer extends Former implements LocaleListener {
     String input = readArgument(argumentMediator.USER_PASSWORD, passwordOffer, null, '*');
     allArguments.put(argumentMediator.USER_PASSWORD, input);
 
-    console.setLogin(allArguments.get(argumentMediator.USER_LOGIN));
+    console.setUser(allArguments.get(argumentMediator.USER_LOGIN));
     logger.info(() -> "Set login for console prompt.");
 
     logger.info(() -> "All arguments were formed.");

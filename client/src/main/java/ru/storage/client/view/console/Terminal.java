@@ -52,6 +52,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
 
   private LineReader reader;
   private PrintWriter writer;
+  private String user;
   private String login;
   private String prefix;
   private boolean processing;
@@ -98,6 +99,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
     prompt = " ~ $ ";
     prefix = "";
     processing = true;
+    login = "";
     token = "";
   }
 
@@ -288,8 +290,10 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
       if (login == null) {
         prefix = "";
       } else {
-        prefix = login;
+        prefix = user;
       }
+
+      login = user;
     }
 
     String answer = null;
@@ -312,12 +316,12 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
   }
 
   /**
-   * Sets login. Used on auth command. Login is used later to update prompt prefix.
+   * Sets user. Used on auth command. User is used later to update prompt prefix.
    *
-   * @param login new login
+   * @param user new user
    */
-  public void setLogin(String login) {
-    this.login = login;
+  public void setUser(String user) {
+    this.user = user;
   }
 
   /** Waits connection with the server. Pending request every 1 second. */

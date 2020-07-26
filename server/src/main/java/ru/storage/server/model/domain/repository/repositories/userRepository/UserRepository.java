@@ -120,6 +120,8 @@ public final class UserRepository implements Repository<User> {
 
   @Override
   public synchronized void update(@Nonnull User user) throws UserRepositoryException {
+    User found;
+
     try {
       UserDTO result = userDAO.getByKey(user.getLogin());
 
@@ -129,13 +131,14 @@ public final class UserRepository implements Repository<User> {
       }
 
       userDAO.update(user.toDTO());
+      found = result.toEntity();
       logger.info(() -> "User was updated in DAO.");
-    } catch (DAOException | DataSourceException e) {
+    } catch (DAOException | DataSourceException | ValidationException e) {
       logger.error(() -> "Cannot update user in DAO.", e);
       throw new UserRepositoryException(e);
     }
 
-    if (users.remove(user)) {
+    if (!users.remove(found)) {
       logger.error(() -> "Cannot delete user, no such user in the collection.");
       throw new UserRepositoryException(USER_NOT_FOUND_IN_COLLECTION_EXCEPTION);
     }

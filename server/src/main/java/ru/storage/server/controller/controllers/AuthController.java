@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /** Authorizes user using java web token. */
-public class
-AuthController implements Controller {
+public class AuthController implements Controller {
   private final Logger logger;
   private final List<String> authCommands;
   private final Key key;
@@ -38,7 +37,6 @@ AuthController implements Controller {
       {
         add(commandMediator.LOGIN);
         add(commandMediator.REGISTER);
-        add(commandMediator.LOGOUT);
       }
     };
   }
@@ -48,30 +46,36 @@ AuthController implements Controller {
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.AuthController", request.getLocale());
     String unauthorizedAnswer = resourceBundle.getString("answers.unauthorized");
+    String alreadyAuthorizedAnswer = resourceBundle.getString("answers.alreadyAuthorized");
+
+    boolean authorized;
+
+    try {
+      authorized =
+          Jwts.parserBuilder()
+              .setSigningKey(key)
+              .build()
+              .parseClaimsJws(request.getToken())
+              .getBody()
+              .getSubject()
+              .equals(subject);
+    } catch (JwtException | IllegalArgumentException e) {
+      logger.warn(() -> "Got wrong token.", e);
+      authorized = false;
+    }
 
     if (authCommands.contains(request.getCommand())) {
+      if (authorized) {
+        logger.warn(() -> "User is already authorized.");
+        return new Response(Status.CONFLICT, alreadyAuthorizedAnswer);
+      }
+
       logger.info(() -> "Got an authentication command, skipping the token check.");
       return null;
     }
 
-    if (request.getToken().isEmpty()) {
-      logger.warn("Token was not found, user was not authenticated.");
-      return new Response(Status.UNAUTHORIZED, unauthorizedAnswer);
-    }
-
-    try {
-      if (!Jwts.parserBuilder()
-          .setSigningKey(key)
-          .build()
-          .parseClaimsJws(request.getToken())
-          .getBody()
-          .getSubject()
-          .equals(subject)) {
-        logger.warn(() -> "User was not authorized");
-        return new Response(Status.UNAUTHORIZED, unauthorizedAnswer);
-      }
-    } catch (JwtException e) {
-      logger.warn(() -> "Got wrong token", e);
+    if (!authorized) {
+      logger.warn(() -> "User was not authorized.");
       return new Response(Status.UNAUTHORIZED, unauthorizedAnswer);
     }
 

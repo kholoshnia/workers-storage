@@ -15,7 +15,7 @@ import java.sql.Statement;
 import java.util.ResourceBundle;
 
 /** Database class is used to initialize tables. */
-public final class Database extends DataSource { // TODO: Debug deleting
+public final class Database extends DataSource {
   private static final String INIT_USERS_TABLE_EXCEPTION;
   private static final String INIT_WORKERS_TABLE_EXCEPTION;
   private static final String INIT_COORDINATES_TABLE_EXCEPTION;
@@ -169,7 +169,7 @@ public final class Database extends DataSource { // TODO: Debug deleting
           + WorkerDTO.OWNER_ID_COLUMN
           + " SERIAL NOT NULL, "
           + WorkerDTO.CREATION_DATE_COLUMN
-          + " DATE NOT NULL, "
+          + " TIMESTAMP WITH TIME ZONE NOT NULL, "
           + WorkerDTO.SALARY_COLUMN
           + " REAL NOT NULL CHECK("
           + WorkerDTO.SALARY_COLUMN
@@ -177,9 +177,9 @@ public final class Database extends DataSource { // TODO: Debug deleting
           + WorkerDTO.STATUS_COLUMN
           + " VARCHAR NULL, "
           + WorkerDTO.START_DATE_COLUMN
-          + " DATE NOT NULL, "
+          + " TIMESTAMP WITH TIME ZONE NOT NULL, "
           + WorkerDTO.END_DATE_COLUMN
-          + " DATE NULL, "
+          + " TIMESTAMP WITH TIME ZONE NULL, "
           + WorkerDTO.COORDINATES_COLUMN
           + " BIGINT NULL, "
           + WorkerDTO.PERSON_COLUMN
@@ -229,7 +229,7 @@ public final class Database extends DataSource { // TODO: Debug deleting
   }
 
   /**
-   * Initializes workers table. Creates new one if not exists.
+   * Initializes users table. Creates new one if not exists.
    *
    * @throws DatabaseException - if initialization is incorrect
    */

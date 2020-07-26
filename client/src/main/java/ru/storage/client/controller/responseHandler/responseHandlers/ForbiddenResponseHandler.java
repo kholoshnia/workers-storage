@@ -2,16 +2,12 @@ package ru.storage.client.controller.responseHandler.responseHandlers;
 
 import ru.storage.client.controller.responseHandler.ResponseHandler;
 import ru.storage.client.controller.responseHandler.formatter.StringFormatter;
-import ru.storage.client.view.console.MessageMediator;
 import ru.storage.common.transfer.response.Status;
 
 public final class ForbiddenResponseHandler extends ResponseHandler {
-  private final MessageMediator messageMediator;
   private final StringFormatter stringFormatter;
 
-  public ForbiddenResponseHandler(
-      MessageMediator messageMediator, StringFormatter stringFormatter) {
-    this.messageMediator = messageMediator;
+  public ForbiddenResponseHandler(StringFormatter stringFormatter) {
     this.stringFormatter = stringFormatter;
   }
 
@@ -21,8 +17,7 @@ public final class ForbiddenResponseHandler extends ResponseHandler {
       return null;
     }
 
-    return String.format(
-            "%s:", stringFormatter.makeMagenta(status.toString()))
+    return String.format("%s:", stringFormatter.makeMagenta(status.toString()))
         + System.lineSeparator()
         + answer;
   }

@@ -6,7 +6,7 @@ import ru.storage.client.controller.argumentFormer.exceptions.CancelException;
 import ru.storage.client.controller.argumentFormer.exceptions.FormingException;
 import ru.storage.client.controller.argumentFormer.exceptions.WrongArgumentsException;
 import ru.storage.client.controller.requestBuilder.exceptions.BuildingException;
-import ru.storage.common.transfer.request.Request;
+import ru.storage.common.transfer.Request;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

@@ -22,7 +22,7 @@ import ru.storage.common.exitManager.ExitListener;
 import ru.storage.common.exitManager.ExitManager;
 import ru.storage.common.exitManager.exceptions.ExitingException;
 import ru.storage.common.serizliser.exceptions.DeserializationException;
-import ru.storage.common.transfer.request.Request;
+import ru.storage.common.transfer.Request;
 import ru.storage.common.transfer.response.Response;
 
 import java.io.InputStream;
@@ -436,7 +436,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
 
   /**
    * Parses string by words in a list of string. Words can be separated by spaces or can be
-   * surrounded by " and ' symbols. NOTE: returns null if there is no words found.
+   * surrounded by " and ' symbols. NOTE: returns empty list if there is no words found.
    *
    * @param string concrete string to parse
    * @return list of words from string

@@ -324,6 +324,14 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       preparedStatement.setLong(9, workerDTO.id);
 
       preparedStatement.execute();
+
+      if (previous.coordinatesDTO != null && workerDTO.coordinatesDTO == null) {
+        coordinatesDAO.delete(previous.coordinatesDTO);
+      }
+
+      if (previous.personDTO != null && workerDTO.personDTO == null) {
+        personDAO.delete(previous.personDTO);
+      }
     } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot update worker.", e);
       throw new DAOException(UPDATE_WORKER_EXCEPTION, e);

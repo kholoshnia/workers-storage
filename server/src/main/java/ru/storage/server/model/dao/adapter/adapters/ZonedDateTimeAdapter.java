@@ -1,7 +1,6 @@
 package ru.storage.server.model.dao.adapter.adapters;
 
 import ru.storage.server.model.dao.adapter.Adapter;
-import ru.storage.server.model.dao.adapter.exceptions.AdapterException;
 
 import java.sql.Timestamp;
 import java.time.ZoneId;
@@ -9,7 +8,7 @@ import java.time.ZonedDateTime;
 
 public final class ZonedDateTimeAdapter implements Adapter<ZonedDateTime, Timestamp> {
   @Override
-  public Timestamp to(ZonedDateTime zonedDateTime) throws AdapterException {
+  public Timestamp to(ZonedDateTime zonedDateTime) {
     if (zonedDateTime == null) {
       return null;
     }
@@ -18,7 +17,7 @@ public final class ZonedDateTimeAdapter implements Adapter<ZonedDateTime, Timest
   }
 
   @Override
-  public ZonedDateTime from(Timestamp timestamp) throws AdapterException {
+  public ZonedDateTime from(Timestamp timestamp) {
     if (timestamp == null) {
       return null;
     }

@@ -28,7 +28,7 @@ public abstract class Former extends ArgumentFormer {
    * @param input user input
    * @throws WrongArgumentsException - if specified argument is wrong
    */
-  protected final void checkArgument(String argument, String input) throws WrongArgumentsException {
+  protected void checkArgument(String argument, String input) throws WrongArgumentsException {
     if (argumentMediator.contains(argument) && input != null && !input.isEmpty()) {
       return;
     }
@@ -55,12 +55,18 @@ public abstract class Former extends ArgumentFormer {
 
     String[] words = input.split(":", 2);
 
-    if (words.length != 2) {
+    String name;
+    String value;
+
+    if (words.length == 2) {
+      name = words[0].trim();
+      value = words[1].trim();
+    } else if (words.length == 1) {
+      name = words[0].trim();
+      value = null;
+    } else {
       throw new WrongArgumentsException();
     }
-
-    String name = words[0];
-    String value = words[1];
 
     if (!argument.equals(name)) {
       throw new WrongArgumentsException();

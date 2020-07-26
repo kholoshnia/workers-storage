@@ -3,7 +3,7 @@ package ru.storage.server.app;
 import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.storage.common.transfer.request.Request;
+import ru.storage.common.transfer.Request;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.app.concurrent.ExecutorService;
@@ -44,16 +44,6 @@ public final class Server implements ServerProcessor {
   }
 
   public void start() throws ServerException {
-    /*new Thread(
-        () -> {
-          try {
-            console.process();
-          } catch (Throwable throwable) {
-            logger.fatal(() -> "Fatal view error, continuing server work.", throwable);
-          }
-        })
-    .start();*/
-
     try {
       serverConnection.process();
     } catch (SelectorException e) {

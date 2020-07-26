@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public abstract class EntryCommand extends Command {
+  protected final Locale locale;
   protected final HashGenerator hashGenerator;
   protected final Repository<User> userRepository;
   protected final Key key;
@@ -26,6 +27,7 @@ public abstract class EntryCommand extends Command {
       Repository<User> userRepository,
       Key key) {
     super(configuration, argumentMediator, arguments);
+    this.locale = locale;
     this.hashGenerator = hashGenerator;
     this.userRepository = userRepository;
     this.key = key;

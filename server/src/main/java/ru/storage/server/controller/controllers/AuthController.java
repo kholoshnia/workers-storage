@@ -7,7 +7,7 @@ import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.CommandMediator;
-import ru.storage.common.transfer.request.Request;
+import ru.storage.common.transfer.Request;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.Controller;

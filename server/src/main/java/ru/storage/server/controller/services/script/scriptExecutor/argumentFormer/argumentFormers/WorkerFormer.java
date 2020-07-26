@@ -5,26 +5,23 @@ import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.exceptions.WrongArgumentsException;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class WorkerFormer extends Former {
   private final Logger logger;
 
-  private final List<String> workerOffers;
-  private final List<String> coordinatesOffers;
-  private final List<String> personOffers;
-  private final List<String> locationOffers;
+  private final List<String> workerArguments;
+  private final List<String> coordinatesArguments;
+  private final List<String> personArguments;
+  private final List<String> locationArguments;
 
   public WorkerFormer(ArgumentMediator argumentMediator) {
     super(argumentMediator);
     logger = LogManager.getLogger(WorkerFormer.class);
-    workerOffers = initWorkerArguments();
-    coordinatesOffers = initCoordinatesArguments();
-    personOffers = initPersonArguments();
-    locationOffers = initLocationArguments();
+    workerArguments = initWorkerArguments();
+    coordinatesArguments = initCoordinatesArguments();
+    personArguments = initPersonArguments();
+    locationArguments = initLocationArguments();
   }
 
   private List<String> initWorkerArguments() {
@@ -69,20 +66,31 @@ public abstract class WorkerFormer extends Former {
 
   protected final Map<String, String> formWorker(Iterator<String> script)
       throws WrongArgumentsException {
-    Map<String, String> allArguments = readArguments(workerOffers, script);
-    logger.info(() -> "Worker arguments were formed.");
+    Map<String, String> allArguments = new HashMap<>();
 
-    Map<String, String> coordinatesArguments = readArguments(coordinatesOffers, script);
-    logger.info(() -> "Coordinates arguments were formed.");
-    allArguments.putAll(coordinatesArguments);
+    if (readArgument(argumentMediator.WORKER, script).equals(argumentMediator.INCLUDED)) {
+      allArguments.put(argumentMediator.WORKER, argumentMediator.INCLUDED);
+      allArguments.putAll(readArguments(workerArguments, script));
+      logger.info(() -> "Worker arguments were formed.");
+    }
 
-    Map<String, String> personArguments = readArguments(personOffers, script);
-    logger.info(() -> "Person arguments were formed.");
-    allArguments.putAll(personArguments);
+    if (readArgument(argumentMediator.COORDINATES, script).equals(argumentMediator.INCLUDED)) {
+      allArguments.put(argumentMediator.COORDINATES, argumentMediator.INCLUDED);
+      allArguments.putAll(readArguments(coordinatesArguments, script));
+      logger.info(() -> "Coordinates arguments were formed.");
+    }
 
-    Map<String, String> locationArguments = readArguments(locationOffers, script);
-    logger.info(() -> "Location arguments were formed.");
-    allArguments.putAll(locationArguments);
+    if (readArgument(argumentMediator.PERSON, script).equals(argumentMediator.INCLUDED)) {
+      allArguments.put(argumentMediator.PERSON, argumentMediator.INCLUDED);
+      allArguments.putAll(readArguments(personArguments, script));
+      logger.info(() -> "Person arguments were formed.");
+    }
+
+    if (readArgument(argumentMediator.LOCATION, script).equals(argumentMediator.INCLUDED)) {
+      allArguments.put(argumentMediator.LOCATION, argumentMediator.INCLUDED);
+      allArguments.putAll(readArguments(locationArguments, script));
+      logger.info(() -> "Location arguments were formed.");
+    }
 
     logger.info(() -> "All arguments were formed.");
     return allArguments;

@@ -30,9 +30,9 @@ import java.util.Locale;
  *   <li>coordinatesZ
  *   <li>personName
  *   <li>personPassportId
- *   <li>personAddress
- *   <li>personLatitude
- *   <li>personLongitude
+ *   <li>locationAddress
+ *   <li>locationLatitude
+ *   <li>locationLongitude
  * </ul>
  */
 public final class Script implements Iterable<String> {

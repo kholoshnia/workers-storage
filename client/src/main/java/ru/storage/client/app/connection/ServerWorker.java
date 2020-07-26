@@ -7,7 +7,7 @@ import ru.storage.common.exitManager.ExitListener;
 import ru.storage.common.exitManager.exceptions.ExitingException;
 import ru.storage.common.serizliser.Serializer;
 import ru.storage.common.serizliser.exceptions.DeserializationException;
-import ru.storage.common.transfer.request.Request;
+import ru.storage.common.transfer.Request;
 import ru.storage.common.transfer.response.Response;
 
 import java.io.IOException;

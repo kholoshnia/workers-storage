@@ -47,13 +47,24 @@ public abstract class Former extends ArgumentFormer {
    * Asks user whether to input next argument.
    *
    * @return true if user answer was "yes" else false if user answer was "no"
+   * @throws CancelException - if forming was canceled
    */
-  protected final boolean readArgumentQuestion(String question) {
+  protected final boolean readArgumentQuestion(String question) throws CancelException {
     String input;
 
     while (true) {
       console.write(String.format("%s [y/n]: ", question));
       input = console.readLine(null, null);
+
+      if (input == null) {
+        continue;
+      }
+
+      if (input.equals(commandMediator.EXIT)) {
+        throw new CancelException();
+      }
+
+      input = input.trim();
 
       if (input.equalsIgnoreCase("y")) {
         return true;

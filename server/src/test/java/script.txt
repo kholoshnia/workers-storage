@@ -1,20 +1,24 @@
 add
-workerSalary:1
-workerStatus:fired
-workerStartDate:2020-07-24T21:31:53.771+03:00[Europe/Moscow]
-workerEndDate:2020-07-24T21:31:53.771+03:00[Europe/Moscow]
-coordinatesX:1
-coordinatesY:1
-coordinatesZ:1
-personName:asd
-personPassportId:asdklalskdjaksdsjdfksdfjks
-personAddress:alksdalksjdlkajsdlkasddfkj
-personLatitude:1
-personLongitude:1
+    worker:included
+    workerSalary:1
+    workerStatus:fired
+    workerStartDate:2020-07-24T21:31:53.771+03:00[Europe/Moscow]
+    workerEndDate:2020-07-24T21:31:53.771+03:00[Europe/Moscow]
+    coordinates:included
+        coordinatesX:1
+        coordinatesY:1
+        coordinatesZ:1
+        person:included
+            personName:asd
+            personPassportId:asdklalskdjaksdsjdfksdfjks
+            location:included
+                locationAddress:alksdalksjdlkajsdlkasddfkj
+                locationLatitude:1
+                locationLongitude:1
 
 info
 show
-    info
+info
 help
 
 show

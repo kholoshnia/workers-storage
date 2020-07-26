@@ -1,6 +1,6 @@
 package ru.storage.server.controller.controllers;
 
-import ru.storage.common.transfer.request.Request;
+import ru.storage.common.transfer.Request;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.Controller;

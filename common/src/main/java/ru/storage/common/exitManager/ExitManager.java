@@ -18,7 +18,7 @@ public class ExitManager {
 
   public void subscribe(ExitListener listener) {
     listeners.add(listener);
-    logger.debug("A {} wasibed.", () -> listener.getClass().getSimpleName());
+    logger.debug("A {} was subscribed.", () -> listener.getClass().getSimpleName());
   }
 
   public void unsubscribe(ExitListener listener) {

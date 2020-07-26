@@ -15,7 +15,6 @@ public final class Coordinates implements Cloneable, Entity {
   private static final String WRONG_OWNER_ID_EXCEPTION;
   private static final String WRONG_X_EXCEPTION;
   private static final String WRONG_Y_EXCEPTION;
-  private static final String WRONG_Z_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Coordinates");
@@ -24,7 +23,6 @@ public final class Coordinates implements Cloneable, Entity {
     WRONG_OWNER_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongOwnerId");
     WRONG_X_EXCEPTION = resourceBundle.getString("exceptions.wrongX");
     WRONG_Y_EXCEPTION = resourceBundle.getString("exceptions.wrongY");
-    WRONG_Z_EXCEPTION = resourceBundle.getString("exceptions.wrongZ");
   }
 
   private long id;

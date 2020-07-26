@@ -214,6 +214,10 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
       preparedStatement.setLong(5, personDTO.id);
 
       preparedStatement.execute();
+
+      if (previous.locationDTO != null && personDTO.locationDTO == null) {
+        locationDAO.delete(previous.locationDTO);
+      }
     } catch (SQLException e) {
       logger.error(() -> "Cannot update person.", e);
       throw new DAOException(UPDATE_PERSON_EXCEPTION, e);

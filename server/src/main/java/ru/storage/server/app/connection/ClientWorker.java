@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.serizliser.Serializer;
 import ru.storage.common.serizliser.exceptions.DeserializationException;
-import ru.storage.common.transfer.request.Request;
+import ru.storage.common.transfer.Request;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.server.app.connection.exceptions.ServerException;
 import ru.storage.server.app.connection.selector.exceptions.SelectorException;

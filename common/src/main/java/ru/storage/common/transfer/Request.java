@@ -1,4 +1,4 @@
-package ru.storage.common.transfer.request;
+package ru.storage.common.transfer;
 
 import java.io.Serializable;
 import java.util.Locale;

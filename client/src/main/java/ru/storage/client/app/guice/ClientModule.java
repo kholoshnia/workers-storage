@@ -250,14 +250,14 @@ public final class ClientModule extends AbstractModule {
     List<ResponseHandler> responseHandlers =
         new ArrayList<ResponseHandler>() {
           {
-            add(new OkResponseHandler(messageMediator, stringFormatter));
-            add(new CreatedResponseHandler(messageMediator, stringFormatter));
-            add(new NoContentResponseHandler(messageMediator, stringFormatter));
-            add(new NotModifiedResponseHandler(messageMediator, stringFormatter));
+            add(new OkResponseHandler());
+            add(new CreatedResponseHandler(stringFormatter));
+            add(new NoContentResponseHandler(stringFormatter));
+            add(new NotModifiedResponseHandler(stringFormatter));
             add(new BadRequestResponseHandler(messageMediator, stringFormatter));
             add(new UnauthorizedResponseHandler(messageMediator, stringFormatter));
-            add(new NotFoundResponseHandler(messageMediator, stringFormatter));
-            add(new ForbiddenResponseHandler(messageMediator, stringFormatter));
+            add(new NotFoundResponseHandler(stringFormatter));
+            add(new ForbiddenResponseHandler(stringFormatter));
             add(new ConflictResponseHandler(messageMediator, stringFormatter));
             add(new InternalServerErrorResponseHandler(messageMediator, stringFormatter));
           }

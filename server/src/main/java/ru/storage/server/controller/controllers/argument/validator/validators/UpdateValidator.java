@@ -24,16 +24,20 @@ public final class UpdateValidator extends ArgumentValidator {
   private List<String> initRequiredArguments(ArgumentMediator argumentMediator) {
     return new ArrayList<String>() {
       {
+        add(argumentMediator.WORKER);
         add(argumentMediator.WORKER_ID);
         add(argumentMediator.WORKER_SALARY);
         add(argumentMediator.WORKER_STATUS);
         add(argumentMediator.WORKER_START_DATE);
         add(argumentMediator.WORKER_END_DATE);
+        add(argumentMediator.COORDINATES);
         add(argumentMediator.COORDINATES_X);
         add(argumentMediator.COORDINATES_Y);
         add(argumentMediator.COORDINATES_Z);
+        add(argumentMediator.PERSON);
         add(argumentMediator.PERSON_NAME);
         add(argumentMediator.PERSON_PASSPORT_ID);
+        add(argumentMediator.LOCATION);
         add(argumentMediator.LOCATION_ADDRESS);
         add(argumentMediator.LOCATION_LATITUDE);
         add(argumentMediator.LOCATION_LONGITUDE);

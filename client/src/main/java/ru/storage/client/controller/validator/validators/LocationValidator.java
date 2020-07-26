@@ -27,8 +27,8 @@ public final class LocationValidator implements LocaleListener {
   }
 
   public void checkLatitude(String latitudeString) throws ValidationException {
-    if (latitudeString == null) {
-      throw new ValidationException(wrongLatitudeException);
+    if (latitudeString == null || latitudeString.isEmpty()) {
+      return;
     }
 
     double latitude;
@@ -36,7 +36,7 @@ public final class LocationValidator implements LocaleListener {
     try {
       latitude = Double.parseDouble(latitudeString);
     } catch (NumberFormatException e) {
-      throw new ValidationException(wrongLatitudeException);
+      throw new ValidationException(wrongLatitudeException, e);
     }
 
     if (latitude < -85.0 || latitude > 85.0) {
@@ -45,8 +45,8 @@ public final class LocationValidator implements LocaleListener {
   }
 
   public void checkLongitude(String longitudeString) throws ValidationException {
-    if (longitudeString == null) {
-      throw new ValidationException(wrongLongitudeException);
+    if (longitudeString == null || longitudeString.isEmpty()) {
+      return;
     }
 
     double longitude;
@@ -54,7 +54,7 @@ public final class LocationValidator implements LocaleListener {
     try {
       longitude = Double.parseDouble(longitudeString);
     } catch (NumberFormatException e) {
-      throw new ValidationException(wrongLongitudeException);
+      throw new ValidationException(wrongLongitudeException, e);
     }
 
     if (longitude < -180.0 || longitude > 180.0) {

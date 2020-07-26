@@ -47,7 +47,6 @@ public final class Coordinates implements Cloneable, Entity {
     checkY(y);
     this.y = y;
 
-    checkZ(z);
     this.z = z;
   }
 
@@ -128,17 +127,8 @@ public final class Coordinates implements Cloneable, Entity {
     return z;
   }
 
-  public void setZ(Double z) throws ValidationException {
-    checkZ(z);
+  public void setZ(Double z) {
     this.z = z;
-  }
-
-  private void checkZ(Double z) throws ValidationException {
-    if (z != null && z >= -500.0 && z <= 500.0) {
-      return;
-    }
-
-    throw new ValidationException(WRONG_Z_EXCEPTION);
   }
 
   @Override

@@ -41,8 +41,12 @@ public abstract class ArgumentValidator {
    * @throws WrongValueException - in case of wrong arguments value
    */
   protected void checkValue(Map<String, String> arguments) throws WrongValueException {
-    if (!Collections.disjoint(requiredArguments, arguments.values())) {
-      throw new WrongValueException(WRONG_ARGUMENTS_VALUE_EXCEPTION);
+    Set<String> argumentNames = arguments.keySet();
+
+    for (String argumentName : argumentNames) {
+      if (!requiredArguments.contains(argumentName)) {
+        throw new WrongValueException(WRONG_ARGUMENTS_VALUE_EXCEPTION);
+      }
     }
   }
 

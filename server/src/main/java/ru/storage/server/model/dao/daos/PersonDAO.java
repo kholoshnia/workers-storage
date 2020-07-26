@@ -17,23 +17,22 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class PersonDAO implements DAO<Long, PersonDTO> {
-  private static final String CANNOT_GET_ALL_PERSON_EXCEPTION;
-  private static final String CANNOT_GET_PERSON_BY_ID_EXCEPTION;
-  private static final String CANNOT_INSERT_PERSON_EXCEPTION;
-  private static final String CANNOT_GET_GENERATED_PERSON_ID;
-  private static final String CANNOT_UPDATE_PERSON_EXCEPTION;
-  private static final String CANNOT_DELETE_PERSON_EXCEPTION;
+  private static final String GET_ALL_PERSON_EXCEPTION;
+  private static final String GET_PERSON_BY_ID_EXCEPTION;
+  private static final String INSERT_PERSON_EXCEPTION;
+  private static final String GET_GENERATED_PERSON_ID;
+  private static final String UPDATE_PERSON_EXCEPTION;
+  private static final String DELETE_PERSON_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.PersonDAO");
 
-    CANNOT_GET_ALL_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotGetAllPersons");
-    CANNOT_GET_PERSON_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.cannotGetPersonById");
-    CANNOT_INSERT_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotInsertPerson");
-    CANNOT_GET_GENERATED_PERSON_ID =
-        resourceBundle.getString("exceptions.cannotGetGeneratedPersonId");
-    CANNOT_UPDATE_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotUpdatePerson");
-    CANNOT_DELETE_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotDeletePerson");
+    GET_ALL_PERSON_EXCEPTION = resourceBundle.getString("exceptions.getAllPersons");
+    GET_PERSON_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.getPersonById");
+    INSERT_PERSON_EXCEPTION = resourceBundle.getString("exceptions.insertPerson");
+    GET_GENERATED_PERSON_ID = resourceBundle.getString("exceptions.getGeneratedPersonId");
+    UPDATE_PERSON_EXCEPTION = resourceBundle.getString("exceptions.updatePerson");
+    DELETE_PERSON_EXCEPTION = resourceBundle.getString("exceptions.deletePerson");
   }
 
   private final String SELECT_ALL = "SELECT * FROM " + PersonDTO.TABLE_NAME;
@@ -105,7 +104,7 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
       }
     } catch (SQLException e) {
       logger.error(() -> "Cannot get all persons.", e);
-      throw new DAOException(CANNOT_GET_ALL_PERSON_EXCEPTION, e);
+      throw new DAOException(GET_ALL_PERSON_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -136,7 +135,7 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
       }
     } catch (SQLException e) {
       logger.error("Cannot get person by id.", e);
-      throw new DAOException(CANNOT_GET_PERSON_BY_ID_EXCEPTION, e);
+      throw new DAOException(GET_PERSON_BY_ID_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -157,8 +156,13 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
       preparedStatement.setString(2, personDTO.name);
       preparedStatement.setString(3, personDTO.passportId);
 
-      locationDTO = locationDAO.insert(personDTO.locationDTO);
-      preparedStatement.setDouble(4, locationDTO.id);
+      if (personDTO.locationDTO != null) {
+        locationDTO = locationDAO.insert(personDTO.locationDTO);
+        preparedStatement.setDouble(4, locationDTO.id);
+      } else {
+        locationDTO = null;
+        preparedStatement.setNull(4, Types.INTEGER);
+      }
 
       preparedStatement.execute();
 
@@ -167,11 +171,11 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
         resultId = generatedKeys.getLong(1);
       } else {
         logger.error(() -> "Cannot get generated person id.");
-        throw new DAOException(CANNOT_GET_GENERATED_PERSON_ID);
+        throw new DAOException(GET_GENERATED_PERSON_ID);
       }
     } catch (SQLException e) {
       logger.error(() -> "Cannot insert person.", e);
-      throw new DAOException(CANNOT_INSERT_PERSON_EXCEPTION, e);
+      throw new DAOException(INSERT_PERSON_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -212,7 +216,7 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
       preparedStatement.execute();
     } catch (SQLException e) {
       logger.error(() -> "Cannot update person.", e);
-      throw new DAOException(CANNOT_UPDATE_PERSON_EXCEPTION, e);
+      throw new DAOException(UPDATE_PERSON_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -232,10 +236,12 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
 
       preparedStatement.execute();
 
-      locationDAO.delete(personDTO.locationDTO);
+      if (personDTO.locationDTO != null) {
+        locationDAO.delete(personDTO.locationDTO);
+      }
     } catch (SQLException e) {
       logger.error(() -> "Cannot delete person.", e);
-      throw new DAOException(CANNOT_DELETE_PERSON_EXCEPTION, e);
+      throw new DAOException(DELETE_PERSON_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }

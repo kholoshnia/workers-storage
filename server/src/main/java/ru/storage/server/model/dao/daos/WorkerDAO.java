@@ -4,6 +4,8 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
+import ru.storage.server.model.dao.adapter.Adapter;
+import ru.storage.server.model.dao.adapter.exceptions.AdapterException;
 import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.domain.dto.dtos.CoordinatesDTO;
 import ru.storage.server.model.domain.dto.dtos.PersonDTO;
@@ -14,30 +16,28 @@ import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import javax.annotation.Nonnull;
 import java.sql.*;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class WorkerDAO implements DAO<Long, WorkerDTO> {
-  private static final String CANNOT_GET_ALL_WORKER_EXCEPTION;
-  private static final String CANNOT_GET_WORKER_BY_ID_EXCEPTION;
-  private static final String CANNOT_INSERT_WORKER_EXCEPTION;
-  private static final String CANNOT_GET_GENERATED_WORKER_ID;
-  private static final String CANNOT_UPDATE_WORKER_EXCEPTION;
-  private static final String CANNOT_DELETE_WORKER_EXCEPTION;
+  private static final String GET_ALL_WORKER_EXCEPTION;
+  private static final String GET_WORKER_BY_ID_EXCEPTION;
+  private static final String INSERT_WORKER_EXCEPTION;
+  private static final String GET_GENERATED_WORKER_ID;
+  private static final String UPDATE_WORKER_EXCEPTION;
+  private static final String DELETE_WORKER_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.WorkerDAO");
 
-    CANNOT_GET_ALL_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotGetAllWorkers");
-    CANNOT_GET_WORKER_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.cannotGetWorkerById");
-    CANNOT_INSERT_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotInsertWorker");
-    CANNOT_GET_GENERATED_WORKER_ID =
-        resourceBundle.getString("exceptions.cannotGetGeneratedWorkerId");
-    CANNOT_UPDATE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotUpdateWorker");
-    CANNOT_DELETE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteWorker");
+    GET_ALL_WORKER_EXCEPTION = resourceBundle.getString("exceptions.getAllWorkers");
+    GET_WORKER_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.getWorkerById");
+    INSERT_WORKER_EXCEPTION = resourceBundle.getString("exceptions.insertWorker");
+    GET_GENERATED_WORKER_ID = resourceBundle.getString("exceptions.getGeneratedWorkerId");
+    UPDATE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.updateWorker");
+    DELETE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.deleteWorker");
   }
 
   private final String SELECT_ALL = "SELECT * FROM " + WorkerDTO.TABLE_NAME;
@@ -93,16 +93,22 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
 
   private final Logger logger;
   private final DataSource dataSource;
+  private final Adapter<Status, String> statusAdapter;
+  private final Adapter<ZonedDateTime, Timestamp> zonedDateTimeAdapter;
   private final DAO<Long, CoordinatesDTO> coordinatesDAO;
   private final DAO<Long, PersonDTO> personDAO;
 
   @Inject
   public WorkerDAO(
       DataSource dataSource,
+      Adapter<Status, String> statusAdapter,
+      Adapter<ZonedDateTime, Timestamp> zonedDateTimeAdapter,
       DAO<Long, CoordinatesDTO> coordinatesDAO,
       DAO<Long, PersonDTO> personDAO) {
     logger = LogManager.getLogger(WorkerDAO.class);
     this.dataSource = dataSource;
+    this.statusAdapter = statusAdapter;
+    this.zonedDateTimeAdapter = zonedDateTimeAdapter;
     this.coordinatesDAO = coordinatesDAO;
     this.personDAO = personDAO;
   }
@@ -120,23 +126,14 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
         long id = resultSet.getLong(WorkerDTO.ID_COLUMN);
         long ownerId = resultSet.getLong(WorkerDTO.OWNER_ID_COLUMN);
         ZonedDateTime creationDate =
-            resultSet
-                .getTimestamp(WorkerDTO.CREATION_DATE_COLUMN)
-                .toInstant()
-                .atZone(ZoneId.systemDefault());
+            zonedDateTimeAdapter.from(resultSet.getTimestamp(WorkerDTO.CREATION_DATE_COLUMN));
         Float salary = resultSet.getObject(WorkerDTO.SALARY_COLUMN, Float.class);
         Status status =
-            Status.getStatus(resultSet.getObject(WorkerDTO.STATUS_COLUMN, String.class));
+            statusAdapter.from(resultSet.getObject(WorkerDTO.STATUS_COLUMN, String.class));
         ZonedDateTime startDate =
-            resultSet
-                .getTimestamp(WorkerDTO.START_DATE_COLUMN)
-                .toInstant()
-                .atZone(ZoneId.systemDefault());
+            zonedDateTimeAdapter.from(resultSet.getTimestamp(WorkerDTO.START_DATE_COLUMN));
         ZonedDateTime endDate =
-            resultSet
-                .getTimestamp(WorkerDTO.END_DATE_COLUMN)
-                .toInstant()
-                .atZone(ZoneId.systemDefault());
+            zonedDateTimeAdapter.from(resultSet.getTimestamp(WorkerDTO.END_DATE_COLUMN));
 
         long coordinatesId = resultSet.getLong(WorkerDTO.COORDINATES_COLUMN);
         CoordinatesDTO coordinatesDTO = coordinatesDAO.getByKey(coordinatesId);
@@ -157,9 +154,9 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
                 personDTO);
         allWorkerDTOs.add(workerDTO);
       }
-    } catch (SQLException e) {
+    } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot get all workers.", e);
-      throw new DAOException(CANNOT_GET_ALL_WORKER_EXCEPTION, e);
+      throw new DAOException(GET_ALL_WORKER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -181,23 +178,14 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       while (resultSet.next()) {
         long ownerId = resultSet.getLong(WorkerDTO.OWNER_ID_COLUMN);
         ZonedDateTime creationDate =
-            resultSet
-                .getTimestamp(WorkerDTO.CREATION_DATE_COLUMN)
-                .toInstant()
-                .atZone(ZoneId.systemDefault());
+            zonedDateTimeAdapter.from(resultSet.getTimestamp(WorkerDTO.CREATION_DATE_COLUMN));
         Float salary = resultSet.getObject(WorkerDTO.SALARY_COLUMN, Float.class);
         Status status =
-            Status.getStatus(resultSet.getObject(WorkerDTO.STATUS_COLUMN, String.class));
+            statusAdapter.from(resultSet.getObject(WorkerDTO.STATUS_COLUMN, String.class));
         ZonedDateTime startDate =
-            resultSet
-                .getTimestamp(WorkerDTO.START_DATE_COLUMN)
-                .toInstant()
-                .atZone(ZoneId.systemDefault());
+            zonedDateTimeAdapter.from(resultSet.getTimestamp(WorkerDTO.START_DATE_COLUMN));
         ZonedDateTime endDate =
-            resultSet
-                .getTimestamp(WorkerDTO.END_DATE_COLUMN)
-                .toInstant()
-                .atZone(ZoneId.systemDefault());
+            zonedDateTimeAdapter.from(resultSet.getTimestamp(WorkerDTO.END_DATE_COLUMN));
 
         long coordinatesId = resultSet.getLong(WorkerDTO.COORDINATES_COLUMN);
         CoordinatesDTO coordinatesDTO = coordinatesDAO.getByKey(coordinatesId);
@@ -217,9 +205,9 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
                 coordinatesDTO,
                 personDTO);
       }
-    } catch (SQLException e) {
+    } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot get worker by id.", e);
-      throw new DAOException(CANNOT_GET_WORKER_BY_ID_EXCEPTION, e);
+      throw new DAOException(GET_WORKER_BY_ID_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -238,17 +226,27 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
 
     try {
       preparedStatement.setLong(1, workerDTO.ownerId);
-      preparedStatement.setTimestamp(2, Timestamp.from(workerDTO.creationDate.toInstant()));
+      preparedStatement.setTimestamp(2, zonedDateTimeAdapter.to(workerDTO.creationDate));
       preparedStatement.setDouble(3, workerDTO.salary);
-      preparedStatement.setString(4, workerDTO.status.toString());
-      preparedStatement.setTimestamp(5, Timestamp.from(workerDTO.startDate.toInstant()));
-      preparedStatement.setTimestamp(6, Timestamp.from(workerDTO.endDate.toInstant()));
+      preparedStatement.setString(4, statusAdapter.to(workerDTO.status));
+      preparedStatement.setTimestamp(5, zonedDateTimeAdapter.to(workerDTO.startDate));
+      preparedStatement.setTimestamp(6, zonedDateTimeAdapter.to(workerDTO.endDate));
 
-      coordinatesDTO = coordinatesDAO.insert(workerDTO.coordinatesDTO);
-      preparedStatement.setLong(7, coordinatesDTO.id);
+      if (workerDTO.coordinatesDTO != null) {
+        coordinatesDTO = coordinatesDAO.insert(workerDTO.coordinatesDTO);
+        preparedStatement.setLong(7, coordinatesDTO.id);
+      } else {
+        coordinatesDTO = null;
+        preparedStatement.setNull(7, Types.INTEGER);
+      }
 
-      personDTO = personDAO.insert(workerDTO.personDTO);
-      preparedStatement.setLong(8, personDTO.id);
+      if (workerDTO.personDTO != null) {
+        personDTO = personDAO.insert(workerDTO.personDTO);
+        preparedStatement.setLong(8, personDTO.id);
+      } else {
+        personDTO = null;
+        preparedStatement.setNull(8, Types.INTEGER);
+      }
 
       preparedStatement.execute();
 
@@ -257,11 +255,11 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
         resultId = generatedKeys.getLong(1);
       } else {
         logger.error(() -> "Cannot get generated worker id.");
-        throw new DAOException(CANNOT_GET_GENERATED_WORKER_ID);
+        throw new DAOException(GET_GENERATED_WORKER_ID);
       }
-    } catch (SQLException e) {
+    } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot insert worker.", e);
-      throw new DAOException(CANNOT_INSERT_WORKER_EXCEPTION, e);
+      throw new DAOException(INSERT_WORKER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -289,11 +287,11 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
 
     try {
       preparedStatement.setLong(1, workerDTO.ownerId);
-      preparedStatement.setTimestamp(2, Timestamp.from(workerDTO.creationDate.toInstant()));
+      preparedStatement.setTimestamp(2, zonedDateTimeAdapter.to(workerDTO.creationDate));
       preparedStatement.setDouble(3, workerDTO.salary);
-      preparedStatement.setString(4, workerDTO.status.toString());
-      preparedStatement.setTimestamp(5, Timestamp.from(workerDTO.startDate.toInstant()));
-      preparedStatement.setTimestamp(6, Timestamp.from(workerDTO.endDate.toInstant()));
+      preparedStatement.setString(4, statusAdapter.to(workerDTO.status));
+      preparedStatement.setTimestamp(5, zonedDateTimeAdapter.to(workerDTO.startDate));
+      preparedStatement.setTimestamp(6, zonedDateTimeAdapter.to(workerDTO.endDate));
 
       if (previous.coordinatesDTO == null && workerDTO.coordinatesDTO != null) {
         coordinatesDTO = coordinatesDAO.insert(workerDTO.coordinatesDTO);
@@ -326,9 +324,9 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       preparedStatement.setLong(9, workerDTO.id);
 
       preparedStatement.execute();
-    } catch (SQLException e) {
+    } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot update worker.", e);
-      throw new DAOException(CANNOT_UPDATE_WORKER_EXCEPTION, e);
+      throw new DAOException(UPDATE_WORKER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -356,11 +354,17 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
 
       preparedStatement.execute();
 
-      coordinatesDAO.delete(workerDTO.coordinatesDTO);
-      personDAO.delete(workerDTO.personDTO);
+      if (workerDTO.coordinatesDTO != null) {
+        coordinatesDAO.delete(workerDTO.coordinatesDTO);
+      }
+
+      if (workerDTO.personDTO != null) {
+        personDAO.delete(workerDTO.personDTO);
+      }
+
     } catch (SQLException e) {
       logger.error(() -> "Cannot delete worker.", e);
-      throw new DAOException(CANNOT_DELETE_WORKER_EXCEPTION, e);
+      throw new DAOException(DELETE_WORKER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }

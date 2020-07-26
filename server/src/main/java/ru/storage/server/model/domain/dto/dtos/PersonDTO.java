@@ -1,6 +1,7 @@
 package ru.storage.server.model.domain.dto.dtos;
 
 import ru.storage.server.model.domain.dto.DTO;
+import ru.storage.server.model.domain.entity.entities.worker.person.Location;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 
@@ -28,7 +29,15 @@ public final class PersonDTO implements DTO<Person> {
 
   @Override
   public Person toEntity() throws ValidationException {
-    return new Person(id, ownerId, name, passportId, locationDTO.toEntity());
+    Location location;
+
+    if (locationDTO != null) {
+      location = locationDTO.toEntity();
+    } else {
+      location = null;
+    }
+
+    return new Person(id, ownerId, name, passportId, location);
   }
 
   @Override

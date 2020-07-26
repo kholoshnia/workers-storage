@@ -40,9 +40,15 @@ import ru.storage.server.controller.services.script.scriptExecutor.argumentForme
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.FormerMediator;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.argumentFormers.*;
 import ru.storage.server.model.dao.DAO;
+import ru.storage.server.model.dao.adapter.Adapter;
+import ru.storage.server.model.dao.adapter.adapters.RoleAdapter;
+import ru.storage.server.model.dao.adapter.adapters.StatusAdapter;
+import ru.storage.server.model.dao.adapter.adapters.ZonedDateTimeAdapter;
 import ru.storage.server.model.dao.daos.*;
 import ru.storage.server.model.domain.dto.dtos.*;
+import ru.storage.server.model.domain.entity.entities.user.Role;
 import ru.storage.server.model.domain.entity.entities.user.User;
+import ru.storage.server.model.domain.entity.entities.worker.Status;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
 import ru.storage.server.model.domain.history.History;
 import ru.storage.server.model.domain.repository.Repository;
@@ -54,6 +60,8 @@ import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,6 +127,14 @@ public final class ServerModule extends AbstractModule {
     bind(ViewCommandFactory.class).in(Scopes.SINGLETON);
     bind(SpecialCommandFactory.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Command factories were configured.");
+
+    bind(RoleAdapter.class).in(Scopes.SINGLETON);
+    bind(new TypeLiteral<Adapter<Role, String>>() {}).to(RoleAdapter.class);
+    bind(StatusAdapter.class).in(Scopes.SINGLETON);
+    bind(new TypeLiteral<Adapter<Status, String>>() {}).to(StatusAdapter.class);
+    bind(ZonedDateTimeAdapter.class).in(Scopes.SINGLETON);
+    bind(new TypeLiteral<Adapter<ZonedDateTime, Timestamp>>() {}).to(ZonedDateTimeAdapter.class);
+    logger.debug(() -> "Adapters were configured.");
 
     bind(UserDAO.class).in(Scopes.SINGLETON);
     bind(new TypeLiteral<DAO<String, UserDTO>>() {}).to(UserDAO.class);

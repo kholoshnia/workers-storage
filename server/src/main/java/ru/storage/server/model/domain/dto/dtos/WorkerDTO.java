@@ -1,8 +1,10 @@
 package ru.storage.server.model.domain.dto.dtos;
 
 import ru.storage.server.model.domain.dto.DTO;
+import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.domain.entity.entities.worker.Status;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
+import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 
 import java.time.ZonedDateTime;
@@ -52,16 +54,24 @@ public final class WorkerDTO implements DTO<Worker> {
 
   @Override
   public Worker toEntity() throws ValidationException {
+    Coordinates coordinates;
+
+    if (coordinatesDTO != null) {
+      coordinates = coordinatesDTO.toEntity();
+    } else {
+      coordinates = null;
+    }
+
+    Person person;
+
+    if (personDTO != null) {
+      person = personDTO.toEntity();
+    } else {
+      person = null;
+    }
+
     return new Worker(
-        id,
-        ownerId,
-        creationDate,
-        salary,
-        status,
-        startDate,
-        endDate,
-        coordinatesDTO.toEntity(),
-        personDTO.toEntity());
+        id, ownerId, creationDate, salary, status, startDate, endDate, coordinates, person);
   }
 
   @Override

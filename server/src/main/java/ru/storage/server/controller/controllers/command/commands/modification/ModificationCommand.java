@@ -68,6 +68,11 @@ public abstract class ModificationCommand extends Command {
 
   protected final CoordinatesDTO createCoordinatesDTO(Map<String, String> arguments)
       throws ParserException {
+    if (arguments.get(argumentMediator.COORDINATES) == null
+        || !arguments.get(argumentMediator.COORDINATES).equals(argumentMediator.INCLUDED)) {
+      return null;
+    }
+
     Double x = parser.parseDouble(arguments.get(argumentMediator.COORDINATES_X));
     Double y = parser.parseDouble(arguments.get(argumentMediator.COORDINATES_Y));
     Double z = parser.parseDouble(arguments.get(argumentMediator.COORDINATES_Z));
@@ -80,6 +85,11 @@ public abstract class ModificationCommand extends Command {
 
   protected final LocationDTO createLocationDTO(Map<String, String> arguments)
       throws ParserException {
+    if (arguments.get(argumentMediator.LOCATION) == null
+        || !arguments.get(argumentMediator.LOCATION).equals(argumentMediator.INCLUDED)) {
+      return null;
+    }
+
     String address = parser.parseString(arguments.get(argumentMediator.LOCATION_ADDRESS));
     Double latitude = parser.parseDouble(arguments.get(argumentMediator.LOCATION_LONGITUDE));
     Double longitude = parser.parseDouble(arguments.get(argumentMediator.LOCATION_LATITUDE));
@@ -92,6 +102,11 @@ public abstract class ModificationCommand extends Command {
   }
 
   protected final PersonDTO createPersonDTO(Map<String, String> arguments) throws ParserException {
+    if (arguments.get(argumentMediator.PERSON) == null
+        || !arguments.get(argumentMediator.PERSON).equals(argumentMediator.INCLUDED)) {
+      return null;
+    }
+
     String name = parser.parseString(arguments.get(argumentMediator.PERSON_NAME));
     String passportId = parser.parseString(arguments.get(argumentMediator.PERSON_PASSPORT_ID));
     LocationDTO locationDTO = createLocationDTO(arguments);
@@ -113,6 +128,11 @@ public abstract class ModificationCommand extends Command {
    * @see #createPersonDTO(Map)
    */
   protected final WorkerDTO createWorkerDTO(Map<String, String> arguments) throws ParserException {
+    if (arguments.get(argumentMediator.WORKER) == null
+        || !arguments.get(argumentMediator.WORKER).equals(argumentMediator.INCLUDED)) {
+      return null;
+    }
+
     Float salary = parser.parseFloat(arguments.get(argumentMediator.WORKER_SALARY));
     Status status = parser.parseStatus(arguments.get(argumentMediator.WORKER_STATUS), locale);
     ZonedDateTime startDate =

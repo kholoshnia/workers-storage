@@ -284,7 +284,12 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
 
     if (token != null) {
       this.token = token;
-      updatePrefix();
+
+      if (login == null) {
+        prefix = "";
+      } else {
+        prefix = login;
+      }
     }
 
     String answer = null;
@@ -307,21 +312,12 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
   }
 
   /**
-   * Sets user login. Used on auth command. Login is used later to update prompt prefix.
+   * Sets login. Used on auth command. Login is used later to update prompt prefix.
    *
    * @param login new login
    */
   public void setLogin(String login) {
     this.login = login;
-  }
-
-  /** Updates prefix before the prompt using login. */
-  public void updatePrefix() {
-    if (login == null) {
-      this.prefix = "";
-    } else {
-      this.prefix = login;
-    }
   }
 
   /** Waits connection with the server. Pending request every 1 second. */

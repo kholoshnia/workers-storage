@@ -15,7 +15,7 @@ import java.sql.Statement;
 import java.util.ResourceBundle;
 
 /** Database class is used to initialize tables. */
-public final class Database extends DataSource {
+public final class Database extends DataSource { // TODO: Debug deleting
   private static final String INIT_USERS_TABLE_EXCEPTION;
   private static final String INIT_WORKERS_TABLE_EXCEPTION;
   private static final String INIT_COORDINATES_TABLE_EXCEPTION;
@@ -80,7 +80,7 @@ public final class Database extends DataSource {
           + CoordinatesDTO.Y_COLUMN
           + "<=500), "
           + CoordinatesDTO.Z_COLUMN
-          + " DOUBLE PRECISION NOT NULL CHECK("
+          + " DOUBLE PRECISION NULL CHECK("
           + CoordinatesDTO.Z_COLUMN
           + ">=-500) CHECK("
           + CoordinatesDTO.Z_COLUMN
@@ -99,7 +99,7 @@ public final class Database extends DataSource {
           + LocationDTO.ID_COLUMN
           + " SERIAL NOT NULL PRIMARY KEY, "
           + LocationDTO.OWNER_ID_COLUMN
-          + " SERIAL NOT NULL , "
+          + " SERIAL NOT NULL, "
           + LocationDTO.ADDRESS_COLUMN
           + " VARCHAR NOT NULL CHECK(LENGTH("
           + LocationDTO.ADDRESS_COLUMN
@@ -107,13 +107,13 @@ public final class Database extends DataSource {
           + LocationDTO.ADDRESS_COLUMN
           + ")<=100), "
           + LocationDTO.LATITUDE_COLUMN
-          + " DOUBLE PRECISION NOT NULL CHECK("
+          + " DOUBLE PRECISION NULL CHECK("
           + LocationDTO.LATITUDE_COLUMN
           + ">=-85) CHECK("
           + LocationDTO.LATITUDE_COLUMN
           + "<=85), "
           + LocationDTO.LONGITUDE_COLUMN
-          + " DOUBLE PRECISION NOT NULL CHECK("
+          + " DOUBLE PRECISION NULL CHECK("
           + LocationDTO.LONGITUDE_COLUMN
           + ">=-180) CHECK("
           + LocationDTO.LONGITUDE_COLUMN
@@ -146,7 +146,7 @@ public final class Database extends DataSource {
           + PersonDTO.PASSPORT_ID_COLUMN
           + ")<=40), "
           + PersonDTO.LOCATION_COLUMN
-          + " SERIAL NOT NULL, FOREIGN KEY ("
+          + " BIGINT NULL, FOREIGN KEY ("
           + PersonDTO.LOCATION_COLUMN
           + ") REFERENCES "
           + LocationDTO.TABLE_NAME
@@ -175,13 +175,13 @@ public final class Database extends DataSource {
           + WorkerDTO.SALARY_COLUMN
           + ">0), "
           + WorkerDTO.STATUS_COLUMN
-          + " VARCHAR NOT NULL, "
+          + " VARCHAR NULL, "
           + WorkerDTO.START_DATE_COLUMN
           + " DATE NOT NULL, "
           + WorkerDTO.END_DATE_COLUMN
-          + " DATE NOT NULL, "
+          + " DATE NULL, "
           + WorkerDTO.COORDINATES_COLUMN
-          + " SERIAL NOT NULL, "
+          + " BIGINT NULL, "
           + WorkerDTO.PERSON_COLUMN
           + " SERIAL NOT NULL, FOREIGN KEY ("
           + WorkerDTO.COORDINATES_COLUMN

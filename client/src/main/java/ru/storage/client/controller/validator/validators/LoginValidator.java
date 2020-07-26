@@ -19,13 +19,13 @@ public final class LoginValidator implements LocaleListener {
   }
 
   public void checkLogin(String login) throws ValidationException {
-    if (login == null || login.trim().isEmpty()) {
+    if (login == null || login.isEmpty()) {
       throw new ValidationException(wrongLoginException);
     }
   }
 
   public void checkPassword(String password) throws ValidationException {
-    if (password == null || password.trim().isEmpty()) {
+    if (password == null || password.isEmpty()) {
       throw new ValidationException(wrongPasswordException);
     }
   }

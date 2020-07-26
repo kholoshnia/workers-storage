@@ -84,6 +84,11 @@ public final class UpdateCommand extends ModificationCommand {
       return new Response(Status.BAD_REQUEST, WRONG_WORKER_FORMAT_ANSWER);
     }
 
+    if (workerDTO == null) {
+      logger.warn(() -> "Got null worker.");
+      return new Response(Status.BAD_REQUEST, WRONG_WORKER_FORMAT_ANSWER);
+    }
+
     for (Worker worker : equalIdWorkers) {
       try {
         if (worker.getOwnerId() == user.getId()) {

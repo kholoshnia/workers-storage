@@ -43,7 +43,7 @@ public final class WorkerValidator implements LocaleListener {
   }
 
   public void checkId(String idString) throws ValidationException {
-    if (idString == null) {
+    if (idString == null || idString.isEmpty()) {
       throw new ValidationException(wrongIdException);
     }
 
@@ -51,8 +51,8 @@ public final class WorkerValidator implements LocaleListener {
 
     try {
       id = Long.parseLong(idString);
-    } catch (NumberFormatException exception) {
-      throw new ValidationException(wrongIdException);
+    } catch (NumberFormatException e) {
+      throw new ValidationException(wrongIdException, e);
     }
 
     if (id < 0) {
@@ -61,7 +61,7 @@ public final class WorkerValidator implements LocaleListener {
   }
 
   public void checkSalary(String salaryString) throws ValidationException {
-    if (salaryString == null) {
+    if (salaryString == null || salaryString.isEmpty()) {
       throw new ValidationException(wrongSalaryException);
     }
 
@@ -70,7 +70,7 @@ public final class WorkerValidator implements LocaleListener {
     try {
       salary = Float.parseFloat(salaryString);
     } catch (NumberFormatException e) {
-      throw new ValidationException(wrongSalaryException);
+      throw new ValidationException(wrongSalaryException, e);
     }
 
     if (salary <= 0) {
@@ -79,32 +79,36 @@ public final class WorkerValidator implements LocaleListener {
   }
 
   public void checkStatus(String statusString) throws ValidationException {
+    if (statusString == null || statusString.isEmpty()) {
+      return;
+    }
+
     if (!statusMap.contains(statusString)) {
       throw new ValidationException(wrongStatusException);
     }
   }
 
+  public void checkEndDate(String endDateString) throws ValidationException {
+    if (endDateString == null || endDateString.isEmpty()) {
+      return;
+    }
+
+    try {
+      LocalDateTime.parse(endDateString, DateTimeFormatter.ISO_DATE_TIME);
+    } catch (DateTimeParseException e) {
+      throw new ValidationException(wrongEndDateException, e);
+    }
+  }
+
   public void checkStartDate(String startDateString) throws ValidationException {
-    if (startDateString == null) {
+    if (startDateString == null || startDateString.isEmpty()) {
       throw new ValidationException(wrongStartDateException);
     }
 
     try {
       ZonedDateTime.parse(startDateString, DateTimeFormatter.ISO_DATE_TIME);
     } catch (DateTimeParseException e) {
-      throw new ValidationException(wrongStartDateException);
-    }
-  }
-
-  public void checkEndDate(String endDateString) throws ValidationException {
-    if (endDateString == null) {
-      throw new ValidationException(wrongEndDateException);
-    }
-
-    try {
-      LocalDateTime.parse(endDateString, DateTimeFormatter.ISO_DATE_TIME);
-    } catch (DateTimeParseException e) {
-      throw new ValidationException(wrongEndDateException);
+      throw new ValidationException(wrongStartDateException, e);
     }
   }
 }

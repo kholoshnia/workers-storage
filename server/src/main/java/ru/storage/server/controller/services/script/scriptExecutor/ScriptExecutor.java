@@ -130,7 +130,7 @@ public final class ScriptExecutor {
         command =
             commandFactory.createCommand(
                 commandName, allArguments, script.getLocale(), script.getUser().getLogin());
-      } catch (CommandFactoryException exception) {
+      } catch (CommandFactoryException e) {
         return new Response(Status.INTERNAL_SERVER_ERROR, COMMAND_CREATION_ERROR_ANSWER);
       }
 

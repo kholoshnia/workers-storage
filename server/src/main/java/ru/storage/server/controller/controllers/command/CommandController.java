@@ -78,7 +78,7 @@ public final class CommandController implements Controller {
               request.getArguments(),
               request.getLocale(),
               request.getLogin());
-    } catch (CommandFactoryException exception) {
+    } catch (CommandFactoryException e) {
       return new Response(Status.INTERNAL_SERVER_ERROR, COMMAND_CREATION_ERROR_ANSWER);
     }
 

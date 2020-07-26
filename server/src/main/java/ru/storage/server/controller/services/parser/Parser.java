@@ -14,6 +14,22 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class Parser {
+  private static final String PARSE_LONG_EXCEPTION;
+  private static final String PARSE_FLOAT_EXCEPTION;
+  private static final String PARSE_DOUBLE_EXCEPTION;
+  private static final String PARSE_STATUS_EXCEPTION;
+  private static final String PARSE_ZONED_DATE_TIME_EXCEPTION;
+
+  static {
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Parser");
+
+    PARSE_LONG_EXCEPTION = resourceBundle.getString("exceptions.parseLong");
+    PARSE_FLOAT_EXCEPTION = resourceBundle.getString("exceptions.parseFloat");
+    PARSE_DOUBLE_EXCEPTION = resourceBundle.getString("exceptions.parseDouble");
+    PARSE_STATUS_EXCEPTION = resourceBundle.getString("exceptions.parseStatus");
+    PARSE_ZONED_DATE_TIME_EXCEPTION = resourceBundle.getString("exceptions.parseZonedDateTime");
+  }
+
   private final Logger logger;
 
   public Parser() {
@@ -21,7 +37,7 @@ public final class Parser {
   }
 
   public Long parseLong(String longString) throws ParserException {
-    if (longString == null) {
+    if (longString == null || longString.isEmpty()) {
       logger.info(() -> "Got null long.");
       return null;
     }
@@ -35,14 +51,14 @@ public final class Parser {
           "Exception was caught during parsing long string: \"{}\".",
           (Supplier<?>) () -> longString,
           e);
-      throw new ParserException(e);
+      throw new ParserException(PARSE_LONG_EXCEPTION, e);
     }
 
     return result;
   }
 
   public Float parseFloat(String floatString) throws ParserException {
-    if (floatString == null) {
+    if (floatString == null || floatString.isEmpty()) {
       logger.info(() -> "Got null float.");
       return null;
     }
@@ -56,14 +72,14 @@ public final class Parser {
           "Exception was caught during parsing float string: \"{}\".",
           (Supplier<?>) () -> floatString,
           e);
-      throw new ParserException(e);
+      throw new ParserException(PARSE_FLOAT_EXCEPTION, e);
     }
 
     return result;
   }
 
   public Double parseDouble(String doubleString) throws ParserException {
-    if (doubleString == null) {
+    if (doubleString == null || doubleString.isEmpty()) {
       logger.info(() -> "Got null double.");
       return null;
     }
@@ -77,14 +93,14 @@ public final class Parser {
           "Exception was caught during parsing double string: \"{}\".",
           (Supplier<?>) () -> doubleString,
           e);
-      throw new ParserException(e);
+      throw new ParserException(PARSE_DOUBLE_EXCEPTION, e);
     }
 
     return result;
   }
 
   public String parseString(String string) {
-    if (string == null || string.trim().isEmpty()) {
+    if (string == null || string.isEmpty()) {
       return null;
     }
 
@@ -92,9 +108,9 @@ public final class Parser {
   }
 
   public Status parseStatus(String statusString, Locale locale) throws ParserException {
-    if (statusString == null) {
+    if (statusString == null || statusString.isEmpty()) {
       logger.info(() -> "Got null status.");
-      throw new ParserException();
+      return null;
     }
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.StatusFormat", locale);
@@ -111,25 +127,25 @@ public final class Parser {
     }
 
     logger.info("Got wrong status: {}.", () -> statusString);
-    throw new ParserException();
+    throw new ParserException(PARSE_STATUS_EXCEPTION);
   }
 
-  public ZonedDateTime parseLocalDateTime(String localDateTimeString) throws ParserException {
-    if (localDateTimeString == null) {
-      logger.info(() -> "Got null local date time.");
+  public ZonedDateTime parseLocalDateTime(String zonedDateTimeString) throws ParserException {
+    if (zonedDateTimeString == null || zonedDateTimeString.isEmpty()) {
+      logger.info(() -> "Got null zoned date time.");
       return null;
     }
 
     ZonedDateTime result;
 
     try {
-      result = ZonedDateTime.parse(localDateTimeString, DateTimeFormatter.ISO_DATE_TIME);
+      result = ZonedDateTime.parse(zonedDateTimeString, DateTimeFormatter.ISO_DATE_TIME);
     } catch (DateTimeParseException e) {
       logger.info(
-          "Exception was caught during parsing local date time string: \"{}\".",
-          (Supplier<?>) () -> localDateTimeString,
+          "Exception was caught during parsing zoned date time string: \"{}\".",
+          (Supplier<?>) () -> zonedDateTimeString,
           e);
-      throw new ParserException(e);
+      throw new ParserException(PARSE_ZONED_DATE_TIME_EXCEPTION, e);
     }
 
     return result;

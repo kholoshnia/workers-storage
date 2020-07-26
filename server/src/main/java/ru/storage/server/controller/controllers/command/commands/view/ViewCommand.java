@@ -5,52 +5,61 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.server.controller.controllers.command.Command;
-import ru.storage.server.controller.services.format.currency.CurrencyFormat;
+import ru.storage.server.controller.services.format.date.DateFormat;
+import ru.storage.server.controller.services.format.number.NumberFormat;
 import ru.storage.server.controller.services.format.status.StatusFormat;
+import ru.storage.server.model.domain.entity.entities.worker.Coordinates;
 import ru.storage.server.model.domain.entity.entities.worker.Worker;
+import ru.storage.server.model.domain.entity.entities.worker.person.Location;
+import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.domain.repository.repositories.workerRepository.WorkerRepository;
 
-import java.text.NumberFormat;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 public abstract class ViewCommand extends Command {
+  private static final String WORKER_PREFIX_PATTERN = "%s:";
+  private static final String COORDINATES_PREFIX_PATTERN = "\t%s:";
+  private static final String PERSON_PREFIX_PATTERN = "\t\t%s:";
+  private static final String LOCATION_PREFIX_PATTERN = "\t\t\t%s:";
+  private static final String WORKER_PATTERN = "\t%s: %s";
+  private static final String COORDINATES_PATTERN = "\t\t%s: %s";
+  private static final String PERSON_PATTERN = "\t\t\t%s: %s";
+  private static final String LOCATION_PATTERN = "\t\t\t\t%s: %s";
+
   protected final Locale locale;
   protected final WorkerRepository workerRepository;
-  protected final DateTimeFormatter dateFormat;
+  protected final DateFormat dateFormat;
   protected final NumberFormat numberFormat;
   protected final StatusFormat statusFormat;
-  protected final CurrencyFormat currencyFormat;
+  protected final NumberFormat currencyFormat;
 
-  private final String WORKER_PREFIX;
-  private final String WORKER_ID_PREFIX;
-  private final String WORKER_OWNER_ID_PREFIX;
-  private final String WORKER_CREATION_DATE_PREFIX;
-  private final String WORKER_SALARY_PREFIX;
-  private final String WORKER_STATUS_PREFIX;
-  private final String WORKER_START_DATE_PREFIX;
-  private final String WORKER_END_DATE_PREFIX;
-  private final String COORDINATES_PREFIX;
-  private final String COORDINATES_OWNER_ID_PREFIX;
-  private final String COORDINATES_ID_PREFIX;
-  private final String COORDINATES_X_PREFIX;
-  private final String COORDINATES_Y_PREFIX;
-  private final String COORDINATES_Z_PREFIX;
-  private final String PERSON_PREFIX;
-  private final String PERSON_ID_PREFIX;
-  private final String PERSON_OWNER_ID_PREFIX;
-  private final String PERSON_NAME_PREFIX;
-  private final String PERSON_PASSWORD_ID_PREFIX;
-  private final String LOCATION_PREFIX;
-  private final String LOCATION_ID_PREFIX;
-  private final String LOCATION_OWNER_ID_PREFIX;
-  private final String LOCATION_ADDRESS_PREFIX;
-  private final String LOCATION_LATITUDE_PREFIX;
-  private final String LOCATION_LONGITUDE_PREFIX;
+  protected final String WORKER_PREFIX;
+  protected final String WORKER_ID_PREFIX;
+  protected final String WORKER_OWNER_ID_PREFIX;
+  protected final String WORKER_CREATION_DATE_PREFIX;
+  protected final String WORKER_SALARY_PREFIX;
+  protected final String WORKER_STATUS_PREFIX;
+  protected final String WORKER_START_DATE_PREFIX;
+  protected final String WORKER_END_DATE_PREFIX;
+  protected final String COORDINATES_PREFIX;
+  protected final String COORDINATES_OWNER_ID_PREFIX;
+  protected final String COORDINATES_ID_PREFIX;
+  protected final String COORDINATES_X_PREFIX;
+  protected final String COORDINATES_Y_PREFIX;
+  protected final String COORDINATES_Z_PREFIX;
+  protected final String PERSON_PREFIX;
+  protected final String PERSON_ID_PREFIX;
+  protected final String PERSON_OWNER_ID_PREFIX;
+  protected final String PERSON_NAME_PREFIX;
+  protected final String PERSON_PASSWORD_ID_PREFIX;
+  protected final String LOCATION_PREFIX;
+  protected final String LOCATION_ID_PREFIX;
+  protected final String LOCATION_OWNER_ID_PREFIX;
+  protected final String LOCATION_ADDRESS_PREFIX;
+  protected final String LOCATION_LATITUDE_PREFIX;
+  protected final String LOCATION_LONGITUDE_PREFIX;
 
   private final Logger logger;
 
@@ -65,12 +74,9 @@ public abstract class ViewCommand extends Command {
     this.locale = locale;
     this.workerRepository = workerRepository;
     numberFormat = NumberFormat.getNumberInstance(locale);
-    dateFormat =
-        DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)
-            .withLocale(locale)
-            .withZone(ZoneId.systemDefault());
+    dateFormat = DateFormat.getDateInstance(locale);
     statusFormat = StatusFormat.getStatusInstance(locale);
-    currencyFormat = CurrencyFormat.getCurrencyInstance(locale);
+    currencyFormat = NumberFormat.getCurrencyInstance(locale);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ViewCommand", locale);
 
@@ -102,96 +108,166 @@ public abstract class ViewCommand extends Command {
   }
 
   protected final void appendWorker(StringBuilder stringBuilder, Worker worker) {
+    if (worker == null) {
+      return;
+    }
+
     stringBuilder
-        .append(String.format("%s: ", WORKER_PREFIX))
+        .append(String.format(WORKER_PREFIX_PATTERN, WORKER_PREFIX))
         .append(System.lineSeparator())
-        .append(String.format("\t%s: %d", WORKER_ID_PREFIX, worker.getId()))
+        .append(String.format(WORKER_PATTERN, WORKER_ID_PREFIX, worker.getId()))
         .append(System.lineSeparator())
-        .append(String.format("\t%s: %d", WORKER_OWNER_ID_PREFIX, worker.getOwnerId()))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t%s: %s",
-                WORKER_CREATION_DATE_PREFIX, dateFormat.format(worker.getCreationDate())))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t%s: %s", WORKER_SALARY_PREFIX, currencyFormat.format(worker.getSalary())))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t%s: %s", WORKER_STATUS_PREFIX, statusFormat.format(worker.getStatus())))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t%s: %s", WORKER_START_DATE_PREFIX, dateFormat.format(worker.getStartDate())))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t%s: %s", WORKER_END_DATE_PREFIX, dateFormat.format(worker.getEndDate())))
-        .append(System.lineSeparator())
-        .append(String.format("\t%s: ", COORDINATES_PREFIX))
-        .append(System.lineSeparator())
-        .append(String.format("\t\t%s: %d", COORDINATES_ID_PREFIX, worker.getCoordinates().getId()))
-        .append(System.lineSeparator())
-        .append(String.format("\t\t%s: %d", COORDINATES_OWNER_ID_PREFIX, worker.getOwnerId()))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t\t%s: %s",
-                COORDINATES_X_PREFIX, numberFormat.format(worker.getCoordinates().getX())))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t\t%s: %s",
-                COORDINATES_Y_PREFIX, numberFormat.format(worker.getCoordinates().getY())))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t\t%s: %s",
-                COORDINATES_Z_PREFIX, numberFormat.format(worker.getCoordinates().getZ())))
-        .append(System.lineSeparator())
-        .append(String.format("\t\t%s: ", PERSON_PREFIX))
-        .append(System.lineSeparator())
-        .append(String.format("\t\t\t%s: %d", PERSON_ID_PREFIX, worker.getPerson().getId()))
-        .append(System.lineSeparator())
-        .append(
-            String.format("\t\t\t%s: %d", PERSON_OWNER_ID_PREFIX, worker.getPerson().getOwnerId()))
-        .append(System.lineSeparator())
-        .append(String.format("\t\t\t%s: %s", PERSON_NAME_PREFIX, worker.getPerson().getName()))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t\t\t%s: %s", PERSON_PASSWORD_ID_PREFIX, worker.getPerson().getPassportId()))
-        .append(System.lineSeparator())
-        .append(String.format("\t\t\t%s: ", LOCATION_PREFIX))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t\t\t\t%s: %d", LOCATION_ID_PREFIX, worker.getPerson().getLocation().getId()))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t\t\t\t%s: %d",
-                LOCATION_OWNER_ID_PREFIX, worker.getPerson().getLocation().getOwnerId()))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t\t\t\t%s: %s",
-                LOCATION_ADDRESS_PREFIX, worker.getPerson().getLocation().getAddress()))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t\t\t\t%s: %s",
-                LOCATION_LATITUDE_PREFIX,
-                numberFormat.format(worker.getPerson().getLocation().getLatitude())))
-        .append(System.lineSeparator())
-        .append(
-            String.format(
-                "\t\t\t\t%s: %s",
-                LOCATION_LONGITUDE_PREFIX,
-                numberFormat.format(worker.getPerson().getLocation().getLongitude())));
+        .append(String.format(WORKER_PATTERN, WORKER_OWNER_ID_PREFIX, worker.getOwnerId()))
+        .append(System.lineSeparator());
+
+    if (worker.getCreationDate() != null) {
+      stringBuilder
+          .append(
+              String.format(
+                  WORKER_PATTERN,
+                  WORKER_CREATION_DATE_PREFIX,
+                  dateFormat.format(worker.getCreationDate())))
+          .append(System.lineSeparator());
+    }
+
+    if (worker.getSalary() != null) {
+      stringBuilder
+          .append(
+              String.format(
+                  WORKER_PATTERN, WORKER_SALARY_PREFIX, currencyFormat.format(worker.getSalary())))
+          .append(System.lineSeparator());
+    }
+
+    if (worker.getStatus() != null) {
+      stringBuilder
+          .append(
+              String.format(
+                  WORKER_PATTERN, WORKER_STATUS_PREFIX, statusFormat.format(worker.getStatus())))
+          .append(System.lineSeparator());
+    }
+
+    if (worker.getStartDate() != null) {
+      stringBuilder
+          .append(
+              String.format(
+                  WORKER_PATTERN,
+                  WORKER_START_DATE_PREFIX,
+                  dateFormat.format(worker.getStartDate())))
+          .append(System.lineSeparator());
+    }
+
+    if (worker.getEndDate() != null) {
+      stringBuilder
+          .append(
+              String.format(
+                  WORKER_PATTERN, WORKER_END_DATE_PREFIX, dateFormat.format(worker.getEndDate())))
+          .append(System.lineSeparator());
+    }
+
+    appendCoordinates(stringBuilder, worker.getCoordinates());
+    appendPerson(stringBuilder, worker.getPerson());
 
     logger.info(() -> "Worker was appended.");
+  }
+
+  protected final void appendCoordinates(StringBuilder stringBuilder, Coordinates coordinates) {
+    if (coordinates == null) {
+      return;
+    }
+
+    stringBuilder
+        .append(String.format(COORDINATES_PREFIX_PATTERN, COORDINATES_PREFIX))
+        .append(System.lineSeparator())
+        .append(String.format(COORDINATES_PATTERN, COORDINATES_ID_PREFIX, coordinates.getId()))
+        .append(System.lineSeparator())
+        .append(
+            String.format(
+                COORDINATES_PATTERN, COORDINATES_OWNER_ID_PREFIX, coordinates.getOwnerId()))
+        .append(System.lineSeparator());
+
+    if (coordinates.getX() != null) {
+      stringBuilder
+          .append(String.format(COORDINATES_PATTERN, COORDINATES_X_PREFIX, coordinates.getX()))
+          .append(System.lineSeparator());
+    }
+
+    if (coordinates.getY() != null) {
+      stringBuilder
+          .append(String.format(COORDINATES_PATTERN, COORDINATES_Y_PREFIX, coordinates.getY()))
+          .append(System.lineSeparator());
+    }
+
+    if (coordinates.getZ() != null) {
+      stringBuilder
+          .append(String.format(COORDINATES_PATTERN, COORDINATES_Z_PREFIX, coordinates.getZ()))
+          .append(System.lineSeparator());
+    }
+
+    logger.info(() -> "Coordinates was appended.");
+  }
+
+  protected final void appendPerson(StringBuilder stringBuilder, Person person) {
+    if (person == null) {
+      return;
+    }
+
+    stringBuilder
+        .append(String.format(PERSON_PREFIX_PATTERN, PERSON_PREFIX))
+        .append(System.lineSeparator())
+        .append(String.format(PERSON_PATTERN, PERSON_ID_PREFIX, person.getId()))
+        .append(System.lineSeparator())
+        .append(String.format(PERSON_PATTERN, PERSON_OWNER_ID_PREFIX, person.getOwnerId()))
+        .append(System.lineSeparator());
+
+    if (person.getName() != null) {
+      stringBuilder
+          .append(String.format(PERSON_PATTERN, PERSON_NAME_PREFIX, person.getName()))
+          .append(System.lineSeparator());
+    }
+
+    if (person.getPassportId() != null) {
+      stringBuilder
+          .append(String.format(PERSON_PATTERN, PERSON_PASSWORD_ID_PREFIX, person.getPassportId()))
+          .append(System.lineSeparator());
+    }
+
+    appendLocation(stringBuilder, person.getLocation());
+
+    logger.info(() -> "Person was appended.");
+  }
+
+  protected final void appendLocation(StringBuilder stringBuilder, Location location) {
+    if (location == null) {
+      return;
+    }
+
+    stringBuilder
+        .append(String.format(LOCATION_PREFIX_PATTERN, LOCATION_PREFIX))
+        .append(System.lineSeparator())
+        .append(String.format(LOCATION_PATTERN, LOCATION_ID_PREFIX, location.getId()))
+        .append(System.lineSeparator())
+        .append(String.format(LOCATION_PATTERN, LOCATION_OWNER_ID_PREFIX, location.getOwnerId()))
+        .append(System.lineSeparator());
+
+    if (location.getAddress() != null) {
+      stringBuilder
+          .append(String.format(LOCATION_PATTERN, LOCATION_ADDRESS_PREFIX, location.getAddress()))
+          .append(System.lineSeparator());
+    }
+
+    if (location.getLatitude() != null) {
+      stringBuilder
+          .append(String.format(LOCATION_PATTERN, LOCATION_LATITUDE_PREFIX, location.getLatitude()))
+          .append(System.lineSeparator());
+    }
+
+    if (location.getLongitude() != null) {
+      stringBuilder
+          .append(
+              String.format(LOCATION_PATTERN, LOCATION_LONGITUDE_PREFIX, location.getLongitude()))
+          .append(System.lineSeparator());
+    }
+
+    logger.info(() -> "Location was appended.");
   }
 }

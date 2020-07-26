@@ -6,7 +6,7 @@ import java.util.Locale;
 
 public abstract class StatusFormat {
   public static StatusFormat getStatusInstance(Locale locale) {
-    return new StatusLocaleFormat(locale);
+    return new StatusFormatter(locale);
   }
 
   public abstract String format(Status value);

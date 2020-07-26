@@ -1,5 +1,6 @@
 package ru.storage.server.model.domain.entity.entities.worker.person;
 
+import ru.storage.server.model.domain.dto.dtos.LocationDTO;
 import ru.storage.server.model.domain.dto.dtos.PersonDTO;
 import ru.storage.server.model.domain.entity.Entity;
 import ru.storage.server.model.domain.entity.exceptions.ValidationException;
@@ -15,7 +16,6 @@ public final class Person implements Cloneable, Entity {
   private static final String WRONG_OWNER_ID_EXCEPTION;
   private static final String WRONG_NAME_EXCEPTION;
   private static final String WRONG_PASSPORT_ID_EXCEPTION;
-  private static final String WRONG_LOCATION_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Person");
@@ -24,7 +24,6 @@ public final class Person implements Cloneable, Entity {
     WRONG_OWNER_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongOwnerId");
     WRONG_NAME_EXCEPTION = resourceBundle.getString("exceptions.wrongName");
     WRONG_PASSPORT_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongPassportId");
-    WRONG_LOCATION_EXCEPTION = resourceBundle.getString("exceptions.wrongLocation");
   }
 
   private long id;
@@ -47,13 +46,20 @@ public final class Person implements Cloneable, Entity {
     checkPassportId(passportId);
     this.passportId = passportId;
 
-    checkLocation(location);
     this.location = location;
   }
 
   @Override
   public PersonDTO toDTO() {
-    return new PersonDTO(id, ownerId, name, passportId, location.toDTO());
+    LocationDTO locationDTO;
+
+    if (location != null) {
+      locationDTO = location.toDTO();
+    } else {
+      locationDTO = null;
+    }
+
+    return new PersonDTO(id, ownerId, name, passportId, locationDTO);
   }
 
   public final long getId() {
@@ -129,17 +135,8 @@ public final class Person implements Cloneable, Entity {
     return location;
   }
 
-  public void setLocation(Location location) throws ValidationException {
-    checkLocation(location);
+  public void setLocation(Location location) {
     this.location = location;
-  }
-
-  private void checkLocation(Location location) throws ValidationException {
-    if (location != null) {
-      return;
-    }
-
-    throw new ValidationException(WRONG_LOCATION_EXCEPTION);
   }
 
   @Override

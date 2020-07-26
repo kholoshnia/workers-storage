@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /** Authorizes user using java web token. */
-public class AuthController implements Controller {
+public class
+AuthController implements Controller {
   private final Logger logger;
   private final List<String> authCommands;
   private final Key key;

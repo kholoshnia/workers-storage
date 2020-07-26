@@ -1,11 +1,13 @@
 package ru.storage.server.model.domain.entity.entities.user;
 
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
+
 public enum Role {
   ADMIN,
   USER,
   UNAUTHORIZED;
 
-  public static Role getRole(String roleString) {
+  public static Role getRole(String roleString) throws ValidationException {
     if (roleString == null) {
       return null;
     }
@@ -13,11 +15,11 @@ public enum Role {
     Role[] roles = values();
 
     for (Role role : roles) {
-      if (role.toString().equals(roleString)) {
+      if (role.name().equals(roleString)) {
         return role;
       }
     }
 
-    return null;
+    throw new ValidationException();
   }
 }

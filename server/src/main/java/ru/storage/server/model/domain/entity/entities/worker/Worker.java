@@ -1,5 +1,7 @@
 package ru.storage.server.model.domain.entity.entities.worker;
 
+import ru.storage.server.model.domain.dto.dtos.CoordinatesDTO;
+import ru.storage.server.model.domain.dto.dtos.PersonDTO;
 import ru.storage.server.model.domain.dto.dtos.WorkerDTO;
 import ru.storage.server.model.domain.entity.Entity;
 import ru.storage.server.model.domain.entity.entities.worker.person.Person;
@@ -17,10 +19,7 @@ public final class Worker implements Cloneable, Entity {
   private static final String WRONG_OWNER_ID_EXCEPTION;
   private static final String WRONG_CREATION_DATE_EXCEPTION;
   private static final String WRONG_SALARY_EXCEPTION;
-  private static final String WRONG_STATUS_EXCEPTION;
   private static final String WRONG_START_DATE_EXCEPTION;
-  private static final String WRONG_END_DATE_EXCEPTION;
-  private static final String WRONG_COORDINATES_EXCEPTION;
   private static final String WRONG_PERSON_EXCEPTION;
 
   static {
@@ -30,10 +29,7 @@ public final class Worker implements Cloneable, Entity {
     WRONG_OWNER_ID_EXCEPTION = resourceBundle.getString("exceptions.wrongOwnerId");
     WRONG_CREATION_DATE_EXCEPTION = resourceBundle.getString("exceptions.wrongCreationDate");
     WRONG_SALARY_EXCEPTION = resourceBundle.getString("exceptions.wrongSalary");
-    WRONG_STATUS_EXCEPTION = resourceBundle.getString("exceptions.wrongStatus");
     WRONG_START_DATE_EXCEPTION = resourceBundle.getString("exceptions.wrongStartDate");
-    WRONG_END_DATE_EXCEPTION = resourceBundle.getString("exceptions.wrongEndDate");
-    WRONG_COORDINATES_EXCEPTION = resourceBundle.getString("exceptions.wrongCoordinates");
     WRONG_PERSON_EXCEPTION = resourceBundle.getString("exceptions.wrongPerson");
   }
 
@@ -70,16 +66,13 @@ public final class Worker implements Cloneable, Entity {
     checkSalary(salary);
     this.salary = salary;
 
-    checkStatus(status);
     this.status = status;
 
     checkStartDate(startDate);
     this.startDate = startDate;
 
-    checkEndDate(endDate);
     this.endDate = endDate;
 
-    checkCoordinates(coordinates);
     this.coordinates = coordinates;
 
     checkPerson(person);
@@ -88,16 +81,24 @@ public final class Worker implements Cloneable, Entity {
 
   @Override
   public WorkerDTO toDTO() {
+    CoordinatesDTO coordinatesDTO;
+
+    if (coordinates != null) {
+      coordinatesDTO = coordinates.toDTO();
+    } else {
+      coordinatesDTO = null;
+    }
+
+    PersonDTO personDTO;
+
+    if (person != null) {
+      personDTO = person.toDTO();
+    } else {
+      personDTO = null;
+    }
+
     return new WorkerDTO(
-        id,
-        ownerId,
-        creationDate,
-        salary,
-        status,
-        startDate,
-        endDate,
-        coordinates.toDTO(),
-        person.toDTO());
+        id, ownerId, creationDate, salary, status, startDate, endDate, coordinatesDTO, personDTO);
   }
 
   public final long getId() {
@@ -172,17 +173,8 @@ public final class Worker implements Cloneable, Entity {
     return status;
   }
 
-  public void setStatus(Status status) throws ValidationException {
-    checkStatus(status);
+  public void setStatus(Status status) {
     this.status = status;
-  }
-
-  private void checkStatus(Status status) throws ValidationException {
-    if (status != null) {
-      return;
-    }
-
-    throw new ValidationException(WRONG_STATUS_EXCEPTION);
   }
 
   public ZonedDateTime getStartDate() {
@@ -206,34 +198,16 @@ public final class Worker implements Cloneable, Entity {
     return endDate;
   }
 
-  public void setEndDate(ZonedDateTime endDate) throws ValidationException {
-    checkEndDate(endDate);
+  public void setEndDate(ZonedDateTime endDate) {
     this.endDate = endDate;
-  }
-
-  private void checkEndDate(ZonedDateTime endDate) throws ValidationException {
-    if (endDate != null) {
-      return;
-    }
-
-    throw new ValidationException(WRONG_END_DATE_EXCEPTION);
   }
 
   public Coordinates getCoordinates() {
     return coordinates;
   }
 
-  public void setCoordinates(Coordinates coordinates) throws ValidationException {
-    checkCoordinates(coordinates);
+  public void setCoordinates(Coordinates coordinates) {
     this.coordinates = coordinates;
-  }
-
-  private void checkCoordinates(Coordinates coordinates) throws ValidationException {
-    if (coordinates != null) {
-      return;
-    }
-
-    throw new ValidationException(WRONG_COORDINATES_EXCEPTION);
   }
 
   public Person getPerson() {

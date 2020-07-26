@@ -117,7 +117,7 @@ public final class Location implements Cloneable, Entity {
   }
 
   private void checkLatitude(Double latitude) throws ValidationException {
-    if (latitude != null && latitude >= -85.0 && latitude <= 85.0) {
+    if (latitude == null || latitude >= -85.0 && latitude <= 85.0) {
       return;
     }
 
@@ -134,7 +134,7 @@ public final class Location implements Cloneable, Entity {
   }
 
   private void checkLongitude(Double longitude) throws ValidationException {
-    if (longitude != null && longitude >= -180.0 && longitude <= 180.0) {
+    if (longitude == null || longitude >= -180.0 && longitude <= 180.0) {
       return;
     }
 

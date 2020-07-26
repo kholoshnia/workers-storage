@@ -21,7 +21,7 @@ public final class CoordinatesValidator implements LocaleListener {
   }
 
   public void checkX(String xString) throws ValidationException {
-    if (xString == null) {
+    if (xString == null || xString.isEmpty()) {
       throw new ValidationException(wrongXException);
     }
 
@@ -29,8 +29,8 @@ public final class CoordinatesValidator implements LocaleListener {
 
     try {
       x = Double.parseDouble(xString);
-    } catch (NumberFormatException | NullPointerException e) {
-      throw new ValidationException(wrongXException);
+    } catch (NumberFormatException e) {
+      throw new ValidationException(wrongXException, e);
     }
 
     if (x < -500.0 || x > 500.0) {
@@ -39,7 +39,7 @@ public final class CoordinatesValidator implements LocaleListener {
   }
 
   public void checkY(String yString) throws ValidationException {
-    if (yString == null) {
+    if (yString == null || yString.isEmpty()) {
       throw new ValidationException(wrongYException);
     }
 
@@ -48,7 +48,7 @@ public final class CoordinatesValidator implements LocaleListener {
     try {
       y = Double.parseDouble(yString);
     } catch (NumberFormatException e) {
-      throw new ValidationException(wrongYException);
+      throw new ValidationException(wrongYException, e);
     }
 
     if (y < -500.0 || y > 500.0) {
@@ -57,8 +57,8 @@ public final class CoordinatesValidator implements LocaleListener {
   }
 
   public void checkZ(String zString) throws ValidationException {
-    if (zString == null) {
-      throw new ValidationException(wrongZException);
+    if (zString == null || zString.isEmpty()) {
+      return;
     }
 
     double z;
@@ -66,7 +66,7 @@ public final class CoordinatesValidator implements LocaleListener {
     try {
       z = Double.parseDouble(zString);
     } catch (NumberFormatException e) {
-      throw new ValidationException(wrongZException);
+      throw new ValidationException(wrongZException, e);
     }
 
     if (z < -500.0 || z > 500.0) {

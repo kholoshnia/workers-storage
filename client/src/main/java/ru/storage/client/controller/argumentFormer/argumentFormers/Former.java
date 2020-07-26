@@ -14,9 +14,8 @@ import java.util.Map;
 
 public abstract class Former extends ArgumentFormer {
   protected final Console console;
-
+  protected final CommandMediator commandMediator;
   private final Logger logger;
-  private final CommandMediator commandMediator;
   private final Map<String, ArgumentValidator> validatorMap;
 
   public Former(
@@ -50,7 +49,7 @@ public abstract class Former extends ArgumentFormer {
    * @return true if user answer was "yes" else false if user answer was "no"
    */
   protected final boolean readArgumentQuestion(String question) {
-    String input; // TODO: Use
+    String input;
 
     while (true) {
       console.write(String.format("%s [y/n]: ", question));

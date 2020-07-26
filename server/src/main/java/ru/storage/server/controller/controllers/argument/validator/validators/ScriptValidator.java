@@ -6,7 +6,6 @@ import ru.storage.server.controller.controllers.argument.validator.ArgumentValid
 import ru.storage.server.controller.controllers.argument.validator.exceptions.WrongNumberException;
 import ru.storage.server.controller.controllers.argument.validator.exceptions.WrongValueException;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -28,10 +27,10 @@ public final class ScriptValidator extends ArgumentValidator {
 
   @Override
   protected void checkValue(Map<String, String> arguments) throws WrongValueException {
-    Set<String> keys = new HashSet<>(arguments.keySet());
+    Set<String> argumentNames = arguments.keySet();
 
-    for (String key : keys) {
-      if (!scriptLinePattern.matcher(key).matches()) {
+    for (String argumentName : argumentNames) {
+      if (!scriptLinePattern.matcher(argumentName).matches()) {
         throw new WrongValueException(WRONG_ARGUMENTS_VALUE_EXCEPTION);
       }
     }

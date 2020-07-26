@@ -4,6 +4,8 @@ import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.model.dao.DAO;
+import ru.storage.server.model.dao.adapter.Adapter;
+import ru.storage.server.model.dao.adapter.exceptions.AdapterException;
 import ru.storage.server.model.dao.exceptions.DAOException;
 import ru.storage.server.model.domain.dto.dtos.UserDTO;
 import ru.storage.server.model.domain.entity.entities.user.Role;
@@ -20,22 +22,22 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class UserDAO implements DAO<String, UserDTO> {
-  private static final String CANNOT_GET_ALL_USER_EXCEPTION;
-  private static final String CANNOT_GET_USER_BY_ID_EXCEPTION;
-  private static final String CANNOT_INSERT_USER_EXCEPTION;
-  private static final String CANNOT_GET_GENERATED_USER_ID;
-  private static final String CANNOT_UPDATE_USER_EXCEPTION;
-  private static final String CANNOT_DELETE_USER_EXCEPTION;
+  private static final String GET_ALL_USER_EXCEPTION;
+  private static final String GET_USER_BY_ID_EXCEPTION;
+  private static final String INSERT_USER_EXCEPTION;
+  private static final String GET_GENERATED_USER_ID;
+  private static final String UPDATE_USER_EXCEPTION;
+  private static final String DELETE_USER_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.UserDAO");
 
-    CANNOT_GET_ALL_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotGetAllUsers");
-    CANNOT_GET_USER_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.cannotGetUserById");
-    CANNOT_INSERT_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotInsertUser");
-    CANNOT_GET_GENERATED_USER_ID = resourceBundle.getString("exceptions.cannotGetGeneratedUserId");
-    CANNOT_UPDATE_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotUpdateUser");
-    CANNOT_DELETE_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteUser");
+    GET_ALL_USER_EXCEPTION = resourceBundle.getString("exceptions.getAllUsers");
+    GET_USER_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.getUserById");
+    INSERT_USER_EXCEPTION = resourceBundle.getString("exceptions.insertUser");
+    GET_GENERATED_USER_ID = resourceBundle.getString("exceptions.getGeneratedUserId");
+    UPDATE_USER_EXCEPTION = resourceBundle.getString("exceptions.updateUser");
+    DELETE_USER_EXCEPTION = resourceBundle.getString("exceptions.deleteUser");
   }
 
   private final String SELECT_ALL = "SELECT * FROM " + UserDTO.TABLE_NAME;
@@ -75,11 +77,13 @@ public class UserDAO implements DAO<String, UserDTO> {
 
   private final Logger logger;
   private final DataSource dataSource;
+  private final Adapter<Role, String> roleAdapter;
 
   @Inject
-  public UserDAO(DataSource dataSource) {
+  public UserDAO(DataSource dataSource, Adapter<Role, String> roleAdapter) {
     logger = LogManager.getLogger(UserDAO.class);
     this.dataSource = dataSource;
+    this.roleAdapter = roleAdapter;
   }
 
   @Override
@@ -96,14 +100,14 @@ public class UserDAO implements DAO<String, UserDTO> {
         String name = resultSet.getObject(UserDTO.NAME_COLUMN, String.class);
         String login = resultSet.getObject(UserDTO.LOGIN_COLUMN, String.class);
         String password = resultSet.getObject(UserDTO.PASSWORD_COLUMN, String.class);
-        Role role = Role.getRole(resultSet.getObject(UserDTO.ROLE_COLUMN, String.class));
+        Role role = roleAdapter.from(resultSet.getObject(UserDTO.ROLE_COLUMN, String.class));
 
         UserDTO userDTO = new UserDTO(id, name, login, password, role);
         allUserDTOs.add(userDTO);
       }
-    } catch (SQLException e) {
+    } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot get all users.", e);
-      throw new DAOException(CANNOT_GET_ALL_USER_EXCEPTION, e);
+      throw new DAOException(GET_ALL_USER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -126,13 +130,13 @@ public class UserDAO implements DAO<String, UserDTO> {
         long id = resultSet.getLong(UserDTO.ID_COLUMN);
         String name = resultSet.getObject(UserDTO.NAME_COLUMN, String.class);
         String password = resultSet.getObject(UserDTO.PASSWORD_COLUMN, String.class);
-        Role role = Role.getRole(resultSet.getObject(UserDTO.ROLE_COLUMN, String.class));
+        Role role = roleAdapter.from(resultSet.getObject(UserDTO.ROLE_COLUMN, String.class));
 
         userDTO = new UserDTO(id, name, login, password, role);
       }
-    } catch (SQLException e) {
+    } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot get user by id.", e);
-      throw new DAOException(CANNOT_GET_USER_BY_ID_EXCEPTION, e);
+      throw new DAOException(GET_USER_BY_ID_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -151,7 +155,7 @@ public class UserDAO implements DAO<String, UserDTO> {
       preparedStatement.setString(1, userDTO.name);
       preparedStatement.setString(2, userDTO.login);
       preparedStatement.setString(3, userDTO.password);
-      preparedStatement.setString(4, userDTO.role.toString());
+      preparedStatement.setString(4, roleAdapter.to(userDTO.role));
 
       preparedStatement.execute();
 
@@ -160,11 +164,11 @@ public class UserDAO implements DAO<String, UserDTO> {
         resultId = generatedKeys.getLong(1);
       } else {
         logger.error(() -> "Cannot get generated user id.");
-        throw new DAOException(CANNOT_GET_GENERATED_USER_ID);
+        throw new DAOException(GET_GENERATED_USER_ID);
       }
-    } catch (SQLException e) {
+    } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot insert user.", e);
-      throw new DAOException(CANNOT_INSERT_USER_EXCEPTION, e);
+      throw new DAOException(INSERT_USER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -182,14 +186,14 @@ public class UserDAO implements DAO<String, UserDTO> {
       preparedStatement.setString(1, userDTO.name);
       preparedStatement.setString(2, userDTO.login);
       preparedStatement.setString(3, userDTO.password);
-      preparedStatement.setString(4, userDTO.role.toString());
+      preparedStatement.setString(4, roleAdapter.to(userDTO.role));
 
       preparedStatement.setLong(6, userDTO.id);
 
       preparedStatement.execute();
-    } catch (SQLException e) {
+    } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot update user.", e);
-      throw new DAOException(CANNOT_UPDATE_USER_EXCEPTION, e);
+      throw new DAOException(UPDATE_USER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -209,7 +213,7 @@ public class UserDAO implements DAO<String, UserDTO> {
       preparedStatement.execute();
     } catch (SQLException e) {
       logger.error(() -> "Cannot delete user.", e);
-      throw new DAOException(CANNOT_DELETE_USER_EXCEPTION, e);
+      throw new DAOException(DELETE_USER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }

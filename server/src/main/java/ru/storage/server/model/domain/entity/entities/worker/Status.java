@@ -1,11 +1,13 @@
 package ru.storage.server.model.domain.entity.entities.worker;
 
+import ru.storage.server.model.domain.entity.exceptions.ValidationException;
+
 public enum Status {
   FIRED,
   HIRED,
   PROMOTION;
 
-  public static Status getStatus(String statusString) {
+  public static Status getStatus(String statusString) throws ValidationException {
     if (statusString == null) {
       return null;
     }
@@ -13,11 +15,11 @@ public enum Status {
     Status[] statuses = values();
 
     for (Status status : statuses) {
-      if (status.toString().equals(statusString)) {
+      if (status.name().equals(statusString)) {
         return status;
       }
     }
 
-    return null;
+    throw new ValidationException();
   }
 }

@@ -9,12 +9,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public final class StatusLocaleFormat extends StatusFormat {
+public final class StatusFormatter extends StatusFormat {
   private final Logger logger;
   private final Map<Status, String> statusMap;
 
-  public StatusLocaleFormat(Locale locale) {
-    logger = LogManager.getLogger(StatusLocaleFormat.class);
+  public StatusFormatter(Locale locale) {
+    logger = LogManager.getLogger(StatusFormatter.class);
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.StatusFormat", locale);
 
     statusMap =
@@ -31,9 +31,13 @@ public final class StatusLocaleFormat extends StatusFormat {
 
   @Override
   public String format(Status status) {
+    if (status == null) {
+      return null;
+    }
+
     String result = statusMap.get(status);
 
     logger.info("Got localized status: {}.", () -> result);
-    return statusMap.get(status);
+    return result;
   }
 }

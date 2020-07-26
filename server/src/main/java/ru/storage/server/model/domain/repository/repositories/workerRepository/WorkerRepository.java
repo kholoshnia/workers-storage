@@ -58,17 +58,29 @@ public final class WorkerRepository implements Repository<Worker> {
     size = workers.size();
   }
 
-  /** Returns type of the collection. */
+  /**
+   * Returns type of the collection.
+   *
+   * @return type of the collection
+   */
   public Class<?> getType() {
     return type;
   }
 
-  /** Returns initialization time of the collection. */
+  /**
+   * Returns initialization time of the collection.
+   *
+   * @return initialization time of the collection
+   */
   public ZonedDateTime getInitTime() {
     return initTime;
   }
 
-  /** Returns current size of the collection. */
+  /**
+   * Returns current size of the collection.
+   *
+   * @return current size of the collection
+   */
   public long getSize() {
     return size;
   }

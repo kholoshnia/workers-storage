@@ -22,6 +22,41 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class UserDAO implements DAO<String, UserDTO> {
+  private static final String SELECT_ALL = "SELECT * FROM " + UserDTO.TABLE_NAME;
+
+  private static final String SELECT_BY_ID = SELECT_ALL + " WHERE " + UserDTO.ID_COLUMN + " = ?";
+
+  private static final String INSERT =
+      "INSERT INTO "
+          + UserDTO.TABLE_NAME
+          + " ("
+          + UserDTO.NAME_COLUMN
+          + ", "
+          + UserDTO.LOGIN_COLUMN
+          + ", "
+          + UserDTO.PASSWORD_COLUMN
+          + ", "
+          + UserDTO.ROLE_COLUMN
+          + ") VALUES (?, ?, ?, ?)";
+
+  private static final String UPDATE =
+      "UPDATE "
+          + UserDTO.TABLE_NAME
+          + " SET "
+          + UserDTO.NAME_COLUMN
+          + " = ?, "
+          + UserDTO.LOGIN_COLUMN
+          + " = ?, "
+          + UserDTO.PASSWORD_COLUMN
+          + " = ?, "
+          + UserDTO.ROLE_COLUMN
+          + " = ?, WHERE "
+          + UserDTO.ID_COLUMN
+          + " = ?";
+
+  private static final String DELETE =
+      "DELETE FROM " + UserDTO.TABLE_NAME + " WHERE " + UserDTO.ID_COLUMN + " = ?";
+
   private static final String GET_ALL_USER_EXCEPTION;
   private static final String GET_USER_BY_ID_EXCEPTION;
   private static final String INSERT_USER_EXCEPTION;
@@ -39,41 +74,6 @@ public class UserDAO implements DAO<String, UserDTO> {
     UPDATE_USER_EXCEPTION = resourceBundle.getString("exceptions.updateUser");
     DELETE_USER_EXCEPTION = resourceBundle.getString("exceptions.deleteUser");
   }
-
-  private final String SELECT_ALL = "SELECT * FROM " + UserDTO.TABLE_NAME;
-
-  private final String SELECT_BY_ID = SELECT_ALL + " WHERE " + UserDTO.ID_COLUMN + " = ?";
-
-  private final String INSERT =
-      "INSERT INTO "
-          + UserDTO.TABLE_NAME
-          + " ("
-          + UserDTO.NAME_COLUMN
-          + ", "
-          + UserDTO.LOGIN_COLUMN
-          + ", "
-          + UserDTO.PASSWORD_COLUMN
-          + ", "
-          + UserDTO.ROLE_COLUMN
-          + ") VALUES (?, ?, ?, ?)";
-
-  private final String UPDATE =
-      "UPDATE "
-          + UserDTO.TABLE_NAME
-          + " SET "
-          + UserDTO.NAME_COLUMN
-          + " = ?, "
-          + UserDTO.LOGIN_COLUMN
-          + " = ?, "
-          + UserDTO.PASSWORD_COLUMN
-          + " = ?, "
-          + UserDTO.ROLE_COLUMN
-          + " = ?, WHERE "
-          + UserDTO.ID_COLUMN
-          + " = ?";
-
-  private final String DELETE =
-      "DELETE FROM " + UserDTO.TABLE_NAME + " WHERE " + UserDTO.ID_COLUMN + " = ?";
 
   private final Logger logger;
   private final DataSource dataSource;

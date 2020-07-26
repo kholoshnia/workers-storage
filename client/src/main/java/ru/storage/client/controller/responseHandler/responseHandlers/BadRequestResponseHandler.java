@@ -23,8 +23,7 @@ public final class BadRequestResponseHandler extends ResponseHandler {
 
     return String.format(
             "%s (%s):",
-            stringFormatter.makeRed(status.toString()),
-            messageMediator.getBadRequestMessage())
+            stringFormatter.makeRed(status.toString()), messageMediator.getBadRequestMessage())
         + System.lineSeparator()
         + answer;
   }

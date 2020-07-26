@@ -10,9 +10,9 @@ add
         coordinatesZ:1
         person:included
             personName:asd
-            personPassportId:asdklalskdjaksdsjdfksdfjks
+            personPassportId:29131092391
             location:included
-                locationAddress:alksdalksjdlkajsdlkasddfkj
+                locationAddress:asd 192 20393
                 locationLatitude:1
                 locationLongitude:1
 

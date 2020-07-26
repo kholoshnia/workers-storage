@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Script class implements {@link Iterable<String>}, contains necessary data for commands execution.
+ * Script class implements {@link Iterable}, contains necessary data for commands execution.
  *
  * <p>Script semantics:
  *

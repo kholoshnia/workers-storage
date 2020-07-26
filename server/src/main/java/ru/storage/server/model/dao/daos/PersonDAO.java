@@ -17,6 +17,41 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class PersonDAO implements DAO<Long, PersonDTO> {
+  private static final String SELECT_ALL = "SELECT * FROM " + PersonDTO.TABLE_NAME;
+
+  private static final String SELECT_BY_ID = SELECT_ALL + " WHERE " + PersonDTO.ID_COLUMN + " = ?";
+
+  private static final String INSERT =
+      "INSERT INTO "
+          + PersonDTO.TABLE_NAME
+          + " ("
+          + PersonDTO.OWNER_ID_COLUMN
+          + ", "
+          + PersonDTO.NAME_COLUMN
+          + ", "
+          + PersonDTO.PASSPORT_ID_COLUMN
+          + ", "
+          + PersonDTO.LOCATION_COLUMN
+          + ") VALUES (?, ?, ?, ?)";
+
+  private static final String UPDATE =
+      "UPDATE "
+          + PersonDTO.TABLE_NAME
+          + " SET "
+          + PersonDTO.OWNER_ID_COLUMN
+          + " = ?, "
+          + PersonDTO.NAME_COLUMN
+          + " = ?, "
+          + PersonDTO.PASSPORT_ID_COLUMN
+          + " = ?, "
+          + PersonDTO.LOCATION_COLUMN
+          + " = ? WHERE "
+          + PersonDTO.ID_COLUMN
+          + " = ?";
+
+  private static final String DELETE =
+      "DELETE FROM " + PersonDTO.TABLE_NAME + " WHERE " + PersonDTO.ID_COLUMN + " = ?";
+
   private static final String GET_ALL_PERSON_EXCEPTION;
   private static final String GET_PERSON_BY_ID_EXCEPTION;
   private static final String INSERT_PERSON_EXCEPTION;
@@ -34,41 +69,6 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
     UPDATE_PERSON_EXCEPTION = resourceBundle.getString("exceptions.updatePerson");
     DELETE_PERSON_EXCEPTION = resourceBundle.getString("exceptions.deletePerson");
   }
-
-  private final String SELECT_ALL = "SELECT * FROM " + PersonDTO.TABLE_NAME;
-
-  private final String SELECT_BY_ID = SELECT_ALL + " WHERE " + PersonDTO.ID_COLUMN + " = ?";
-
-  private final String INSERT =
-      "INSERT INTO "
-          + PersonDTO.TABLE_NAME
-          + " ("
-          + PersonDTO.OWNER_ID_COLUMN
-          + ", "
-          + PersonDTO.NAME_COLUMN
-          + ", "
-          + PersonDTO.PASSPORT_ID_COLUMN
-          + ", "
-          + PersonDTO.LOCATION_COLUMN
-          + ") VALUES (?, ?, ?, ?)";
-
-  private final String UPDATE =
-      "UPDATE "
-          + PersonDTO.TABLE_NAME
-          + " SET "
-          + PersonDTO.OWNER_ID_COLUMN
-          + " = ?, "
-          + PersonDTO.NAME_COLUMN
-          + " = ?, "
-          + PersonDTO.PASSPORT_ID_COLUMN
-          + " = ?, "
-          + PersonDTO.LOCATION_COLUMN
-          + " = ? WHERE "
-          + PersonDTO.ID_COLUMN
-          + " = ?";
-
-  private final String DELETE =
-      "DELETE FROM " + PersonDTO.TABLE_NAME + " WHERE " + PersonDTO.ID_COLUMN + " = ?";
 
   private final Logger logger;
   private final DataSource dataSource;

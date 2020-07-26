@@ -42,6 +42,7 @@ public abstract class Former extends ArgumentFormer {
    * @param argument argument name
    * @param script script to read argument from
    * @return ready argument
+   * @throws WrongArgumentsException - if specified argument is wrong
    */
   protected final String readArgument(String argument, Iterator<String> script)
       throws WrongArgumentsException {
@@ -82,8 +83,10 @@ public abstract class Former extends ArgumentFormer {
    * Reads a list of arguments. Uses null prompt and mask.
    *
    * @param arguments argument names
+   * @param script script to read arguments from
    * @return ready arguments
    * @see #readArgument(String, Iterator)
+   * @throws WrongArgumentsException - if specified argument is wrong
    */
   protected final Map<String, String> readArguments(List<String> arguments, Iterator<String> script)
       throws WrongArgumentsException {

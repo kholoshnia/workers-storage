@@ -19,6 +19,42 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class LocationDAO implements DAO<Long, LocationDTO> {
+  private static final String SELECT_ALL = "SELECT * FROM " + LocationDTO.TABLE_NAME;
+
+  private static final String SELECT_BY_ID =
+      SELECT_ALL + " WHERE " + LocationDTO.ID_COLUMN + " = ?";
+
+  private static final String INSERT =
+      "INSERT INTO "
+          + LocationDTO.TABLE_NAME
+          + " ("
+          + LocationDTO.OWNER_ID_COLUMN
+          + ", "
+          + LocationDTO.ADDRESS_COLUMN
+          + ", "
+          + LocationDTO.LATITUDE_COLUMN
+          + ", "
+          + LocationDTO.LONGITUDE_COLUMN
+          + ") VALUES (?, ?, ?, ?)";
+
+  private static final String UPDATE =
+      "UPDATE "
+          + LocationDTO.TABLE_NAME
+          + " SET "
+          + LocationDTO.OWNER_ID_COLUMN
+          + " = ?, "
+          + LocationDTO.ADDRESS_COLUMN
+          + " = ?, "
+          + LocationDTO.LATITUDE_COLUMN
+          + " = ?, "
+          + LocationDTO.LONGITUDE_COLUMN
+          + " = ? WHERE "
+          + LocationDTO.ID_COLUMN
+          + " = ?";
+
+  private static final String DELETE =
+      "DELETE FROM " + LocationDTO.TABLE_NAME + " WHERE " + LocationDTO.ID_COLUMN + " = ?";
+
   private static final String GET_ALL_LOCATION_EXCEPTION;
   private static final String GET_LOCATION_BY_ID_EXCEPTION;
   private static final String INSERT_LOCATION_EXCEPTION;
@@ -36,41 +72,6 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
     UPDATE_LOCATION_EXCEPTION = resourceBundle.getString("exceptions.updateLocation");
     DELETE_LOCATION_EXCEPTION = resourceBundle.getString("exceptions.deleteLocation");
   }
-
-  private final String SELECT_ALL = "SELECT * FROM " + LocationDTO.TABLE_NAME;
-
-  private final String SELECT_BY_ID = SELECT_ALL + " WHERE " + LocationDTO.ID_COLUMN + " = ?";
-
-  private final String INSERT =
-      "INSERT INTO "
-          + LocationDTO.TABLE_NAME
-          + " ("
-          + LocationDTO.OWNER_ID_COLUMN
-          + ", "
-          + LocationDTO.ADDRESS_COLUMN
-          + ", "
-          + LocationDTO.LATITUDE_COLUMN
-          + ", "
-          + LocationDTO.LONGITUDE_COLUMN
-          + ") VALUES (?, ?, ?, ?)";
-
-  private final String UPDATE =
-      "UPDATE "
-          + LocationDTO.TABLE_NAME
-          + " SET "
-          + LocationDTO.OWNER_ID_COLUMN
-          + " = ?, "
-          + LocationDTO.ADDRESS_COLUMN
-          + " = ?, "
-          + LocationDTO.LATITUDE_COLUMN
-          + " = ?, "
-          + LocationDTO.LONGITUDE_COLUMN
-          + " = ? WHERE "
-          + LocationDTO.ID_COLUMN
-          + " = ?";
-
-  private final String DELETE =
-      "DELETE FROM " + LocationDTO.TABLE_NAME + " WHERE " + LocationDTO.ID_COLUMN + " = ?";
 
   private final Logger logger;
   private final DataSource dataSource;

@@ -19,6 +19,42 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
+  private static final String SELECT_ALL = "SELECT * FROM " + CoordinatesDTO.TABLE_NAME;
+
+  private static final String SELECT_BY_ID =
+      SELECT_ALL + " WHERE " + CoordinatesDTO.ID_COLUMN + " = ?";
+
+  private static final String INSERT =
+      "INSERT INTO "
+          + CoordinatesDTO.TABLE_NAME
+          + " ("
+          + CoordinatesDTO.OWNER_ID_COLUMN
+          + ", "
+          + CoordinatesDTO.X_COLUMN
+          + ", "
+          + CoordinatesDTO.Y_COLUMN
+          + ", "
+          + CoordinatesDTO.Z_COLUMN
+          + ") VALUES (?, ?, ?, ?)";
+
+  private static final String UPDATE =
+      "UPDATE "
+          + CoordinatesDTO.TABLE_NAME
+          + " SET "
+          + CoordinatesDTO.OWNER_ID_COLUMN
+          + " = ?, "
+          + CoordinatesDTO.X_COLUMN
+          + " = ?, "
+          + CoordinatesDTO.Y_COLUMN
+          + " = ?, "
+          + CoordinatesDTO.Z_COLUMN
+          + " = ? WHERE "
+          + CoordinatesDTO.ID_COLUMN
+          + " = ?";
+
+  private static final String DELETE =
+      "DELETE FROM " + CoordinatesDTO.TABLE_NAME + " WHERE " + CoordinatesDTO.ID_COLUMN + " = ?";
+
   private static final String GET_ALL_COORDINATES_EXCEPTION;
   private static final String GET_COORDINATES_BY_ID_EXCEPTION;
   private static final String INSERT_COORDINATES_EXCEPTION;
@@ -36,41 +72,6 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
     UPDATE_COORDINATES_EXCEPTION = resourceBundle.getString("exceptions.updateCoordinates");
     DELETE_COORDINATES_EXCEPTION = resourceBundle.getString("exceptions.deleteCoordinates");
   }
-
-  private final String SELECT_ALL = "SELECT * FROM " + CoordinatesDTO.TABLE_NAME;
-
-  private final String SELECT_BY_ID = SELECT_ALL + " WHERE " + CoordinatesDTO.ID_COLUMN + " = ?";
-
-  private final String INSERT =
-      "INSERT INTO "
-          + CoordinatesDTO.TABLE_NAME
-          + " ("
-          + CoordinatesDTO.OWNER_ID_COLUMN
-          + ", "
-          + CoordinatesDTO.X_COLUMN
-          + ", "
-          + CoordinatesDTO.Y_COLUMN
-          + ", "
-          + CoordinatesDTO.Z_COLUMN
-          + ") VALUES (?, ?, ?, ?)";
-
-  private final String UPDATE =
-      "UPDATE "
-          + CoordinatesDTO.TABLE_NAME
-          + " SET "
-          + CoordinatesDTO.OWNER_ID_COLUMN
-          + " = ?, "
-          + CoordinatesDTO.X_COLUMN
-          + " = ?, "
-          + CoordinatesDTO.Y_COLUMN
-          + " = ?, "
-          + CoordinatesDTO.Z_COLUMN
-          + " = ? WHERE "
-          + CoordinatesDTO.ID_COLUMN
-          + " = ?";
-
-  private final String DELETE =
-      "DELETE FROM " + CoordinatesDTO.TABLE_NAME + " WHERE " + CoordinatesDTO.ID_COLUMN + " = ?";
 
   private final Logger logger;
   private final DataSource dataSource;

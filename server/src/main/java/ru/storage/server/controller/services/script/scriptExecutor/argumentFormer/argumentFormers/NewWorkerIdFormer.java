@@ -35,7 +35,8 @@ public final class NewWorkerIdFormer extends WorkerFormer {
   }
 
   @Override
-  public Map<String, String> form(List<String> arguments, Iterator<String> script) throws FormingException {
+  public Map<String, String> form(List<String> arguments, Iterator<String> script)
+      throws FormingException {
     Map<String, String> allArguments = new HashMap<>();
     allArguments.put(argumentMediator.WORKER_ID, arguments.get(0));
 

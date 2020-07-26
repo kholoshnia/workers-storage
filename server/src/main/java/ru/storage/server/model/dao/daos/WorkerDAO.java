@@ -22,29 +22,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class WorkerDAO implements DAO<Long, WorkerDTO> {
-  private static final String GET_ALL_WORKER_EXCEPTION;
-  private static final String GET_WORKER_BY_ID_EXCEPTION;
-  private static final String INSERT_WORKER_EXCEPTION;
-  private static final String GET_GENERATED_WORKER_ID;
-  private static final String UPDATE_WORKER_EXCEPTION;
-  private static final String DELETE_WORKER_EXCEPTION;
+  private static final String SELECT_ALL = "SELECT * FROM " + WorkerDTO.TABLE_NAME;
 
-  static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.WorkerDAO");
+  private static final String SELECT_BY_ID = SELECT_ALL + " WHERE " + WorkerDTO.ID_COLUMN + " = ?";
 
-    GET_ALL_WORKER_EXCEPTION = resourceBundle.getString("exceptions.getAllWorkers");
-    GET_WORKER_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.getWorkerById");
-    INSERT_WORKER_EXCEPTION = resourceBundle.getString("exceptions.insertWorker");
-    GET_GENERATED_WORKER_ID = resourceBundle.getString("exceptions.getGeneratedWorkerId");
-    UPDATE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.updateWorker");
-    DELETE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.deleteWorker");
-  }
-
-  private final String SELECT_ALL = "SELECT * FROM " + WorkerDTO.TABLE_NAME;
-
-  private final String SELECT_BY_ID = SELECT_ALL + " WHERE " + WorkerDTO.ID_COLUMN + " = ?";
-
-  private final String INSERT =
+  private static final String INSERT =
       "INSERT INTO "
           + WorkerDTO.TABLE_NAME
           + " ("
@@ -65,7 +47,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
           + WorkerDTO.PERSON_COLUMN
           + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-  private final String UPDATE =
+  private static final String UPDATE =
       "UPDATE "
           + WorkerDTO.TABLE_NAME
           + " SET "
@@ -88,8 +70,26 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
           + WorkerDTO.ID_COLUMN
           + " = ?";
 
-  private final String DELETE =
+  private static final String DELETE =
       "DELETE FROM " + WorkerDTO.TABLE_NAME + " WHERE " + WorkerDTO.ID_COLUMN + " = ?";
+
+  private static final String GET_ALL_WORKER_EXCEPTION;
+  private static final String GET_WORKER_BY_ID_EXCEPTION;
+  private static final String INSERT_WORKER_EXCEPTION;
+  private static final String GET_GENERATED_WORKER_ID;
+  private static final String UPDATE_WORKER_EXCEPTION;
+  private static final String DELETE_WORKER_EXCEPTION;
+
+  static {
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.WorkerDAO");
+
+    GET_ALL_WORKER_EXCEPTION = resourceBundle.getString("exceptions.getAllWorkers");
+    GET_WORKER_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.getWorkerById");
+    INSERT_WORKER_EXCEPTION = resourceBundle.getString("exceptions.insertWorker");
+    GET_GENERATED_WORKER_ID = resourceBundle.getString("exceptions.getGeneratedWorkerId");
+    UPDATE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.updateWorker");
+    DELETE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.deleteWorker");
+  }
 
   private final Logger logger;
   private final DataSource dataSource;

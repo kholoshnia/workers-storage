@@ -6,7 +6,8 @@ import org.apache.logging.log4j.Logger;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public final class CurrencyFormatter extends ru.storage.server.controller.services.format.number.NumberFormat {
+public final class CurrencyFormatter
+    extends ru.storage.server.controller.services.format.number.NumberFormat {
   private final Logger logger;
   private final NumberFormat numberFormat;
 

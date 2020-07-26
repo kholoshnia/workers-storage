@@ -71,7 +71,8 @@ public final class ScriptFormer extends ArgumentFormer {
   }
 
   @Override
-  public Map<String, String> form(List<String> arguments, Iterator<String> script) throws FormingException {
+  public Map<String, String> form(List<String> arguments, Iterator<String> script)
+      throws FormingException {
     String path = arguments.get(0);
     Scanner scanner;
 

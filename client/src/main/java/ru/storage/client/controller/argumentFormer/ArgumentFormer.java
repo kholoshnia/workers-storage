@@ -30,6 +30,7 @@ public abstract class ArgumentFormer {
    * @param arguments command arguments
    * @return formed arguments
    * @throws FormingException - in case of any exceptions during forming
+   * @throws CancelException - if forming was canceled
    */
   protected abstract Map<String, String> form(List<String> arguments)
       throws FormingException, CancelException;

@@ -324,7 +324,12 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
     this.user = user;
   }
 
-  /** Waits connection with the server. Pending request every 1 second. */
+  /**
+   * Waits connection with the server. Pending request every 1 second.
+   *
+   * @param request pending request
+   * @return server response
+   */
   private Response waitConnection(Request request) {
     Response response = null;
     String anim = "|/-\\";

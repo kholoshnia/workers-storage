@@ -46,6 +46,7 @@ public abstract class Former extends ArgumentFormer {
   /**
    * Asks user whether to input next argument.
    *
+   * @param question question to the user
    * @return true if user answer was "yes" else false if user answer was "no"
    * @throws CancelException - if forming was canceled
    */

@@ -20,9 +20,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class AddCommand extends ModificationCommand {
-  private final String ADDED_SUCCESSFULLY_ANSWER;
+  private static final Logger logger = LogManager.getLogger(AddCommand.class);
 
-  private final Logger logger;
+  private final String addedSuccessfullyAnswer;
 
   public AddCommand(
       Configuration configuration,
@@ -33,11 +33,10 @@ public final class AddCommand extends ModificationCommand {
       Parser parser,
       User user) {
     super(configuration, argumentMediator, arguments, locale, user, workerRepository, parser);
-    logger = LogManager.getLogger(AddCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.AddCommand");
 
-    ADDED_SUCCESSFULLY_ANSWER = resourceBundle.getString("answers.addedSuccessfully");
+    addedSuccessfullyAnswer = resourceBundle.getString("answers.addedSuccessfully");
   }
 
   @Override
@@ -48,12 +47,12 @@ public final class AddCommand extends ModificationCommand {
       workerDTO = createWorkerDTO();
     } catch (ParserException e) {
       logger.warn(() -> "Cannot create worker DTO.", e);
-      return new Response(Status.BAD_REQUEST, WRONG_WORKER_FORMAT_ANSWER);
+      return new Response(Status.BAD_REQUEST, wrongWorkerFormatAnswer);
     }
 
     if (workerDTO == null) {
       logger.warn(() -> "Got null worker.");
-      return new Response(Status.BAD_REQUEST, WRONG_WORKER_FORMAT_ANSWER);
+      return new Response(Status.BAD_REQUEST, wrongWorkerFormatAnswer);
     }
 
     try {
@@ -62,13 +61,13 @@ public final class AddCommand extends ModificationCommand {
       workerRepository.insert(worker);
     } catch (ValidationException e) {
       logger.error(() -> "Cannot create worker from DTO.", e);
-      return new Response(Status.BAD_REQUEST, WRONG_WORKER_DATA_ANSWER);
+      return new Response(Status.BAD_REQUEST, wrongWorkerDataAnswer);
     } catch (RepositoryException e) {
       logger.error(() -> "Cannot add worker.", e);
       return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
     logger.info(() -> "Worker was added.");
-    return new Response(Status.CREATED, ADDED_SUCCESSFULLY_ANSWER);
+    return new Response(Status.CREATED, addedSuccessfullyAnswer);
   }
 }

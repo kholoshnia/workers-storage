@@ -16,23 +16,15 @@ import java.util.ResourceBundle;
 
 /** Database class is used to initialize tables. */
 public final class Database extends DataSource {
+  private static final Logger logger = LogManager.getLogger(Database.class);
+
   private static final String INIT_USERS_TABLE_EXCEPTION;
   private static final String INIT_WORKERS_TABLE_EXCEPTION;
   private static final String INIT_COORDINATES_TABLE_EXCEPTION;
   private static final String INIT_PERSONS_TABLE_EXCEPTION;
   private static final String INIT_LOCATIONS_TABLE_EXCEPTION;
 
-  static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Database");
-
-    INIT_USERS_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initUsersTable");
-    INIT_WORKERS_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initWorkersTable");
-    INIT_COORDINATES_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initCoordinatesTable");
-    INIT_PERSONS_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initPersonsTable");
-    INIT_LOCATIONS_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initLocationsTable");
-  }
-
-  private final String CREATE_IF_NOT_EXISTS_USERS_TABLE =
+  private static final String CREATE_IF_NOT_EXISTS_USERS_TABLE =
       "CREATE TABLE IF NOT EXISTS "
           + UserDTO.TABLE_NAME
           + " ("
@@ -59,7 +51,7 @@ public final class Database extends DataSource {
           + UserDTO.ROLE_COLUMN
           + " VARCHAR NOT NULL)";
 
-  private final String CREATE_IF_NOT_EXISTS_COORDINATES_TABLE =
+  private static final String CREATE_IF_NOT_EXISTS_COORDINATES_TABLE =
       "CREATE TABLE IF NOT EXISTS "
           + CoordinatesDTO.TABLE_NAME
           + " ("
@@ -92,7 +84,7 @@ public final class Database extends DataSource {
           + UserDTO.ID_COLUMN
           + "))";
 
-  private final String CREATE_IF_NOT_EXISTS_LOCATIONS_TABLE =
+  private static final String CREATE_IF_NOT_EXISTS_LOCATIONS_TABLE =
       "CREATE TABLE IF NOT EXISTS "
           + LocationDTO.TABLE_NAME
           + " ("
@@ -125,7 +117,7 @@ public final class Database extends DataSource {
           + UserDTO.ID_COLUMN
           + "))";
 
-  private final String CREATE_IF_NOT_EXISTS_PERSONS_TABLE =
+  private static final String CREATE_IF_NOT_EXISTS_PERSONS_TABLE =
       "CREATE TABLE IF NOT EXISTS "
           + PersonDTO.TABLE_NAME
           + " ("
@@ -160,7 +152,7 @@ public final class Database extends DataSource {
           + UserDTO.ID_COLUMN
           + "))";
 
-  private final String CREATE_IF_NOT_EXISTS_WORKERS_TABLE =
+  private static final String CREATE_IF_NOT_EXISTS_WORKERS_TABLE =
       "CREATE TABLE IF NOT EXISTS "
           + WorkerDTO.TABLE_NAME
           + " ("
@@ -203,7 +195,15 @@ public final class Database extends DataSource {
           + UserDTO.ID_COLUMN
           + "))";
 
-  private final Logger logger;
+  static {
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Database");
+
+    INIT_USERS_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initUsersTable");
+    INIT_WORKERS_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initWorkersTable");
+    INIT_COORDINATES_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initCoordinatesTable");
+    INIT_PERSONS_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initPersonsTable");
+    INIT_LOCATIONS_TABLE_EXCEPTION = resourceBundle.getString("exceptions.initLocationsTable");
+  }
 
   /**
    * Initializes all tables. NOTE: order is important.
@@ -217,14 +217,11 @@ public final class Database extends DataSource {
   public Database(String url, String user, String password)
       throws DataSourceException, DatabaseException {
     super(url, user, password);
-    logger = LogManager.getLogger(Database.class);
-
     initUsersTable();
     initCoordinatesTable();
     initLocationsTable();
     initPersonsTable();
     initWorkersTable();
-
     logger.debug(() -> "All tables were initialized.");
   }
 

@@ -10,11 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class ArgumentFormer {
-  private final Logger logger;
-
-  public ArgumentFormer() {
-    logger = LogManager.getLogger(ArgumentFormer.class);
-  }
+  private static final Logger logger = LogManager.getLogger(ArgumentFormer.class);
 
   /**
    * Checks number of command arguments and its values.

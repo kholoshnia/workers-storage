@@ -17,7 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public final class ExecuteScriptCommand extends SpecialCommand {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(ExecuteScriptCommand.class);
 
   public ExecuteScriptCommand(
       Configuration configuration,
@@ -37,7 +37,6 @@ public final class ExecuteScriptCommand extends SpecialCommand {
         locale,
         exitManager,
         scriptExecutor);
-    logger = LogManager.getLogger(ExecuteScriptCommand.class);
   }
 
   @Override

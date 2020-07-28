@@ -21,6 +21,8 @@ import java.util.ResourceBundle;
  * @see PreparedStatement
  */
 public abstract class DataSource implements ExitListener {
+  private static final Logger logger = LogManager.getLogger(DataSource.class);
+
   private static final String SETUP_CONNECTION_EXCEPTION;
   private static final String GET_PREPARED_STATEMENT_EXCEPTION;
   private static final String CLOSE_PREPARED_STATEMENT_EXCEPTION;
@@ -36,11 +38,9 @@ public abstract class DataSource implements ExitListener {
     CLOSE_CONNECTION_EXCEPTION = resourceBundle.getString("exceptions.closeConnection");
   }
 
-  private final Logger logger;
   private final Connection connection;
 
   public DataSource(String url, String user, String password) throws DataSourceException {
-    logger = LogManager.getLogger(DataSource.class);
     connection = initConnection(url, user, password);
   }
 

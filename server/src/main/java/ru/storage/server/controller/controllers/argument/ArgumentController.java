@@ -16,14 +16,14 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class ArgumentController implements Controller {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(ArgumentController.class);
+
   private final CommandMediator commandMediator;
   private final Map<String, ArgumentValidator> validatorMap;
 
   @Inject
   public ArgumentController(
       CommandMediator commandMediator, Map<String, ArgumentValidator> validatorMap) {
-    logger = LogManager.getLogger(ArgumentController.class);
     this.commandMediator = commandMediator;
     this.validatorMap = validatorMap;
   }

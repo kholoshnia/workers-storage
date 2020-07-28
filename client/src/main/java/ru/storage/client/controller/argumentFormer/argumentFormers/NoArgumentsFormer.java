@@ -1,6 +1,5 @@
 package ru.storage.client.controller.argumentFormer.argumentFormers;
 
-import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.controller.argumentFormer.ArgumentFormer;
@@ -10,14 +9,9 @@ import ru.storage.client.controller.localeManager.LocaleListener;
 import java.util.*;
 
 public final class NoArgumentsFormer extends ArgumentFormer implements LocaleListener {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(NoArgumentsFormer.class);
 
   private String wrongArgumentsNumberException;
-
-  @Inject
-  public NoArgumentsFormer() {
-    logger = LogManager.getLogger(NoArgumentsFormer.class);
-  }
 
   @Override
   public void changeLocale(Locale locale) {

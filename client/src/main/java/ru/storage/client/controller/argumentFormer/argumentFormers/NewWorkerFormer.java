@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class NewWorkerFormer extends WorkerFormer {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(NewWorkerFormer.class);
 
   private String wrongArgumentsNumberException;
 
@@ -27,7 +27,6 @@ public final class NewWorkerFormer extends WorkerFormer {
       Map<String, ArgumentValidator> validatorMap,
       ArgumentMediator argumentMediator) {
     super(commandMediator, console, validatorMap, argumentMediator);
-    logger = LogManager.getLogger(NewWorkerFormer.class);
   }
 
   @Override

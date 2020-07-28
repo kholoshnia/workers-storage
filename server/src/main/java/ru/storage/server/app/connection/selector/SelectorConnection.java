@@ -13,13 +13,13 @@ import java.util.Iterator;
 import java.util.Set;
 
 public abstract class SelectorConnection implements ExitListener {
+  private static final Logger logger = LogManager.getLogger(SelectorConnection.class);
+
   protected final Selector selector;
 
-  private final Logger logger;
   private boolean processing;
 
   public SelectorConnection() throws SelectorException {
-    logger = LogManager.getLogger(SelectorConnection.class);
     processing = true;
 
     try {

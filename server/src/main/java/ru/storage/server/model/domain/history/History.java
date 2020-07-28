@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public final class History {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(History.class);
+
   private final List<Record> records;
 
   public History() {
-    logger = LogManager.getLogger(History.class);
     records = new ArrayList<>();
   }
 

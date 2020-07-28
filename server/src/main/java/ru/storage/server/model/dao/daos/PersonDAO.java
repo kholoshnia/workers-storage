@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class PersonDAO implements DAO<Long, PersonDTO> {
+  private static final Logger logger = LogManager.getLogger(PersonDAO.class);
+
   private static final String SELECT_ALL = "SELECT * FROM " + PersonDTO.TABLE_NAME;
 
   private static final String SELECT_BY_ID = SELECT_ALL + " WHERE " + PersonDTO.ID_COLUMN + " = ?";
@@ -71,13 +73,11 @@ public class PersonDAO implements DAO<Long, PersonDTO> {
     CANNOT_DELETE_PERSON_EXCEPTION = resourceBundle.getString("exceptions.cannotDeletePerson");
   }
 
-  private final Logger logger;
   private final DataSource dataSource;
   private final DAO<Long, LocationDTO> locationDAO;
 
   @Inject
   public PersonDAO(DataSource dataSource, DAO<Long, LocationDTO> locationDAO) {
-    logger = LogManager.getLogger(PersonDAO.class);
     this.dataSource = dataSource;
     this.locationDAO = locationDAO;
   }

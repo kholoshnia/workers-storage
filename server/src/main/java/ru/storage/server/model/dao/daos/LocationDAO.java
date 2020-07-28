@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class LocationDAO implements DAO<Long, LocationDTO> {
+  private static final Logger logger = LogManager.getLogger(LocationDAO.class);
+
   private static final String SELECT_ALL = "SELECT * FROM " + LocationDTO.TABLE_NAME;
 
   private static final String SELECT_BY_ID =
@@ -76,12 +78,10 @@ public class LocationDAO implements DAO<Long, LocationDTO> {
     CANNOT_DELETE_LOCATION_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteLocation");
   }
 
-  private final Logger logger;
   private final DataSource dataSource;
 
   @Inject
   public LocationDAO(DataSource dataSource) {
-    logger = LogManager.getLogger(LocationDAO.class);
     this.dataSource = dataSource;
   }
 

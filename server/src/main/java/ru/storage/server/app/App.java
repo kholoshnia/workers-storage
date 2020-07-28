@@ -10,10 +10,10 @@ import java.util.ResourceBundle;
 
 /** Main server application class. */
 public final class App {
+  private static final Logger logger = LogManager.getLogger(App.class);
+
   private static final String FATAL_ERROR;
   private static final String WRONG_ARGUMENTS_NUMBER_ERROR;
-
-  private static final Logger LOGGER = LogManager.getLogger(App.class);
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.App");
@@ -24,30 +24,30 @@ public final class App {
 
   public static void main(String[] args) {
     try {
-      LOGGER.debug(() -> "Launching application...");
+      logger.debug(() -> "Launching application...");
 
       if (args.length != 3) {
-        LOGGER.fatal(() -> "Wrong arguments number. App was not started.");
+        logger.fatal(() -> "Wrong arguments number. App was not started.");
         System.err.println(WRONG_ARGUMENTS_NUMBER_ERROR);
         System.exit(1);
       }
 
-      LOGGER.debug(() -> "Creating Guice injector...");
+      logger.debug(() -> "Creating Guice injector...");
       Injector injector = Guice.createInjector(new ServerModule(args));
-      LOGGER.debug(() -> "Guice injector was created.");
+      logger.debug(() -> "Guice injector was created.");
 
       Server server = injector.getInstance(Server.class);
-      LOGGER.debug(() -> "Server was created.");
+      logger.debug(() -> "Server was created.");
 
-      LOGGER.debug(() -> "Server was started.");
+      logger.debug(() -> "Server was started.");
       server.start();
     } catch (Exception exception) {
-      LOGGER.fatal(() -> "Got an exception during work of server.", exception);
+      logger.fatal(() -> "Got an exception during work of server.", exception);
       System.err.println();
       System.err.println(FATAL_ERROR);
       System.err.println();
       System.err.println(exception.getMessage());
-      LOGGER.fatal(() -> "Application was stopped with an error.");
+      logger.fatal(() -> "Application was stopped with an error.");
       System.exit(1);
     }
   }

@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class WorkerDAO implements DAO<Long, WorkerDTO> {
+  private static final Logger logger = LogManager.getLogger(WorkerDAO.class);
+
   private static final String SELECT_ALL = "SELECT * FROM " + WorkerDTO.TABLE_NAME;
 
   private static final String SELECT_BY_ID = SELECT_ALL + " WHERE " + WorkerDTO.ID_COLUMN + " = ?";
@@ -92,7 +94,6 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
     CANNOT_DELETE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteWorker");
   }
 
-  private final Logger logger;
   private final DataSource dataSource;
   private final Adapter<Status, String> statusAdapter;
   private final Adapter<ZonedDateTime, Timestamp> zonedDateTimeAdapter;
@@ -106,7 +107,6 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       Adapter<ZonedDateTime, Timestamp> zonedDateTimeAdapter,
       DAO<Long, CoordinatesDTO> coordinatesDAO,
       DAO<Long, PersonDTO> personDAO) {
-    logger = LogManager.getLogger(WorkerDAO.class);
     this.dataSource = dataSource;
     this.statusAdapter = statusAdapter;
     this.zonedDateTimeAdapter = zonedDateTimeAdapter;
@@ -228,7 +228,13 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
     try {
       preparedStatement.setLong(1, workerDTO.ownerId);
       preparedStatement.setTimestamp(2, zonedDateTimeAdapter.to(workerDTO.creationDate));
-      preparedStatement.setDouble(3, workerDTO.salary);
+
+      if (workerDTO.salary != null) {
+        preparedStatement.setDouble(3, workerDTO.salary);
+      } else {
+        preparedStatement.setNull(3, Types.DOUBLE);
+      }
+
       preparedStatement.setString(4, statusAdapter.to(workerDTO.status));
       preparedStatement.setTimestamp(5, zonedDateTimeAdapter.to(workerDTO.startDate));
       preparedStatement.setTimestamp(6, zonedDateTimeAdapter.to(workerDTO.endDate));
@@ -289,7 +295,13 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
     try {
       preparedStatement.setLong(1, workerDTO.ownerId);
       preparedStatement.setTimestamp(2, zonedDateTimeAdapter.to(workerDTO.creationDate));
-      preparedStatement.setDouble(3, workerDTO.salary);
+
+      if (workerDTO.salary != null) {
+        preparedStatement.setDouble(3, workerDTO.salary);
+      } else {
+        preparedStatement.setNull(3, Types.DOUBLE);
+      }
+
       preparedStatement.setString(4, statusAdapter.to(workerDTO.status));
       preparedStatement.setTimestamp(5, zonedDateTimeAdapter.to(workerDTO.startDate));
       preparedStatement.setTimestamp(6, zonedDateTimeAdapter.to(workerDTO.endDate));

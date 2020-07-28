@@ -24,7 +24,8 @@ import java.util.ResourceBundle;
 
 /** Setups Jline line reader with specified options. */
 public final class JlineConsole implements LocaleListener {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(JlineConsole.class);
+
   private final Terminal terminal;
   private final CommandMediator commandMediator;
 
@@ -39,7 +40,6 @@ public final class JlineConsole implements LocaleListener {
   public JlineConsole(
       InputStream inputStream, OutputStream outputStream, CommandMediator commandMediator)
       throws ConsoleException {
-    logger = LogManager.getLogger(JlineConsole.class);
     terminal = initTerminal(inputStream, outputStream);
     this.commandMediator = commandMediator;
   }

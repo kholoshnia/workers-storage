@@ -19,7 +19,7 @@ public final class IdValidator extends ArgumentValidator {
     super(
         new ArrayList<String>() {
           {
-            add(argumentMediator.WORKER_ID);
+            add(argumentMediator.workerId);
           }
         });
     this.argumentMediator = argumentMediator;
@@ -30,7 +30,7 @@ public final class IdValidator extends ArgumentValidator {
   protected void checkValue(Map<String, String> arguments) throws WrongValueException {
     super.checkValue(arguments);
 
-    String idString = arguments.get(argumentMediator.WORKER_ID);
+    String idString = arguments.get(argumentMediator.workerId);
 
     try {
       parser.parseLong(idString);

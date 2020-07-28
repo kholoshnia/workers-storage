@@ -8,13 +8,13 @@ import java.util.concurrent.Executor;
 
 /** Executes tasks in accordance with {@link Executor}; */
 public final class ExecutorService {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(ExecutorService.class);
+
   private final Executor readExecutor;
   private final Executor handleExecutor;
   private final Executor sendExecutor;
 
   public ExecutorService(Executor readExecutor, Executor handleExecutor, Executor sendExecutor) {
-    logger = LogManager.getLogger(ExecutorService.class);
     this.readExecutor = readExecutor;
     this.handleExecutor = handleExecutor;
     this.sendExecutor = sendExecutor;

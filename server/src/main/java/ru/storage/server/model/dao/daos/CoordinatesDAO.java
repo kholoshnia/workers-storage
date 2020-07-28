@@ -10,15 +10,14 @@ import ru.storage.server.model.source.DataSource;
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import javax.annotation.Nonnull;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
+  private static final Logger logger = LogManager.getLogger(CoordinatesDAO.class);
+
   private static final String SELECT_ALL = "SELECT * FROM " + CoordinatesDTO.TABLE_NAME;
 
   private static final String SELECT_BY_ID =
@@ -79,12 +78,10 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
         resourceBundle.getString("exceptions.cannotDeleteCoordinates");
   }
 
-  private final Logger logger;
   private final DataSource dataSource;
 
   @Inject
   public CoordinatesDAO(DataSource dataSource) {
-    logger = LogManager.getLogger(CoordinatesDAO.class);
     this.dataSource = dataSource;
   }
 
@@ -156,9 +153,24 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
 
     try {
       preparedStatement.setDouble(1, coordinatesDTO.ownerId);
-      preparedStatement.setDouble(2, coordinatesDTO.x);
-      preparedStatement.setDouble(3, coordinatesDTO.y);
-      preparedStatement.setDouble(4, coordinatesDTO.z);
+
+      if (coordinatesDTO.x != null) {
+        preparedStatement.setDouble(2, coordinatesDTO.x);
+      } else {
+        preparedStatement.setNull(2, Types.DOUBLE);
+      }
+
+      if (coordinatesDTO.y != null) {
+        preparedStatement.setDouble(3, coordinatesDTO.y);
+      } else {
+        preparedStatement.setNull(3, Types.DOUBLE);
+      }
+
+      if (coordinatesDTO.z != null) {
+        preparedStatement.setDouble(4, coordinatesDTO.z);
+      } else {
+        preparedStatement.setNull(4, Types.DOUBLE);
+      }
 
       preparedStatement.execute();
 
@@ -189,9 +201,24 @@ public class CoordinatesDAO implements DAO<Long, CoordinatesDTO> {
 
     try {
       preparedStatement.setDouble(1, coordinatesDTO.ownerId);
-      preparedStatement.setDouble(2, coordinatesDTO.x);
-      preparedStatement.setDouble(3, coordinatesDTO.y);
-      preparedStatement.setDouble(4, coordinatesDTO.z);
+
+      if (coordinatesDTO.x != null) {
+        preparedStatement.setDouble(2, coordinatesDTO.x);
+      } else {
+        preparedStatement.setNull(2, Types.DOUBLE);
+      }
+
+      if (coordinatesDTO.y != null) {
+        preparedStatement.setDouble(3, coordinatesDTO.y);
+      } else {
+        preparedStatement.setNull(3, Types.DOUBLE);
+      }
+
+      if (coordinatesDTO.z != null) {
+        preparedStatement.setDouble(4, coordinatesDTO.z);
+      } else {
+        preparedStatement.setNull(4, Types.DOUBLE);
+      }
 
       preparedStatement.setLong(5, coordinatesDTO.id);
 

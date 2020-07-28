@@ -8,11 +8,11 @@ import java.util.List;
 
 /** Observer class that is used to call exit method of all subscribed listeners. */
 public class ExitManager {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(ExitManager.class);
+
   private final List<ExitListener> listeners;
 
   public ExitManager(List<ExitListener> listeners) {
-    logger = LogManager.getLogger(ExitManager.class);
     this.listeners = listeners;
   }
 

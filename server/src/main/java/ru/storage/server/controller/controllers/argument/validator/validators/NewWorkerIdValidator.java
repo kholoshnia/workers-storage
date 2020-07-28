@@ -16,7 +16,7 @@ public final class NewWorkerIdValidator extends WorkerValidator {
   @Inject
   public NewWorkerIdValidator(ArgumentMediator argumentMediator, Parser parser) {
     super(argumentMediator);
-    requiredArguments.add(argumentMediator.WORKER_ID);
+    requiredArguments.add(argumentMediator.workerId);
     this.argumentMediator = argumentMediator;
     this.parser = parser;
   }
@@ -32,7 +32,7 @@ public final class NewWorkerIdValidator extends WorkerValidator {
   protected void checkValue(Map<String, String> arguments) throws WrongValueException {
     super.checkValue(arguments);
 
-    String idString = arguments.get(argumentMediator.WORKER_ID);
+    String idString = arguments.get(argumentMediator.workerId);
 
     try {
       parser.parseLong(idString);

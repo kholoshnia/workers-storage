@@ -22,18 +22,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public final class CommandController implements Controller {
-  private static final String COMMAND_CREATION_ERROR_ANSWER;
-  private static final String GOT_NULL_COMMAND_ANSWER;
+  private static final Logger logger = LogManager.getLogger(CommandController.class);
 
-  static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.CommandController");
-
-    COMMAND_CREATION_ERROR_ANSWER = resourceBundle.getString("answers.commandCreationError");
-    GOT_NULL_COMMAND_ANSWER = resourceBundle.getString("answers.gotNullCommand");
-  }
-
-  private final Logger logger;
-  private final CommandMediator commandMediator;
   private final ArgumentMediator argumentMediator;
   private final CommandFactoryMediator commandFactoryMediator;
   private final List<String> authCommands;
@@ -45,19 +35,17 @@ public final class CommandController implements Controller {
       ArgumentMediator argumentMediator,
       CommandFactoryMediator commandFactoryMediator,
       History history) {
-    logger = LogManager.getLogger(CommandController.class);
-    this.commandMediator = commandMediator;
     this.argumentMediator = argumentMediator;
     this.commandFactoryMediator = commandFactoryMediator;
-    authCommands = initAuthCommandList(argumentMediator);
     this.history = history;
+    authCommands = initAuthCommandList(commandMediator);
   }
 
-  private List<String> initAuthCommandList(ArgumentMediator argumentMediator) {
+  private List<String> initAuthCommandList(CommandMediator commandMediator) {
     return new ArrayList<String>() {
       {
-        add(commandMediator.LOGIN);
-        add(commandMediator.REGISTER);
+        add(commandMediator.login);
+        add(commandMediator.register);
       }
     };
   }
@@ -68,6 +56,8 @@ public final class CommandController implements Controller {
         ResourceBundle.getBundle("localized.CommandController", request.getLocale());
     String noSuchCommandAnswer = resourceBundle.getString("answers.noSuchCommand");
     String userNotFound = resourceBundle.getString("answers.userNotFound");
+    String commandCreationErrorAnswer = resourceBundle.getString("answers.commandCreationError");
+    String commandNotSupportedAnswer = resourceBundle.getString("answers.commandNotSupported");
 
     CommandFactory commandFactory = commandFactoryMediator.getCommandFactory(request.getCommand());
 
@@ -90,12 +80,12 @@ public final class CommandController implements Controller {
       return new Response(Status.NOT_FOUND, userNotFound);
     } catch (CommandFactoryException e) {
       logger.error("Cannot create command: {}.", (Supplier<?>) request::getCommand, e);
-      return new Response(Status.INTERNAL_SERVER_ERROR, COMMAND_CREATION_ERROR_ANSWER);
+      return new Response(Status.INTERNAL_SERVER_ERROR, commandCreationErrorAnswer);
     }
 
     if (command == null) {
       logger.error(() -> "Got null command factory.");
-      return new Response(Status.INTERNAL_SERVER_ERROR, GOT_NULL_COMMAND_ANSWER);
+      return new Response(Status.INTERNAL_SERVER_ERROR, commandNotSupportedAnswer);
     }
 
     Response response = command.executeCommand();
@@ -113,7 +103,7 @@ public final class CommandController implements Controller {
    */
   private void addToHistory(Request request, Response response) {
     if (authCommands.contains(request.getCommand())) {
-      request.getArguments().replace(argumentMediator.USER_PASSWORD, "");
+      request.getArguments().replace(argumentMediator.userPassword, "");
     }
 
     history.addRecord(new Record(request.getCommand(), request.getArguments(), response));

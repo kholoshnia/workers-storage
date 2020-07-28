@@ -8,7 +8,7 @@ import ru.storage.server.controller.services.script.scriptExecutor.argumentForme
 import java.util.*;
 
 public abstract class WorkerFormer extends Former {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(WorkerFormer.class);
 
   private final List<String> workerArguments;
   private final List<String> coordinatesArguments;
@@ -17,7 +17,6 @@ public abstract class WorkerFormer extends Former {
 
   public WorkerFormer(ArgumentMediator argumentMediator) {
     super(argumentMediator);
-    logger = LogManager.getLogger(WorkerFormer.class);
     workerArguments = initWorkerArguments();
     coordinatesArguments = initCoordinatesArguments();
     personArguments = initPersonArguments();
@@ -27,10 +26,10 @@ public abstract class WorkerFormer extends Former {
   private List<String> initWorkerArguments() {
     return new ArrayList<String>() {
       {
-        add(argumentMediator.WORKER_SALARY);
-        add(argumentMediator.WORKER_STATUS);
-        add(argumentMediator.WORKER_START_DATE);
-        add(argumentMediator.WORKER_END_DATE);
+        add(argumentMediator.workerSalary);
+        add(argumentMediator.workerStatus);
+        add(argumentMediator.workerStartDate);
+        add(argumentMediator.workerEndDate);
       }
     };
   }
@@ -38,9 +37,9 @@ public abstract class WorkerFormer extends Former {
   private List<String> initCoordinatesArguments() {
     return new ArrayList<String>() {
       {
-        add(argumentMediator.COORDINATES_X);
-        add(argumentMediator.COORDINATES_Y);
-        add(argumentMediator.COORDINATES_Z);
+        add(argumentMediator.coordinatesX);
+        add(argumentMediator.coordinatesY);
+        add(argumentMediator.coordinatesZ);
       }
     };
   }
@@ -48,8 +47,8 @@ public abstract class WorkerFormer extends Former {
   private List<String> initPersonArguments() {
     return new ArrayList<String>() {
       {
-        add(argumentMediator.PERSON_NAME);
-        add(argumentMediator.PERSON_PASSPORT_ID);
+        add(argumentMediator.personName);
+        add(argumentMediator.personPassportId);
       }
     };
   }
@@ -57,9 +56,9 @@ public abstract class WorkerFormer extends Former {
   private List<String> initLocationArguments() {
     return new ArrayList<String>() {
       {
-        add(argumentMediator.LOCATION_ADDRESS);
-        add(argumentMediator.LOCATION_LATITUDE);
-        add(argumentMediator.LOCATION_LONGITUDE);
+        add(argumentMediator.locationAddress);
+        add(argumentMediator.locationLatitude);
+        add(argumentMediator.locationLongitude);
       }
     };
   }
@@ -68,26 +67,26 @@ public abstract class WorkerFormer extends Former {
       throws WrongArgumentsException {
     Map<String, String> allArguments = new HashMap<>();
 
-    if (readArgument(argumentMediator.WORKER, script).equals(argumentMediator.INCLUDED)) {
-      allArguments.put(argumentMediator.WORKER, argumentMediator.INCLUDED);
+    if (readArgument(argumentMediator.worker, script).equals(argumentMediator.included)) {
+      allArguments.put(argumentMediator.worker, argumentMediator.included);
       allArguments.putAll(readArguments(workerArguments, script));
       logger.info(() -> "Worker arguments were formed.");
     }
 
-    if (readArgument(argumentMediator.COORDINATES, script).equals(argumentMediator.INCLUDED)) {
-      allArguments.put(argumentMediator.COORDINATES, argumentMediator.INCLUDED);
+    if (readArgument(argumentMediator.coordinates, script).equals(argumentMediator.included)) {
+      allArguments.put(argumentMediator.coordinates, argumentMediator.included);
       allArguments.putAll(readArguments(coordinatesArguments, script));
       logger.info(() -> "Coordinates arguments were formed.");
     }
 
-    if (readArgument(argumentMediator.PERSON, script).equals(argumentMediator.INCLUDED)) {
-      allArguments.put(argumentMediator.PERSON, argumentMediator.INCLUDED);
+    if (readArgument(argumentMediator.person, script).equals(argumentMediator.included)) {
+      allArguments.put(argumentMediator.person, argumentMediator.included);
       allArguments.putAll(readArguments(personArguments, script));
       logger.info(() -> "Person arguments were formed.");
     }
 
-    if (readArgument(argumentMediator.LOCATION, script).equals(argumentMediator.INCLUDED)) {
-      allArguments.put(argumentMediator.LOCATION, argumentMediator.INCLUDED);
+    if (readArgument(argumentMediator.location, script).equals(argumentMediator.included)) {
+      allArguments.put(argumentMediator.location, argumentMediator.included);
       allArguments.putAll(readArguments(locationArguments, script));
       logger.info(() -> "Location arguments were formed.");
     }

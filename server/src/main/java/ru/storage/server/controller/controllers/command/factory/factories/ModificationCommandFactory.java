@@ -51,9 +51,9 @@ public final class ModificationCommandFactory extends CommandFactory {
       CommandMediator commandMediator) {
     return new HashMap<String, Class<? extends ModificationCommand>>() {
       {
-        put(commandMediator.ADD, AddCommand.class);
-        put(commandMediator.UPDATE, UpdateCommand.class);
-        put(commandMediator.REMOVE, RemoveCommand.class);
+        put(commandMediator.add, AddCommand.class);
+        put(commandMediator.update, UpdateCommand.class);
+        put(commandMediator.remove, RemoveCommand.class);
       }
     };
   }

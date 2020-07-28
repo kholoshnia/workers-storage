@@ -13,12 +13,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public final class SHA256Generator extends HashGenerator {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(SHA256Generator.class);
 
   @Inject
   public SHA256Generator(@Nonnull Configuration configuration) {
     super(configuration);
-    logger = LogManager.getLogger(SHA256Generator.class);
   }
 
   @Override

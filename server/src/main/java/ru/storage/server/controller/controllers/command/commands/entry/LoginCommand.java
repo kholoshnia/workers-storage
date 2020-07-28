@@ -23,11 +23,11 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class LoginCommand extends EntryCommand {
-  private final String USER_NOT_REGISTERED_ANSWER;
-  private final String WRONG_USER_PASSWORD_ANSWER;
-  private final String LOGGED_IN_ANSWER;
+  private static final Logger logger = LogManager.getLogger(LoginCommand.class);
 
-  private final Logger logger;
+  private final String userNotRegisteredAnswer;
+  private final String wrongUserPasswordAnswer;
+  private final String loggedInAnswer;
 
   public LoginCommand(
       Configuration configuration,
@@ -38,19 +38,18 @@ public class LoginCommand extends EntryCommand {
       HashGenerator hashGenerator,
       Key key) {
     super(configuration, argumentMediator, arguments, locale, userRepository, hashGenerator, key);
-    logger = LogManager.getLogger(LoginCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.LoginCommand", locale);
 
-    USER_NOT_REGISTERED_ANSWER = resourceBundle.getString("answers.userNotRegistered");
-    WRONG_USER_PASSWORD_ANSWER = resourceBundle.getString("answers.wrongUserPassword");
-    LOGGED_IN_ANSWER = resourceBundle.getString("answers.loggedIn");
+    userNotRegisteredAnswer = resourceBundle.getString("answers.userNotRegistered");
+    wrongUserPasswordAnswer = resourceBundle.getString("answers.wrongUserPassword");
+    loggedInAnswer = resourceBundle.getString("answers.loggedIn");
   }
 
   @Override
   public Response executeCommand() {
-    String login = arguments.get(argumentMediator.USER_LOGIN);
-    String password = arguments.get(argumentMediator.USER_PASSWORD);
+    String login = arguments.get(argumentMediator.userLogin);
+    String password = arguments.get(argumentMediator.userPassword);
 
     Query<User> query = new GetEqualsLoginUsers(login);
     List<User> equalLoginUsers;
@@ -67,7 +66,7 @@ public class LoginCommand extends EntryCommand {
 
     if (equalLoginUsers.isEmpty()) {
       logger.warn("User with specified login: {} was not found.", () -> login);
-      return new Response(Status.NOT_FOUND, USER_NOT_REGISTERED_ANSWER);
+      return new Response(Status.NOT_FOUND, userNotRegisteredAnswer);
     }
 
     String hashedPassword;
@@ -82,13 +81,13 @@ public class LoginCommand extends EntryCommand {
     for (User user : equalLoginUsers) {
       if (!user.getPassword().equals(hashedPassword)) {
         logger.warn("Wrong user password.");
-        return new Response(Status.FORBIDDEN, WRONG_USER_PASSWORD_ANSWER);
+        return new Response(Status.FORBIDDEN, wrongUserPasswordAnswer);
       }
     }
 
     String jws = Jwts.builder().setSubject(subject).signWith(key).compact();
     logger.info(() -> "Json web signature was created.");
 
-    return new Response(Status.OK, LOGGED_IN_ANSWER, jws);
+    return new Response(Status.OK, loggedInAnswer, jws);
   }
 }

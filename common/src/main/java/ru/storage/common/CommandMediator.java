@@ -8,23 +8,23 @@ import java.util.ResourceBundle;
 
 /** Command mediator class contains all command names. */
 public final class CommandMediator {
-  public final String LOGIN;
-  public final String LOGOUT;
-  public final String REGISTER;
+  public final String login;
+  public final String logout;
+  public final String register;
 
-  public final String SHOW_HISTORY;
-  public final String CLEAR_HISTORY;
+  public final String showHistory;
+  public final String clearHistory;
 
-  public final String ADD;
-  public final String REMOVE;
-  public final String UPDATE;
+  public final String add;
+  public final String remove;
+  public final String update;
 
-  public final String INFO;
-  public final String SHOW;
+  public final String info;
+  public final String show;
 
-  public final String HELP;
-  public final String EXECUTE_SCRIPT;
-  public final String EXIT;
+  public final String help;
+  public final String executeScript;
+  public final String exit;
 
   private final List<String> commands;
 
@@ -32,23 +32,23 @@ public final class CommandMediator {
   public CommandMediator() {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("CommandMediator");
 
-    LOGIN = resourceBundle.getString("commands.login");
-    LOGOUT = resourceBundle.getString("commands.logout");
-    REGISTER = resourceBundle.getString("commands.register");
+    login = resourceBundle.getString("commands.login");
+    logout = resourceBundle.getString("commands.logout");
+    register = resourceBundle.getString("commands.register");
 
-    SHOW_HISTORY = resourceBundle.getString("commands.showHistory");
-    CLEAR_HISTORY = resourceBundle.getString("commands.clearHistory");
+    showHistory = resourceBundle.getString("commands.showHistory");
+    clearHistory = resourceBundle.getString("commands.clearHistory");
 
-    ADD = resourceBundle.getString("commands.add");
-    REMOVE = resourceBundle.getString("commands.remove");
-    UPDATE = resourceBundle.getString("commands.update");
+    add = resourceBundle.getString("commands.add");
+    remove = resourceBundle.getString("commands.remove");
+    update = resourceBundle.getString("commands.update");
 
-    INFO = resourceBundle.getString("commands.info");
-    SHOW = resourceBundle.getString("commands.show");
+    info = resourceBundle.getString("commands.info");
+    show = resourceBundle.getString("commands.show");
 
-    HELP = resourceBundle.getString("commands.help");
-    EXECUTE_SCRIPT = resourceBundle.getString("commands.executeScript");
-    EXIT = resourceBundle.getString("commands.exit");
+    help = resourceBundle.getString("commands.help");
+    executeScript = resourceBundle.getString("commands.executeScript");
+    exit = resourceBundle.getString("commands.exit");
 
     commands = initCommandList();
   }
@@ -56,48 +56,48 @@ public final class CommandMediator {
   private List<String> initCommandList() {
     return new ArrayList<String>() {
       {
-        if (LOGIN != null) {
-          add(LOGIN);
+        if (login != null) {
+          add(login);
         }
-        if (LOGOUT != null) {
-          add(LOGOUT);
+        if (logout != null) {
+          add(logout);
         }
-        if (REGISTER != null) {
-          add(REGISTER);
-        }
-
-        if (SHOW_HISTORY != null) {
-          add(SHOW_HISTORY);
-        }
-        if (CLEAR_HISTORY != null) {
-          add(CLEAR_HISTORY);
+        if (register != null) {
+          add(register);
         }
 
-        if (ADD != null) {
-          add(ADD);
+        if (showHistory != null) {
+          add(showHistory);
         }
-        if (REMOVE != null) {
-          add(REMOVE);
-        }
-        if (UPDATE != null) {
-          add(UPDATE);
+        if (clearHistory != null) {
+          add(clearHistory);
         }
 
-        if (INFO != null) {
-          add(INFO);
+        if (add != null) {
+          add(add);
         }
-        if (SHOW != null) {
-          add(SHOW);
+        if (remove != null) {
+          add(remove);
+        }
+        if (update != null) {
+          add(update);
         }
 
-        if (HELP != null) {
-          add(HELP);
+        if (info != null) {
+          add(info);
         }
-        if (EXECUTE_SCRIPT != null) {
-          add(EXECUTE_SCRIPT);
+        if (show != null) {
+          add(show);
         }
-        if (EXIT != null) {
-          add(EXIT);
+
+        if (help != null) {
+          add(help);
+        }
+        if (executeScript != null) {
+          add(executeScript);
+        }
+        if (exit != null) {
+          add(exit);
         }
       }
     };

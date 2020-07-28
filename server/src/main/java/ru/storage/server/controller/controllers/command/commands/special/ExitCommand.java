@@ -17,10 +17,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class ExitCommand extends SpecialCommand {
-  private final String EXIT_ERROR_ANSWER;
-  private final String EXIT_SUCCESSFULLY_ANSWER;
+  private static final Logger logger = LogManager.getLogger(ExitCommand.class);
 
-  private final Logger logger;
+  private final String exitErrorAnswer;
+  private final String exitSuccessfullyAnswer;
 
   public ExitCommand(
       Configuration configuration,
@@ -40,12 +40,11 @@ public class ExitCommand extends SpecialCommand {
         locale,
         exitManager,
         scriptExecutor);
-    logger = LogManager.getLogger(ExitCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ExitCommand", locale);
 
-    EXIT_ERROR_ANSWER = resourceBundle.getString("answers.exitError");
-    EXIT_SUCCESSFULLY_ANSWER = resourceBundle.getString("answers.exitSuccessfully");
+    exitErrorAnswer = resourceBundle.getString("answers.exitError");
+    exitSuccessfullyAnswer = resourceBundle.getString("answers.exitSuccessfully");
   }
 
   @Override
@@ -54,9 +53,9 @@ public class ExitCommand extends SpecialCommand {
       exitManager.exit();
     } catch (ExitingException e) {
       logger.fatal(() -> "Cannot exit.", e);
-      return new Response(Status.INTERNAL_SERVER_ERROR, EXIT_ERROR_ANSWER);
+      return new Response(Status.INTERNAL_SERVER_ERROR, exitErrorAnswer);
     }
 
-    return new Response(Status.OK, EXIT_SUCCESSFULLY_ANSWER);
+    return new Response(Status.OK, exitSuccessfullyAnswer);
   }
 }

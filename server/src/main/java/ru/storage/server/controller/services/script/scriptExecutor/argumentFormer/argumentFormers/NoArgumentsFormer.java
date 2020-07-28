@@ -1,6 +1,5 @@
 package ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.argumentFormers;
 
-import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.ArgumentFormer;
@@ -9,19 +8,14 @@ import ru.storage.server.controller.services.script.scriptExecutor.argumentForme
 import java.util.*;
 
 public final class NoArgumentsFormer extends ArgumentFormer {
+  private static final Logger logger = LogManager.getLogger(NoArgumentsFormer.class);
+
   private static final String WRONG_ARGUMENTS_NUMBER_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.NoArgumentsFormer");
 
     WRONG_ARGUMENTS_NUMBER_EXCEPTION = resourceBundle.getString("exceptions.wrongArgumentsNumber");
-  }
-
-  private final Logger logger;
-
-  @Inject
-  public NoArgumentsFormer() {
-    logger = LogManager.getLogger(NoArgumentsFormer.class);
   }
 
   @Override

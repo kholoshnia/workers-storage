@@ -13,16 +13,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Former extends ArgumentFormer {
+  private static final Logger logger = LogManager.getLogger(Former.class);
+
   protected final Console console;
   protected final CommandMediator commandMediator;
-  private final Logger logger;
+
   private final Map<String, ArgumentValidator> validatorMap;
 
   public Former(
       CommandMediator commandMediator,
       Console console,
       Map<String, ArgumentValidator> validatorMap) {
-    logger = LogManager.getLogger(Former.class);
     this.console = console;
     this.commandMediator = commandMediator;
     this.validatorMap = validatorMap;
@@ -61,7 +62,7 @@ public abstract class Former extends ArgumentFormer {
         continue;
       }
 
-      if (input.equals(commandMediator.EXIT)) {
+      if (input.equals(commandMediator.exit)) {
         throw new CancelException();
       }
 
@@ -95,7 +96,7 @@ public abstract class Former extends ArgumentFormer {
 
       String input = console.readLine(prompt, mask).trim();
 
-      if (input.equals(commandMediator.EXIT)) {
+      if (input.equals(commandMediator.exit)) {
         throw new CancelException();
       }
 

@@ -21,21 +21,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class ScriptExecutor {
+  private static final Logger logger = LogManager.getLogger(ScriptExecutor.class);
+
   private static final String ERROR_NEAR_PATTERN = "%s: %d %s - %s";
 
-  private static final String COMMAND_CREATION_ERROR_ANSWER;
-  private static final String USER_NOT_FOUND_ANSWER;
-  private static final String GOT_NULL_COMMAND_ANSWER;
-
-  static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.ScriptExecutor");
-
-    COMMAND_CREATION_ERROR_ANSWER = resourceBundle.getString("answers.commandCreationError");
-    USER_NOT_FOUND_ANSWER = resourceBundle.getString("answers.userNotFound");
-    GOT_NULL_COMMAND_ANSWER = resourceBundle.getString("answers.gotNullCommand");
-  }
-
-  private final Logger logger;
   private final Pattern regex;
   private final List<Integer> scriptList;
   private final Map<String, CommandFactory> commandFactoryMap;
@@ -45,7 +34,6 @@ public final class ScriptExecutor {
   @Inject
   public ScriptExecutor(
       Map<String, CommandFactory> commandFactoryMap, FormerMediator formerMediator) {
-    logger = LogManager.getLogger(ScriptExecutor.class);
     regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
     this.commandFactoryMap = commandFactoryMap;
     this.formerMediator = formerMediator;
@@ -74,6 +62,9 @@ public final class ScriptExecutor {
     String alreadyExecutedAnswer = resourceBundle.getString("answers.alreadyExecuted");
     String noSuchCommandAnswer = resourceBundle.getString("answers.noSuchCommand");
     String errorNear = resourceBundle.getString("answers.errorNear");
+    String userNotFound = resourceBundle.getString("answers.userNotFound");
+    String commandCreationErrorAnswer = resourceBundle.getString("answers.commandCreationError");
+    String commandNotSupportedAnswer = resourceBundle.getString("answers.commandNotSupported");
 
     Integer hash = script.hashCode();
     if (scriptList.contains(hash)) {
@@ -151,17 +142,17 @@ public final class ScriptExecutor {
       } catch (UserNotFoundException e) {
         logger.warn(() -> "User was not found", e);
         scriptList.remove(hash);
-        return new Response(Status.NOT_FOUND, USER_NOT_FOUND_ANSWER);
+        return new Response(Status.NOT_FOUND, userNotFound);
       } catch (CommandFactoryException e) {
         logger.error("Cannot create command: {}.", (Supplier<?>) () -> commandName, e);
         scriptList.remove(hash);
-        return new Response(Status.INTERNAL_SERVER_ERROR, COMMAND_CREATION_ERROR_ANSWER);
+        return new Response(Status.INTERNAL_SERVER_ERROR, commandCreationErrorAnswer);
       }
 
       if (command == null) {
         logger.error(() -> "Got null command factory.");
         scriptList.remove(hash);
-        return new Response(Status.INTERNAL_SERVER_ERROR, GOT_NULL_COMMAND_ANSWER);
+        return new Response(Status.INTERNAL_SERVER_ERROR, commandNotSupportedAnswer);
       }
 
       Response response = command.executeCommand();

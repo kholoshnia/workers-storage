@@ -51,9 +51,9 @@ public final class EntryCommandFactory extends CommandFactory {
       CommandMediator commandMediator) {
     return new HashMap<String, Class<? extends EntryCommand>>() {
       {
-        put(commandMediator.LOGIN, LoginCommand.class);
-        put(commandMediator.REGISTER, RegisterCommand.class);
-        put(commandMediator.LOGOUT, LogoutCommand.class);
+        put(commandMediator.login, LoginCommand.class);
+        put(commandMediator.register, RegisterCommand.class);
+        put(commandMediator.logout, LogoutCommand.class);
       }
     };
   }

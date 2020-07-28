@@ -12,8 +12,8 @@ public final class LoginValidator extends ArgumentValidator {
     super(
         new ArrayList<String>() {
           {
-            add(argumentMediator.USER_LOGIN);
-            add(argumentMediator.USER_PASSWORD);
+            add(argumentMediator.userLogin);
+            add(argumentMediator.userPassword);
           }
         });
   }

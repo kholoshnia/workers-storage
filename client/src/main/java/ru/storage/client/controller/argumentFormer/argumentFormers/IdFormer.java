@@ -14,7 +14,8 @@ import ru.storage.common.CommandMediator;
 import java.util.*;
 
 public final class IdFormer extends Former implements LocaleListener {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(IdFormer.class);
+
   private final ArgumentMediator argumentMediator;
 
   private String wrongArgumentsNumberException;
@@ -26,7 +27,6 @@ public final class IdFormer extends Former implements LocaleListener {
       Map<String, ArgumentValidator> validatorMap,
       ArgumentMediator argumentMediator) {
     super(commandMediator, console, validatorMap);
-    logger = LogManager.getLogger(IdFormer.class);
     this.argumentMediator = argumentMediator;
   }
 
@@ -45,7 +45,7 @@ public final class IdFormer extends Former implements LocaleListener {
     }
 
     try {
-      checkArgument(argumentMediator.WORKER_ID, arguments.get(0));
+      checkArgument(argumentMediator.workerId, arguments.get(0));
     } catch (ValidationException e) {
       logger.warn(() -> "Got wrong argument.", e);
       throw new WrongArgumentsException(e.getMessage());
@@ -55,7 +55,7 @@ public final class IdFormer extends Former implements LocaleListener {
   @Override
   public Map<String, String> form(List<String> arguments) {
     Map<String, String> allArguments = new HashMap<>();
-    allArguments.put(argumentMediator.WORKER_ID, arguments.get(0));
+    allArguments.put(argumentMediator.workerId, arguments.get(0));
 
     logger.info(() -> "All arguments were formed.");
     return allArguments;

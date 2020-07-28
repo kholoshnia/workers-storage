@@ -29,6 +29,8 @@ import java.util.function.Supplier;
  * @see Repository
  */
 public final class WorkerRepository implements Repository<Worker> {
+  private static final Logger logger = LogManager.getLogger(WorkerRepository.class);
+
   private static final String WORKER_NOT_FOUND_USING_DAO_EXCEPTION;
   private static final String WORKER_NOT_FOUND_IN_COLLECTION_EXCEPTION;
 
@@ -41,7 +43,6 @@ public final class WorkerRepository implements Repository<Worker> {
         resourceBundle.getString("exceptions.workerNotFoundInCollection");
   }
 
-  private final Logger logger;
   private final DAO<Long, WorkerDTO> workerDAO;
   private final List<Worker> workers;
   private final Class<?> type;
@@ -51,7 +52,6 @@ public final class WorkerRepository implements Repository<Worker> {
   @Inject
   public WorkerRepository(@Nonnull DAO<Long, WorkerDTO> workerDAO)
       throws WorkerRepositoryException {
-    logger = LogManager.getLogger(WorkerRepository.class);
     this.workerDAO = workerDAO;
     workers = initWorkersList();
     initTime = ZonedDateTime.now();

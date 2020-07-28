@@ -18,12 +18,13 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public final class ScriptFormer extends ArgumentFormer implements LocaleListener {
+  private static final Logger logger = LogManager.getLogger(ScriptFormer.class);
+
   private static final Pattern FILE_PATTERN = Pattern.compile("^(\\\\?([^/]*[/])*)([^/]+)$");
   private static final Pattern URL_PATTERN =
       Pattern.compile(
           "https?://(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)");
 
-  private final Logger logger;
   private final ArgumentMediator argumentMediator;
 
   private String wrongArgumentsNumberException;
@@ -32,7 +33,6 @@ public final class ScriptFormer extends ArgumentFormer implements LocaleListener
 
   @Inject
   public ScriptFormer(ArgumentMediator argumentMediator) {
-    logger = LogManager.getLogger(ScriptFormer.class);
     this.argumentMediator = argumentMediator;
   }
 
@@ -102,7 +102,7 @@ public final class ScriptFormer extends ArgumentFormer implements LocaleListener
     int counter = 0;
     while (scanner.hasNextLine()) {
       allArguments.put(
-          String.format("%s%d", argumentMediator.SCRIPT_LINE, counter), scanner.nextLine());
+          String.format("%s%d", argumentMediator.scriptLine, counter), scanner.nextLine());
       counter++;
     }
 

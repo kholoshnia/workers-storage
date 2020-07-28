@@ -6,11 +6,11 @@ import org.apache.logging.log4j.Logger;
 import java.util.Locale;
 
 public final class NumberFormatter extends NumberFormat {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(NumberFormatter.class);
+
   private final java.text.NumberFormat numberFormat;
 
   NumberFormatter(Locale locale) {
-    logger = LogManager.getLogger(NumberFormatter.class);
     numberFormat = java.text.NumberFormat.getNumberInstance(locale);
   }
 

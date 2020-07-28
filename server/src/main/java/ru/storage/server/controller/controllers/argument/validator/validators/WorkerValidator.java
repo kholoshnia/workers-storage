@@ -15,22 +15,22 @@ public abstract class WorkerValidator extends ArgumentValidator {
     super(
         new ArrayList<String>() {
           {
-            add(argumentMediator.WORKER);
-            add(argumentMediator.WORKER_SALARY);
-            add(argumentMediator.WORKER_STATUS);
-            add(argumentMediator.WORKER_START_DATE);
-            add(argumentMediator.WORKER_END_DATE);
-            add(argumentMediator.COORDINATES);
-            add(argumentMediator.COORDINATES_X);
-            add(argumentMediator.COORDINATES_Y);
-            add(argumentMediator.COORDINATES_Z);
-            add(argumentMediator.PERSON);
-            add(argumentMediator.PERSON_NAME);
-            add(argumentMediator.PERSON_PASSPORT_ID);
-            add(argumentMediator.LOCATION);
-            add(argumentMediator.LOCATION_ADDRESS);
-            add(argumentMediator.LOCATION_LATITUDE);
-            add(argumentMediator.LOCATION_LONGITUDE);
+            add(argumentMediator.worker);
+            add(argumentMediator.workerSalary);
+            add(argumentMediator.workerStatus);
+            add(argumentMediator.workerStartDate);
+            add(argumentMediator.workerEndDate);
+            add(argumentMediator.coordinates);
+            add(argumentMediator.coordinatesX);
+            add(argumentMediator.coordinatesY);
+            add(argumentMediator.coordinatesZ);
+            add(argumentMediator.person);
+            add(argumentMediator.personName);
+            add(argumentMediator.personPassportId);
+            add(argumentMediator.location);
+            add(argumentMediator.locationAddress);
+            add(argumentMediator.locationLatitude);
+            add(argumentMediator.locationLongitude);
           }
         });
   }

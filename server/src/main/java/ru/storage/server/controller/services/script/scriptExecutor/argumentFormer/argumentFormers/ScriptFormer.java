@@ -17,6 +17,8 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public final class ScriptFormer extends ArgumentFormer {
+  private static final Logger logger = LogManager.getLogger(ScriptFormer.class);
+
   private static final String WRONG_ARGUMENTS_NUMBER_EXCEPTION;
   private static final String WRONG_FILE_PATH_EXCEPTION;
   private static final Pattern FILE_PATTERN = Pattern.compile("^(\\\\?([^/]*[/])*)([^/]+)$");
@@ -31,12 +33,10 @@ public final class ScriptFormer extends ArgumentFormer {
     WRONG_FILE_PATH_EXCEPTION = resourceBundle.getString("exceptions.wrongFilePath");
   }
 
-  private final Logger logger;
   private final ArgumentMediator argumentMediator;
 
   @Inject
   public ScriptFormer(ArgumentMediator argumentMediator) {
-    logger = LogManager.getLogger(ScriptFormer.class);
     this.argumentMediator = argumentMediator;
   }
 
@@ -101,7 +101,7 @@ public final class ScriptFormer extends ArgumentFormer {
     int counter = 0;
     while (scanner.hasNextLine()) {
       allArguments.put(
-          String.format("%s_%d", argumentMediator.SCRIPT_LINE, counter), scanner.nextLine());
+          String.format("%s_%d", argumentMediator.scriptLine, counter), scanner.nextLine());
       counter++;
     }
 

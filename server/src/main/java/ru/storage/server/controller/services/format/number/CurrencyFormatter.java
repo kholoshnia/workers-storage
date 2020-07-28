@@ -3,22 +3,19 @@ package ru.storage.server.controller.services.format.number;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.text.NumberFormat;
 import java.util.Locale;
 
-public final class CurrencyFormatter
-    extends ru.storage.server.controller.services.format.number.NumberFormat {
-  private final Logger logger;
-  private final NumberFormat numberFormat;
+public final class CurrencyFormatter extends NumberFormat {
+  private static final Logger logger = LogManager.getLogger(CurrencyFormatter.class);
+
+  private final java.text.NumberFormat numberFormat;
 
   CurrencyFormatter(Locale locale) {
-    logger = LogManager.getLogger(CurrencyFormatter.class);
-
     if (!locale.equals(Locale.US)) {
       logger.info(() -> "Specified locale is not US, setting formatter as US locale formatter.");
     }
 
-    numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
+    numberFormat = java.text.NumberFormat.getCurrencyInstance(Locale.US);
   }
 
   @Override

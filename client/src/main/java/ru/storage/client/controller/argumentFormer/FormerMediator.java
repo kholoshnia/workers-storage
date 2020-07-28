@@ -7,12 +7,12 @@ import org.apache.logging.log4j.Logger;
 import java.util.Map;
 
 public final class FormerMediator {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(FormerMediator.class);
+
   private final Map<String, ArgumentFormer> argumentFormerMap;
 
   @Inject
   public FormerMediator(Map<String, ArgumentFormer> argumentFormerMap) {
-    logger = LogManager.getLogger(FormerMediator.class);
     this.argumentFormerMap = argumentFormerMap;
   }
 

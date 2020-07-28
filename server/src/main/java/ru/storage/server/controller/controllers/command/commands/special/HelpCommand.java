@@ -1,6 +1,8 @@
 package ru.storage.server.controller.controllers.command.commands.special;
 
 import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
 import ru.storage.common.exitManager.ExitManager;
@@ -14,42 +16,44 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class HelpCommand extends SpecialCommand {
+  private static final Logger logger = LogManager.getLogger(HelpCommand.class);
+
   private static final String INFO_PATTERN = "%-25s- %s";
   private static final String ARGUMENT_PATTERN = "%s <%s>";
   private static final String ADDITIONAL_PATTERN = "%s {%s}";
 
-  private final String HELP_PREFIX;
+  private final String helpPrefix;
 
-  private final String ENTRY_COMMANDS_PREFIX;
-  private final String HISTORY_COMMANDS_PREFIX;
-  private final String MODIFICATION_COMMANDS_PREFIX;
-  private final String VIEW_COMMANDS_PREFIX;
-  private final String SPECIAL_COMMANDS_PREFIX;
+  private final String entryCommandsPrefix;
+  private final String historyCommandsPrefix;
+  private final String modificationCommandsPrefix;
+  private final String viewCommandsPrefix;
+  private final String specialCommandsPrefix;
 
-  private final String LOGIN_INFO;
-  private final String LOGOUT_INFO;
-  private final String REGISTER_INFO;
+  private final String loginInfo;
+  private final String logoutInfo;
+  private final String registerInfo;
 
-  private final String SHOW_HISTORY_INFO;
-  private final String CLEAR_HISTORY_INFO;
+  private final String showHistoryInfo;
+  private final String clearHistoryInfo;
 
-  private final String ADD_INFO;
-  private final String REMOVE_INFO;
-  private final String UPDATE_INFO;
+  private final String addInfo;
+  private final String removeInfo;
+  private final String updateInfo;
 
-  private final String INFO_INFO;
-  private final String SHOW_INFO;
+  private final String infoInfo;
+  private final String showInfo;
 
-  private final String HELP_INFO;
-  private final String EXECUTE_SCRIPT_INFO;
-  private final String EXIT_INFO;
+  private final String helpInfo;
+  private final String executeScriptInfo;
+  private final String exitInfo;
 
-  private final String LOGIN_ARGUMENT;
-  private final String PASSWORD_ARGUMENT;
-  private final String USER_ARGUMENT;
-  private final String WORKER_ARGUMENT;
-  private final String ID_ARGUMENT;
-  private final String PATH_ARGUMENT;
+  private final String loginArgument;
+  private final String passwordArgument;
+  private final String userArgument;
+  private final String workerArgument;
+  private final String idArgument;
+  private final String pathArgument;
 
   public HelpCommand(
       Configuration configuration,
@@ -69,116 +73,117 @@ public class HelpCommand extends SpecialCommand {
         locale,
         exitManager,
         scriptExecutor);
+
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.HelpCommand");
 
-    HELP_PREFIX = resourceBundle.getString("prefixes.help");
+    helpPrefix = resourceBundle.getString("prefixes.help");
 
-    ENTRY_COMMANDS_PREFIX = resourceBundle.getString("prefixes.entryCommands");
-    HISTORY_COMMANDS_PREFIX = resourceBundle.getString("prefixes.historyCommands");
-    MODIFICATION_COMMANDS_PREFIX = resourceBundle.getString("prefixes.modificationCommands");
-    VIEW_COMMANDS_PREFIX = resourceBundle.getString("prefixes.viewCommands");
-    SPECIAL_COMMANDS_PREFIX = resourceBundle.getString("prefixes.specialCommands");
+    entryCommandsPrefix = resourceBundle.getString("prefixes.entryCommands");
+    historyCommandsPrefix = resourceBundle.getString("prefixes.historyCommands");
+    modificationCommandsPrefix = resourceBundle.getString("prefixes.modificationCommands");
+    viewCommandsPrefix = resourceBundle.getString("prefixes.viewCommands");
+    specialCommandsPrefix = resourceBundle.getString("prefixes.specialCommands");
 
-    LOGIN_INFO = resourceBundle.getString("infos.login");
-    LOGOUT_INFO = resourceBundle.getString("infos.logout");
-    REGISTER_INFO = resourceBundle.getString("infos.register");
+    loginInfo = resourceBundle.getString("infos.login");
+    logoutInfo = resourceBundle.getString("infos.logout");
+    registerInfo = resourceBundle.getString("infos.register");
 
-    SHOW_HISTORY_INFO = resourceBundle.getString("infos.showHistory");
-    CLEAR_HISTORY_INFO = resourceBundle.getString("infos.clearHistory");
+    showHistoryInfo = resourceBundle.getString("infos.showHistory");
+    clearHistoryInfo = resourceBundle.getString("infos.clearHistory");
 
-    ADD_INFO = resourceBundle.getString("infos.add");
-    REMOVE_INFO = resourceBundle.getString("infos.remove");
-    UPDATE_INFO = resourceBundle.getString("infos.update");
+    addInfo = resourceBundle.getString("infos.add");
+    removeInfo = resourceBundle.getString("infos.remove");
+    updateInfo = resourceBundle.getString("infos.update");
 
-    INFO_INFO = resourceBundle.getString("infos.info");
-    SHOW_INFO = resourceBundle.getString("infos.show");
+    infoInfo = resourceBundle.getString("infos.info");
+    showInfo = resourceBundle.getString("infos.show");
 
-    HELP_INFO = resourceBundle.getString("infos.help");
-    EXECUTE_SCRIPT_INFO = resourceBundle.getString("infos.executeScript");
-    EXIT_INFO = resourceBundle.getString("infos.exit");
+    helpInfo = resourceBundle.getString("infos.help");
+    executeScriptInfo = resourceBundle.getString("infos.executeScript");
+    exitInfo = resourceBundle.getString("infos.exit");
 
-    LOGIN_ARGUMENT = resourceBundle.getString("arguments.login");
-    PASSWORD_ARGUMENT = resourceBundle.getString("arguments.password");
-    USER_ARGUMENT = resourceBundle.getString("arguments.user");
-    WORKER_ARGUMENT = resourceBundle.getString("arguments.worker");
-    ID_ARGUMENT = resourceBundle.getString("arguments.id");
-    PATH_ARGUMENT = resourceBundle.getString("arguments.path");
+    loginArgument = resourceBundle.getString("arguments.login");
+    passwordArgument = resourceBundle.getString("arguments.password");
+    userArgument = resourceBundle.getString("arguments.user");
+    workerArgument = resourceBundle.getString("arguments.worker");
+    idArgument = resourceBundle.getString("arguments.id");
+    pathArgument = resourceBundle.getString("arguments.path");
   }
 
   private String formEntryCommandsInfo() {
-    return ENTRY_COMMANDS_PREFIX
+    return entryCommandsPrefix
         + System.lineSeparator()
         + String.format(
             INFO_PATTERN,
             String.format(
                 ADDITIONAL_PATTERN,
-                String.format(ARGUMENT_PATTERN, commandMediator.LOGIN, LOGIN_ARGUMENT),
-                PASSWORD_ARGUMENT),
-            LOGIN_INFO)
+                String.format(ARGUMENT_PATTERN, commandMediator.login, loginArgument),
+                passwordArgument),
+            loginInfo)
         + System.lineSeparator()
-        + String.format(INFO_PATTERN, commandMediator.LOGOUT, LOGOUT_INFO)
+        + String.format(INFO_PATTERN, commandMediator.logout, logoutInfo)
         + System.lineSeparator()
         + String.format(
             INFO_PATTERN,
-            String.format(ADDITIONAL_PATTERN, commandMediator.REGISTER, USER_ARGUMENT),
-            REGISTER_INFO);
+            String.format(ADDITIONAL_PATTERN, commandMediator.register, userArgument),
+            registerInfo);
   }
 
   private String formHistoryCommandsInfo() {
-    return HISTORY_COMMANDS_PREFIX
+    return historyCommandsPrefix
         + System.lineSeparator()
-        + String.format(INFO_PATTERN, commandMediator.SHOW_HISTORY, SHOW_HISTORY_INFO)
+        + String.format(INFO_PATTERN, commandMediator.showHistory, showHistoryInfo)
         + System.lineSeparator()
-        + String.format(INFO_PATTERN, commandMediator.CLEAR_HISTORY, CLEAR_HISTORY_INFO);
+        + String.format(INFO_PATTERN, commandMediator.clearHistory, clearHistoryInfo);
   }
 
   private String formModificationCommandsInfo() {
-    return MODIFICATION_COMMANDS_PREFIX
+    return modificationCommandsPrefix
         + System.lineSeparator()
         + String.format(
             INFO_PATTERN,
-            String.format(ADDITIONAL_PATTERN, commandMediator.ADD, WORKER_ARGUMENT),
-            ADD_INFO)
+            String.format(ADDITIONAL_PATTERN, commandMediator.add, workerArgument),
+            addInfo)
         + System.lineSeparator()
         + String.format(
             INFO_PATTERN,
-            String.format(ARGUMENT_PATTERN, commandMediator.REMOVE, ID_ARGUMENT),
-            REMOVE_INFO)
+            String.format(ARGUMENT_PATTERN, commandMediator.remove, idArgument),
+            removeInfo)
         + System.lineSeparator()
         + String.format(
             INFO_PATTERN,
             String.format(
                 ADDITIONAL_PATTERN,
-                String.format(ARGUMENT_PATTERN, commandMediator.UPDATE, ID_ARGUMENT),
-                WORKER_ARGUMENT),
-            UPDATE_INFO);
+                String.format(ARGUMENT_PATTERN, commandMediator.update, idArgument),
+                workerArgument),
+            updateInfo);
   }
 
   private String formViewCommandsInfo() {
-    return VIEW_COMMANDS_PREFIX
+    return viewCommandsPrefix
         + System.lineSeparator()
-        + String.format(INFO_PATTERN, commandMediator.INFO, INFO_INFO)
+        + String.format(INFO_PATTERN, commandMediator.info, infoInfo)
         + System.lineSeparator()
-        + String.format(INFO_PATTERN, commandMediator.SHOW, SHOW_INFO);
+        + String.format(INFO_PATTERN, commandMediator.show, showInfo);
   }
 
   private String formSpecialCommandsInfo() {
-    return SPECIAL_COMMANDS_PREFIX
+    return specialCommandsPrefix
         + System.lineSeparator()
-        + String.format(INFO_PATTERN, commandMediator.HELP, HELP_INFO)
+        + String.format(INFO_PATTERN, commandMediator.help, helpInfo)
         + System.lineSeparator()
         + String.format(
             INFO_PATTERN,
-            String.format(ARGUMENT_PATTERN, commandMediator.EXECUTE_SCRIPT, PATH_ARGUMENT),
-            EXECUTE_SCRIPT_INFO)
+            String.format(ARGUMENT_PATTERN, commandMediator.executeScript, pathArgument),
+            executeScriptInfo)
         + System.lineSeparator()
-        + String.format(INFO_PATTERN, commandMediator.EXIT, EXIT_INFO);
+        + String.format(INFO_PATTERN, commandMediator.exit, exitInfo);
   }
 
   @Override
   public Response executeCommand() {
     String result =
-        HELP_PREFIX
+        helpPrefix
             + System.lineSeparator()
             + System.lineSeparator()
             + formEntryCommandsInfo()
@@ -195,6 +200,7 @@ public class HelpCommand extends SpecialCommand {
             + System.lineSeparator()
             + formSpecialCommandsInfo();
 
+    logger.info(() -> "Information about commands formed.");
     return new Response(Status.OK, result);
   }
 }

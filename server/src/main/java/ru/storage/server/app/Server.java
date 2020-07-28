@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public final class Server implements ServerProcessor {
-  public static final String NO_RESPONSE_FROM_HANDLERS_ANSWER;
+  private static final Logger logger = LogManager.getLogger(Server.class);
+
+  private static final String NO_RESPONSE_FROM_HANDLERS_ANSWER;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.Server");
@@ -27,7 +29,6 @@ public final class Server implements ServerProcessor {
     NO_RESPONSE_FROM_HANDLERS_ANSWER = resourceBundle.getString("answers.noResponseFromHandlers");
   }
 
-  private final Logger logger;
   private final ExecutorService executorService;
   private final List<Controller> controllers;
   private final ServerConnection serverConnection;
@@ -37,7 +38,6 @@ public final class Server implements ServerProcessor {
       ExecutorService executorService,
       List<Controller> controllers,
       ServerConnection serverConnection) {
-    logger = LogManager.getLogger(Server.class);
     this.executorService = executorService;
     this.controllers = controllers;
     this.serverConnection = serverConnection;

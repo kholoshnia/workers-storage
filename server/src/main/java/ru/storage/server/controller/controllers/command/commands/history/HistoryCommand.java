@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public abstract class HistoryCommand extends Command {
-  protected final String HISTORY_IS_EMPTY_ANSWER;
+  protected final String historyIsEmptyAnswer;
 
   protected final Locale locale;
   protected final History history;
@@ -27,6 +27,6 @@ public abstract class HistoryCommand extends Command {
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.HistoryCommand", locale);
 
-    HISTORY_IS_EMPTY_ANSWER = resourceBundle.getString("answers.historyIsEmpty");
+    historyIsEmptyAnswer = resourceBundle.getString("answers.historyIsEmpty");
   }
 }

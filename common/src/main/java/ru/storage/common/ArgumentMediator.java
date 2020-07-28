@@ -8,34 +8,34 @@ import java.util.ResourceBundle;
 
 /** Argument mediator class contains all argument names. */
 public final class ArgumentMediator {
-  public final String WORKER;
-  public final String WORKER_ID;
-  public final String WORKER_SALARY;
-  public final String WORKER_STATUS;
-  public final String WORKER_START_DATE;
-  public final String WORKER_END_DATE;
+  public final String worker;
+  public final String workerId;
+  public final String workerSalary;
+  public final String workerStatus;
+  public final String workerStartDate;
+  public final String workerEndDate;
 
-  public final String COORDINATES;
-  public final String COORDINATES_X;
-  public final String COORDINATES_Y;
-  public final String COORDINATES_Z;
+  public final String coordinates;
+  public final String coordinatesX;
+  public final String coordinatesY;
+  public final String coordinatesZ;
 
-  public final String PERSON;
-  public final String PERSON_NAME;
-  public final String PERSON_PASSPORT_ID;
+  public final String person;
+  public final String personName;
+  public final String personPassportId;
 
-  public final String LOCATION;
-  public final String LOCATION_ADDRESS;
-  public final String LOCATION_LATITUDE;
-  public final String LOCATION_LONGITUDE;
+  public final String location;
+  public final String locationAddress;
+  public final String locationLatitude;
+  public final String locationLongitude;
 
-  public final String USER_NAME;
-  public final String USER_LOGIN;
-  public final String USER_PASSWORD;
+  public final String userName;
+  public final String userLogin;
+  public final String userPassword;
 
-  public final String SCRIPT_LINE;
+  public final String scriptLine;
 
-  public final String INCLUDED;
+  public final String included;
 
   private final List<String> arguments;
 
@@ -43,34 +43,34 @@ public final class ArgumentMediator {
   public ArgumentMediator() {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("ArgumentMediator");
 
-    WORKER = resourceBundle.getString("arguments.worker");
-    WORKER_ID = resourceBundle.getString("arguments.worker.id");
-    WORKER_SALARY = resourceBundle.getString("arguments.worker.salary");
-    WORKER_STATUS = resourceBundle.getString("arguments.worker.status");
-    WORKER_START_DATE = resourceBundle.getString("arguments.worker.startDate");
-    WORKER_END_DATE = resourceBundle.getString("arguments.worker.endDate");
+    worker = resourceBundle.getString("arguments.worker");
+    workerId = resourceBundle.getString("arguments.worker.id");
+    workerSalary = resourceBundle.getString("arguments.worker.salary");
+    workerStatus = resourceBundle.getString("arguments.worker.status");
+    workerStartDate = resourceBundle.getString("arguments.worker.startDate");
+    workerEndDate = resourceBundle.getString("arguments.worker.endDate");
 
-    COORDINATES = resourceBundle.getString("arguments.coordinates");
-    COORDINATES_X = resourceBundle.getString("arguments.coordinates.x");
-    COORDINATES_Y = resourceBundle.getString("arguments.coordinates.y");
-    COORDINATES_Z = resourceBundle.getString("arguments.coordinates.z");
+    coordinates = resourceBundle.getString("arguments.coordinates");
+    coordinatesX = resourceBundle.getString("arguments.coordinates.x");
+    coordinatesY = resourceBundle.getString("arguments.coordinates.y");
+    coordinatesZ = resourceBundle.getString("arguments.coordinates.z");
 
-    PERSON = resourceBundle.getString("arguments.person");
-    PERSON_NAME = resourceBundle.getString("arguments.person.name");
-    PERSON_PASSPORT_ID = resourceBundle.getString("arguments.person.passportId");
+    person = resourceBundle.getString("arguments.person");
+    personName = resourceBundle.getString("arguments.person.name");
+    personPassportId = resourceBundle.getString("arguments.person.passportId");
 
-    LOCATION = resourceBundle.getString("arguments.location");
-    LOCATION_ADDRESS = resourceBundle.getString("arguments.location.address");
-    LOCATION_LATITUDE = resourceBundle.getString("arguments.location.latitude");
-    LOCATION_LONGITUDE = resourceBundle.getString("arguments.location.longitude");
+    location = resourceBundle.getString("arguments.location");
+    locationAddress = resourceBundle.getString("arguments.location.address");
+    locationLatitude = resourceBundle.getString("arguments.location.latitude");
+    locationLongitude = resourceBundle.getString("arguments.location.longitude");
 
-    USER_NAME = resourceBundle.getString("arguments.user.name");
-    USER_LOGIN = resourceBundle.getString("arguments.user.login");
-    USER_PASSWORD = resourceBundle.getString("arguments.user.password");
+    userName = resourceBundle.getString("arguments.user.name");
+    userLogin = resourceBundle.getString("arguments.user.login");
+    userPassword = resourceBundle.getString("arguments.user.password");
 
-    SCRIPT_LINE = resourceBundle.getString("arguments.scriptLine");
+    scriptLine = resourceBundle.getString("arguments.scriptLine");
 
-    INCLUDED = resourceBundle.getString("arguments.included");
+    included = resourceBundle.getString("arguments.included");
 
     arguments = initArgumentsList();
   }
@@ -78,77 +78,77 @@ public final class ArgumentMediator {
   private List<String> initArgumentsList() {
     return new ArrayList<String>() {
       {
-        if (WORKER != null) {
-          add(WORKER);
+        if (worker != null) {
+          add(worker);
         }
-        if (WORKER_ID != null) {
-          add(WORKER_ID);
+        if (workerId != null) {
+          add(workerId);
         }
-        if (WORKER_SALARY != null) {
-          add(WORKER_SALARY);
+        if (workerSalary != null) {
+          add(workerSalary);
         }
-        if (WORKER_STATUS != null) {
-          add(WORKER_STATUS);
+        if (workerStatus != null) {
+          add(workerStatus);
         }
-        if (WORKER_START_DATE != null) {
-          add(WORKER_START_DATE);
+        if (workerStartDate != null) {
+          add(workerStartDate);
         }
-        if (WORKER_END_DATE != null) {
-          add(WORKER_END_DATE);
-        }
-
-        if (COORDINATES != null) {
-          add(COORDINATES);
-        }
-        if (COORDINATES_X != null) {
-          add(COORDINATES_X);
-        }
-        if (COORDINATES_Y != null) {
-          add(COORDINATES_Y);
-        }
-        if (COORDINATES_Z != null) {
-          add(COORDINATES_Z);
+        if (workerEndDate != null) {
+          add(workerEndDate);
         }
 
-        if (PERSON != null) {
-          add(PERSON);
+        if (coordinates != null) {
+          add(coordinates);
         }
-        if (PERSON_NAME != null) {
-          add(PERSON_NAME);
+        if (coordinatesX != null) {
+          add(coordinatesX);
         }
-        if (PERSON_PASSPORT_ID != null) {
-          add(PERSON_PASSPORT_ID);
+        if (coordinatesY != null) {
+          add(coordinatesY);
         }
-
-        if (LOCATION != null) {
-          add(LOCATION);
-        }
-        if (LOCATION_ADDRESS != null) {
-          add(LOCATION_ADDRESS);
-        }
-        if (LOCATION_LATITUDE != null) {
-          add(LOCATION_LATITUDE);
-        }
-        if (LOCATION_LONGITUDE != null) {
-          add(LOCATION_LONGITUDE);
+        if (coordinatesZ != null) {
+          add(coordinatesZ);
         }
 
-        if (USER_NAME != null) {
-          add(USER_NAME);
+        if (person != null) {
+          add(person);
         }
-        if (USER_LOGIN != null) {
-          add(USER_LOGIN);
+        if (personName != null) {
+          add(personName);
         }
-        if (USER_PASSWORD != null) {
-          add(USER_PASSWORD);
-        }
-
-        if (SCRIPT_LINE != null) {
-          add(SCRIPT_LINE);
+        if (personPassportId != null) {
+          add(personPassportId);
         }
 
-        if (INCLUDED != null) {
-          add(INCLUDED);
+        if (location != null) {
+          add(location);
+        }
+        if (locationAddress != null) {
+          add(locationAddress);
+        }
+        if (locationLatitude != null) {
+          add(locationLatitude);
+        }
+        if (locationLongitude != null) {
+          add(locationLongitude);
+        }
+
+        if (userName != null) {
+          add(userName);
+        }
+        if (userLogin != null) {
+          add(userLogin);
+        }
+        if (userPassword != null) {
+          add(userPassword);
+        }
+
+        if (scriptLine != null) {
+          add(scriptLine);
+        }
+
+        if (included != null) {
+          add(included);
         }
       }
     };

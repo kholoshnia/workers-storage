@@ -45,13 +45,9 @@ import java.util.List;
 import java.util.Map;
 
 public final class ClientModule extends AbstractModule {
+  private static final Logger logger = LogManager.getLogger(ClientModule.class);
+
   private static final String CLIENT_CONFIG_PATH = "client.properties";
-
-  private final Logger logger;
-
-  public ClientModule(String[] args) {
-    logger = LogManager.getLogger(ClientModule.class);
-  }
 
   @Override
   protected void configure() {
@@ -190,19 +186,19 @@ public final class ClientModule extends AbstractModule {
     Map<String, ArgumentFormer> argumentFormerMap =
         new HashMap<String, ArgumentFormer>() {
           {
-            put(commandMediator.LOGIN, loginFormer);
-            put(commandMediator.LOGOUT, noArgumentsFormer);
-            put(commandMediator.REGISTER, registerFormer);
-            put(commandMediator.SHOW_HISTORY, noArgumentsFormer);
-            put(commandMediator.CLEAR_HISTORY, noArgumentsFormer);
-            put(commandMediator.ADD, newWorkerFormer);
-            put(commandMediator.REMOVE, idFormer);
-            put(commandMediator.UPDATE, newWorkerIdFormer);
-            put(commandMediator.EXIT, noArgumentsFormer);
-            put(commandMediator.HELP, noArgumentsFormer);
-            put(commandMediator.INFO, noArgumentsFormer);
-            put(commandMediator.SHOW, noArgumentsFormer);
-            put(commandMediator.EXECUTE_SCRIPT, scriptFormer);
+            put(commandMediator.login, loginFormer);
+            put(commandMediator.logout, noArgumentsFormer);
+            put(commandMediator.register, registerFormer);
+            put(commandMediator.showHistory, noArgumentsFormer);
+            put(commandMediator.clearHistory, noArgumentsFormer);
+            put(commandMediator.add, newWorkerFormer);
+            put(commandMediator.remove, idFormer);
+            put(commandMediator.update, newWorkerIdFormer);
+            put(commandMediator.exit, noArgumentsFormer);
+            put(commandMediator.help, noArgumentsFormer);
+            put(commandMediator.info, noArgumentsFormer);
+            put(commandMediator.show, noArgumentsFormer);
+            put(commandMediator.executeScript, scriptFormer);
           }
         };
 
@@ -222,22 +218,22 @@ public final class ClientModule extends AbstractModule {
     Map<String, ArgumentValidator> argumentValidatorMap =
         new HashMap<String, ArgumentValidator>() {
           {
-            put(argumentMediator.WORKER_ID, workerValidator::checkId);
-            put(argumentMediator.WORKER_SALARY, workerValidator::checkSalary);
-            put(argumentMediator.WORKER_STATUS, workerValidator::checkStatus);
-            put(argumentMediator.WORKER_START_DATE, workerValidator::checkStartDate);
-            put(argumentMediator.WORKER_END_DATE, workerValidator::checkEndDate);
-            put(argumentMediator.COORDINATES_X, coordinatesValidator::checkX);
-            put(argumentMediator.COORDINATES_Y, coordinatesValidator::checkY);
-            put(argumentMediator.COORDINATES_Z, coordinatesValidator::checkZ);
-            put(argumentMediator.PERSON_NAME, personValidator::checkName);
-            put(argumentMediator.PERSON_PASSPORT_ID, personValidator::checkPassportId);
-            put(argumentMediator.LOCATION_ADDRESS, locationValidator::checkAddress);
-            put(argumentMediator.LOCATION_LATITUDE, locationValidator::checkLatitude);
-            put(argumentMediator.LOCATION_LONGITUDE, locationValidator::checkLongitude);
-            put(argumentMediator.USER_NAME, registerValidator::checkName);
-            put(argumentMediator.USER_LOGIN, registerValidator::checkLogin);
-            put(argumentMediator.USER_PASSWORD, registerValidator::checkPassword);
+            put(argumentMediator.workerId, workerValidator::checkId);
+            put(argumentMediator.workerSalary, workerValidator::checkSalary);
+            put(argumentMediator.workerStatus, workerValidator::checkStatus);
+            put(argumentMediator.workerStartDate, workerValidator::checkStartDate);
+            put(argumentMediator.workerEndDate, workerValidator::checkEndDate);
+            put(argumentMediator.coordinatesX, coordinatesValidator::checkX);
+            put(argumentMediator.coordinatesY, coordinatesValidator::checkY);
+            put(argumentMediator.coordinatesZ, coordinatesValidator::checkZ);
+            put(argumentMediator.personName, personValidator::checkName);
+            put(argumentMediator.personPassportId, personValidator::checkPassportId);
+            put(argumentMediator.locationAddress, locationValidator::checkAddress);
+            put(argumentMediator.locationLatitude, locationValidator::checkLatitude);
+            put(argumentMediator.locationLongitude, locationValidator::checkLongitude);
+            put(argumentMediator.userName, registerValidator::checkName);
+            put(argumentMediator.userLogin, registerValidator::checkLogin);
+            put(argumentMediator.userPassword, registerValidator::checkPassword);
           }
         };
 

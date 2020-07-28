@@ -18,10 +18,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class ShowCommand extends ViewCommand {
-  private final String SHOW_PREFIX;
-  private final String COLLECTION_IS_EMPTY_ANSWER;
+  private static final Logger logger = LogManager.getLogger(ShowCommand.class);
 
-  private final Logger logger;
+  private final String showPrefix;
+  private final String collectionIsEmptyAnswer;
 
   public ShowCommand(
       Configuration configuration,
@@ -30,12 +30,11 @@ public final class ShowCommand extends ViewCommand {
       Locale locale,
       WorkerRepository workerRepository) {
     super(configuration, argumentMediator, arguments, locale, workerRepository);
-    logger = LogManager.getLogger(ShowCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ShowCommand");
 
-    SHOW_PREFIX = resourceBundle.getString("prefixes.show");
-    COLLECTION_IS_EMPTY_ANSWER = resourceBundle.getString("answers.collectionIsEmpty");
+    showPrefix = resourceBundle.getString("prefixes.show");
+    collectionIsEmptyAnswer = resourceBundle.getString("answers.collectionIsEmpty");
   }
 
   @Override
@@ -52,10 +51,10 @@ public final class ShowCommand extends ViewCommand {
 
     if (allWorkers.isEmpty()) {
       logger.info(() -> "Workers not found.");
-      return new Response(Status.NO_CONTENT, COLLECTION_IS_EMPTY_ANSWER);
+      return new Response(Status.NO_CONTENT, collectionIsEmptyAnswer);
     }
 
-    StringBuilder result = new StringBuilder(SHOW_PREFIX);
+    StringBuilder result = new StringBuilder(showPrefix);
 
     for (Worker worker : allWorkers) {
       result

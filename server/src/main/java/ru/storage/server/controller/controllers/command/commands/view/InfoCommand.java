@@ -13,12 +13,12 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class InfoCommand extends ViewCommand {
-  private final String INFO_PREFIX;
-  private final String TYPE_PREFIX;
-  private final String INIT_TIME_PREFIX;
-  private final String SIZE_PREFIX;
+  private static final Logger logger = LogManager.getLogger(InfoCommand.class);
 
-  private final Logger logger;
+  private final String infoPrefix;
+  private final String typePrefix;
+  private final String initTimePrefix;
+  private final String sizePrefix;
 
   public InfoCommand(
       Configuration configuration,
@@ -27,28 +27,27 @@ public final class InfoCommand extends ViewCommand {
       Locale locale,
       WorkerRepository workerRepository) {
     super(configuration, argumentMediator, arguments, locale, workerRepository);
-    logger = LogManager.getLogger(InfoCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.InfoCommand", locale);
 
-    INFO_PREFIX = resourceBundle.getString("answers.info");
-    TYPE_PREFIX = resourceBundle.getString("answers.type");
-    INIT_TIME_PREFIX = resourceBundle.getString("answers.initTime");
-    SIZE_PREFIX = resourceBundle.getString("answers.size");
+    infoPrefix = resourceBundle.getString("answers.info");
+    typePrefix = resourceBundle.getString("answers.type");
+    initTimePrefix = resourceBundle.getString("answers.initTime");
+    sizePrefix = resourceBundle.getString("answers.size");
   }
 
   @Override
   public Response executeCommand() {
     String result =
-        INFO_PREFIX
+        infoPrefix
             + System.lineSeparator()
             + System.lineSeparator()
-            + String.format("%s: %s", TYPE_PREFIX, workerRepository.getType())
+            + String.format("%s: %s", typePrefix, workerRepository.getType())
             + System.lineSeparator()
             + String.format(
-                "%s: %s", INIT_TIME_PREFIX, dateFormat.format(workerRepository.getInitTime()))
+                "%s: %s", initTimePrefix, dateFormat.format(workerRepository.getInitTime()))
             + System.lineSeparator()
-            + String.format("%s: %d", SIZE_PREFIX, workerRepository.getSize());
+            + String.format("%s: %d", sizePrefix, workerRepository.getSize());
 
     logger.info(() -> "Information was formed.");
     return new Response(Status.OK, result);

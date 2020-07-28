@@ -14,7 +14,8 @@ import ru.storage.common.CommandMediator;
 import java.util.*;
 
 public final class RegisterFormer extends Former implements LocaleListener {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(RegisterFormer.class);
+
   private final ArgumentMediator argumentMediator;
 
   private Map<String, String> registerOffers;
@@ -29,7 +30,6 @@ public final class RegisterFormer extends Former implements LocaleListener {
       Map<String, ArgumentValidator> validatorMap,
       ArgumentMediator argumentMediator) {
     super(commandMediator, console, validatorMap);
-    logger = LogManager.getLogger(RegisterFormer.class);
     this.argumentMediator = argumentMediator;
   }
 
@@ -37,10 +37,10 @@ public final class RegisterFormer extends Former implements LocaleListener {
     return new LinkedHashMap<String, String>() {
       {
         put(
-            argumentMediator.USER_NAME,
+            argumentMediator.userName,
             String.format("%s: ", resourceBundle.getString("offers.name")));
         put(
-            argumentMediator.USER_LOGIN,
+            argumentMediator.userLogin,
             String.format("%s: ", resourceBundle.getString("offers.login")));
       }
     };
@@ -67,10 +67,10 @@ public final class RegisterFormer extends Former implements LocaleListener {
   public Map<String, String> form(List<String> arguments) throws CancelException {
     Map<String, String> allArguments = readArguments(registerOffers);
 
-    String input = readArgument(argumentMediator.USER_PASSWORD, passwordOffer, null, '*');
-    allArguments.put(argumentMediator.USER_PASSWORD, input);
+    String input = readArgument(argumentMediator.userPassword, passwordOffer, null, '*');
+    allArguments.put(argumentMediator.userPassword, input);
 
-    console.setUser(allArguments.get(argumentMediator.USER_LOGIN));
+    console.setUser(allArguments.get(argumentMediator.userLogin));
     logger.info(() -> "Set login for console prompt.");
 
     logger.info(() -> "All arguments were formed.");

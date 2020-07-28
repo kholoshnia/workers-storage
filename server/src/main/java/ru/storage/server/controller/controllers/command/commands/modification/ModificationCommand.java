@@ -26,18 +26,18 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public abstract class ModificationCommand extends Command {
-  protected final String WRONG_ID_ANSWER;
-  protected final String WORKER_NOT_FOUND_ANSWER;
-  protected final String WRONG_WORKER_FORMAT_ANSWER;
-  protected final String WRONG_WORKER_DATA_ANSWER;
-  protected final String NOT_OWNER_ANSWER;
+  private static final Logger logger = LogManager.getLogger(ModificationCommand.class);
+
+  protected final String wrongIdAnswer;
+  protected final String workerNotFoundAnswer;
+  protected final String wrongWorkerFormatAnswer;
+  protected final String wrongWorkerDataAnswer;
+  protected final String notOwnerAnswer;
 
   protected final Locale locale;
   protected final User user;
   protected final Repository<Worker> workerRepository;
   protected final Parser parser;
-
-  private final Logger logger;
 
   public ModificationCommand(
       Configuration configuration,
@@ -48,7 +48,6 @@ public abstract class ModificationCommand extends Command {
       Repository<Worker> workerRepository,
       Parser parser) {
     super(configuration, argumentMediator, arguments);
-    logger = LogManager.getLogger(ModificationCommand.class);
     this.locale = locale;
     this.user = user;
     this.workerRepository = workerRepository;
@@ -57,11 +56,11 @@ public abstract class ModificationCommand extends Command {
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.ModificationCommand", locale);
 
-    WRONG_ID_ANSWER = resourceBundle.getString("answers.wrongId");
-    WORKER_NOT_FOUND_ANSWER = resourceBundle.getString("answers.workerNotFound");
-    WRONG_WORKER_FORMAT_ANSWER = resourceBundle.getString("answers.wrongWorkerFormat");
-    WRONG_WORKER_DATA_ANSWER = resourceBundle.getString("answers.wrongWorkerData");
-    NOT_OWNER_ANSWER = resourceBundle.getString("answers.notOwner");
+    wrongIdAnswer = resourceBundle.getString("answers.wrongId");
+    workerNotFoundAnswer = resourceBundle.getString("answers.workerNotFound");
+    wrongWorkerFormatAnswer = resourceBundle.getString("answers.wrongWorkerFormat");
+    wrongWorkerDataAnswer = resourceBundle.getString("answers.wrongWorkerData");
+    notOwnerAnswer = resourceBundle.getString("answers.notOwner");
   }
 
   /**
@@ -71,14 +70,14 @@ public abstract class ModificationCommand extends Command {
    * @throws ParserException - in case of user arguments parse errors
    */
   protected final CoordinatesDTO createCoordinatesDTO() throws ParserException {
-    if (arguments.get(argumentMediator.COORDINATES) == null
-        || !arguments.get(argumentMediator.COORDINATES).equals(argumentMediator.INCLUDED)) {
+    if (arguments.get(argumentMediator.coordinates) == null
+        || !arguments.get(argumentMediator.coordinates).equals(argumentMediator.included)) {
       return null;
     }
 
-    Double x = parser.parseDouble(arguments.get(argumentMediator.COORDINATES_X));
-    Double y = parser.parseDouble(arguments.get(argumentMediator.COORDINATES_Y));
-    Double z = parser.parseDouble(arguments.get(argumentMediator.COORDINATES_Z));
+    Double x = parser.parseDouble(arguments.get(argumentMediator.coordinatesX));
+    Double y = parser.parseDouble(arguments.get(argumentMediator.coordinatesY));
+    Double z = parser.parseDouble(arguments.get(argumentMediator.coordinatesZ));
 
     CoordinatesDTO coordinatesDTO =
         new CoordinatesDTO(Coordinates.DEFAULT_ID, Coordinates.DEFAULT_OWNER_ID, x, y, z);
@@ -93,14 +92,14 @@ public abstract class ModificationCommand extends Command {
    * @throws ParserException - in case of user arguments parse errors
    */
   protected final LocationDTO createLocationDTO() throws ParserException {
-    if (arguments.get(argumentMediator.LOCATION) == null
-        || !arguments.get(argumentMediator.LOCATION).equals(argumentMediator.INCLUDED)) {
+    if (arguments.get(argumentMediator.location) == null
+        || !arguments.get(argumentMediator.location).equals(argumentMediator.included)) {
       return null;
     }
 
-    String address = parser.parseString(arguments.get(argumentMediator.LOCATION_ADDRESS));
-    Double latitude = parser.parseDouble(arguments.get(argumentMediator.LOCATION_LONGITUDE));
-    Double longitude = parser.parseDouble(arguments.get(argumentMediator.LOCATION_LATITUDE));
+    String address = parser.parseString(arguments.get(argumentMediator.locationAddress));
+    Double latitude = parser.parseDouble(arguments.get(argumentMediator.locationLongitude));
+    Double longitude = parser.parseDouble(arguments.get(argumentMediator.locationLatitude));
 
     LocationDTO locationDTO =
         new LocationDTO(
@@ -117,13 +116,13 @@ public abstract class ModificationCommand extends Command {
    * @see #createLocationDTO
    */
   protected final PersonDTO createPersonDTO() throws ParserException {
-    if (arguments.get(argumentMediator.PERSON) == null
-        || !arguments.get(argumentMediator.PERSON).equals(argumentMediator.INCLUDED)) {
+    if (arguments.get(argumentMediator.person) == null
+        || !arguments.get(argumentMediator.person).equals(argumentMediator.included)) {
       return null;
     }
 
-    String name = parser.parseString(arguments.get(argumentMediator.PERSON_NAME));
-    String passportId = parser.parseString(arguments.get(argumentMediator.PERSON_PASSPORT_ID));
+    String name = parser.parseString(arguments.get(argumentMediator.personName));
+    String passportId = parser.parseString(arguments.get(argumentMediator.personPassportId));
     LocationDTO locationDTO = createLocationDTO();
 
     PersonDTO personDTO =
@@ -141,17 +140,17 @@ public abstract class ModificationCommand extends Command {
    * @see #createPersonDTO
    */
   protected final WorkerDTO createWorkerDTO() throws ParserException {
-    if (arguments.get(argumentMediator.WORKER) == null
-        || !arguments.get(argumentMediator.WORKER).equals(argumentMediator.INCLUDED)) {
+    if (arguments.get(argumentMediator.worker) == null
+        || !arguments.get(argumentMediator.worker).equals(argumentMediator.included)) {
       return null;
     }
 
-    Float salary = parser.parseFloat(arguments.get(argumentMediator.WORKER_SALARY));
-    Status status = parser.parseStatus(arguments.get(argumentMediator.WORKER_STATUS), locale);
+    Float salary = parser.parseFloat(arguments.get(argumentMediator.workerSalary));
+    Status status = parser.parseStatus(arguments.get(argumentMediator.workerStatus), locale);
     ZonedDateTime startDate =
-        parser.parseLocalDateTime(arguments.get(argumentMediator.WORKER_START_DATE));
+        parser.parseLocalDateTime(arguments.get(argumentMediator.workerStartDate));
     ZonedDateTime endDate =
-        parser.parseLocalDateTime(arguments.get(argumentMediator.WORKER_END_DATE));
+        parser.parseLocalDateTime(arguments.get(argumentMediator.workerEndDate));
     CoordinatesDTO coordinatesDTO = createCoordinatesDTO();
     PersonDTO personDTO = createPersonDTO();
 

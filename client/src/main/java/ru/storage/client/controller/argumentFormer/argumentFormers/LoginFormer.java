@@ -15,7 +15,8 @@ import ru.storage.common.CommandMediator;
 import java.util.*;
 
 public final class LoginFormer extends Former implements LocaleListener {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(LoginFormer.class);
+
   private final ArgumentMediator argumentMediator;
   private final LoginValidator loginValidator;
 
@@ -31,7 +32,6 @@ public final class LoginFormer extends Former implements LocaleListener {
       ArgumentMediator argumentMediator,
       LoginValidator loginValidator) {
     super(commandMediator, console, validatorMap);
-    logger = LogManager.getLogger(LoginFormer.class);
     this.argumentMediator = argumentMediator;
     this.loginValidator = loginValidator;
   }
@@ -62,7 +62,7 @@ public final class LoginFormer extends Former implements LocaleListener {
   @Override
   public Map<String, String> form(List<String> arguments) {
     Map<String, String> allArguments = new HashMap<>();
-    allArguments.put(argumentMediator.USER_LOGIN, arguments.get(0));
+    allArguments.put(argumentMediator.userLogin, arguments.get(0));
 
     boolean wrong = true;
     while (wrong) {
@@ -73,14 +73,14 @@ public final class LoginFormer extends Former implements LocaleListener {
 
       try {
         loginValidator.checkPassword(input);
-        allArguments.put(argumentMediator.USER_PASSWORD, input);
+        allArguments.put(argumentMediator.userPassword, input);
         wrong = false;
       } catch (ValidationException e) {
         console.writeLine(e.getMessage());
       }
     }
 
-    console.setUser(allArguments.get(argumentMediator.USER_LOGIN));
+    console.setUser(allArguments.get(argumentMediator.userLogin));
     logger.info(() -> "Set login for console prompt.");
 
     logger.info(() -> "All arguments were formed.");

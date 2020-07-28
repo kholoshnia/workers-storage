@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class RemoveCommand extends ModificationCommand {
-  private final String REMOVED_SUCCESSFULLY_ANSWER;
+  private static final Logger logger = LogManager.getLogger(RemoveCommand.class);
 
-  private final Logger logger;
+  private final String removedSuccessfullyAnswer;
 
   public RemoveCommand(
       Configuration configuration,
@@ -35,11 +35,10 @@ public final class RemoveCommand extends ModificationCommand {
       Parser parser,
       User user) {
     super(configuration, argumentMediator, arguments, locale, user, workerRepository, parser);
-    logger = LogManager.getLogger(RemoveCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.RemoveCommand");
 
-    REMOVED_SUCCESSFULLY_ANSWER = resourceBundle.getString("answers.removedSuccessfully");
+    removedSuccessfullyAnswer = resourceBundle.getString("answers.removedSuccessfully");
   }
 
   @Override
@@ -47,15 +46,15 @@ public final class RemoveCommand extends ModificationCommand {
     Long id;
 
     try {
-      id = parser.parseLong(arguments.get(argumentMediator.WORKER_ID));
+      id = parser.parseLong(arguments.get(argumentMediator.workerId));
     } catch (ParserException e) {
       logger.warn(() -> "Got wrong remove id.", e);
-      return new Response(Status.BAD_REQUEST, WRONG_ID_ANSWER);
+      return new Response(Status.BAD_REQUEST, wrongIdAnswer);
     }
 
     if (id == null) {
       logger.warn(() -> "Got null remove id.");
-      return new Response(Status.BAD_REQUEST, WRONG_ID_ANSWER);
+      return new Response(Status.BAD_REQUEST, wrongIdAnswer);
     }
 
     Query<Worker> query = new GetEqualIdWorkers(id);
@@ -70,7 +69,7 @@ public final class RemoveCommand extends ModificationCommand {
 
     if (equalIdWorkers.isEmpty()) {
       logger.info("Worker with specified id: {} was not found.", () -> id);
-      return new Response(Status.NOT_FOUND, WORKER_NOT_FOUND_ANSWER);
+      return new Response(Status.NOT_FOUND, workerNotFoundAnswer);
     }
 
     for (Worker worker : equalIdWorkers) {
@@ -78,7 +77,7 @@ public final class RemoveCommand extends ModificationCommand {
         if (worker.getOwnerId() == user.getId()) {
           workerRepository.delete(worker);
         } else {
-          return new Response(Status.FORBIDDEN, NOT_OWNER_ANSWER);
+          return new Response(Status.FORBIDDEN, notOwnerAnswer);
         }
       } catch (RepositoryException e) {
         logger.error("Cannot remove worker which id is equal to {}.", (Supplier<?>) () -> id, e);
@@ -87,6 +86,6 @@ public final class RemoveCommand extends ModificationCommand {
     }
 
     logger.info(() -> "Worker was removed.");
-    return new Response(Status.OK, REMOVED_SUCCESSFULLY_ANSWER);
+    return new Response(Status.OK, removedSuccessfullyAnswer);
   }
 }

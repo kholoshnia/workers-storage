@@ -71,20 +71,18 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public final class ServerModule extends AbstractModule {
+  private static final Logger logger = LogManager.getLogger(ServerModule.class);
+
   private static final String SERVER_CONFIG_PATH = "server.properties";
 
-  private final String URL;
-  private final String USER;
-  private final String PASSWORD;
-
-  private final Logger logger;
+  private final String url;
+  private final String user;
+  private final String password;
 
   public ServerModule(String[] args) {
-    logger = LogManager.getLogger(ServerModule.class);
-
-    URL = args[0];
-    USER = args[1];
-    PASSWORD = args[2];
+    url = args[0];
+    user = args[1];
+    password = args[2];
   }
 
   @Override
@@ -303,19 +301,19 @@ public final class ServerModule extends AbstractModule {
     Map<String, CommandFactory> commandFactoryMap =
         new HashMap<String, CommandFactory>() {
           {
-            put(commandMediator.LOGIN, entryCommandFactory);
-            put(commandMediator.LOGOUT, entryCommandFactory);
-            put(commandMediator.REGISTER, entryCommandFactory);
-            put(commandMediator.SHOW_HISTORY, historyCommandFactory);
-            put(commandMediator.CLEAR_HISTORY, historyCommandFactory);
-            put(commandMediator.ADD, modificationCommandFactory);
-            put(commandMediator.REMOVE, modificationCommandFactory);
-            put(commandMediator.UPDATE, modificationCommandFactory);
-            put(commandMediator.EXIT, specialCommandFactory);
-            put(commandMediator.HELP, specialCommandFactory);
-            put(commandMediator.INFO, viewCommandFactory);
-            put(commandMediator.SHOW, viewCommandFactory);
-            put(commandMediator.EXECUTE_SCRIPT, specialCommandFactory);
+            put(commandMediator.login, entryCommandFactory);
+            put(commandMediator.logout, entryCommandFactory);
+            put(commandMediator.register, entryCommandFactory);
+            put(commandMediator.showHistory, historyCommandFactory);
+            put(commandMediator.clearHistory, historyCommandFactory);
+            put(commandMediator.add, modificationCommandFactory);
+            put(commandMediator.remove, modificationCommandFactory);
+            put(commandMediator.update, modificationCommandFactory);
+            put(commandMediator.exit, specialCommandFactory);
+            put(commandMediator.help, specialCommandFactory);
+            put(commandMediator.info, viewCommandFactory);
+            put(commandMediator.show, viewCommandFactory);
+            put(commandMediator.executeScript, specialCommandFactory);
           }
         };
 
@@ -335,16 +333,16 @@ public final class ServerModule extends AbstractModule {
     Map<String, ArgumentFormer> argumentFormerMap =
         new HashMap<String, ArgumentFormer>() {
           {
-            put(commandMediator.SHOW_HISTORY, noArgumentsFormer);
-            put(commandMediator.CLEAR_HISTORY, noArgumentsFormer);
-            put(commandMediator.ADD, newWorkerFormer);
-            put(commandMediator.REMOVE, idFormer);
-            put(commandMediator.UPDATE, newWorkerIdFormer);
-            put(commandMediator.EXIT, noArgumentsFormer);
-            put(commandMediator.HELP, noArgumentsFormer);
-            put(commandMediator.INFO, noArgumentsFormer);
-            put(commandMediator.SHOW, noArgumentsFormer);
-            put(commandMediator.EXECUTE_SCRIPT, scriptFormer);
+            put(commandMediator.showHistory, noArgumentsFormer);
+            put(commandMediator.clearHistory, noArgumentsFormer);
+            put(commandMediator.add, newWorkerFormer);
+            put(commandMediator.remove, idFormer);
+            put(commandMediator.update, newWorkerIdFormer);
+            put(commandMediator.exit, noArgumentsFormer);
+            put(commandMediator.help, noArgumentsFormer);
+            put(commandMediator.info, noArgumentsFormer);
+            put(commandMediator.show, noArgumentsFormer);
+            put(commandMediator.executeScript, scriptFormer);
           }
         };
 
@@ -366,19 +364,19 @@ public final class ServerModule extends AbstractModule {
     Map<String, ArgumentValidator> validatorMap =
         new HashMap<String, ArgumentValidator>() {
           {
-            put(commandMediator.LOGIN, loginValidator);
-            put(commandMediator.LOGOUT, noArgumentsValidator);
-            put(commandMediator.REGISTER, registerValidator);
-            put(commandMediator.SHOW_HISTORY, noArgumentsValidator);
-            put(commandMediator.CLEAR_HISTORY, noArgumentsValidator);
-            put(commandMediator.ADD, newWorkerValidator);
-            put(commandMediator.REMOVE, idValidator);
-            put(commandMediator.UPDATE, newWorkerIdValidator);
-            put(commandMediator.EXIT, noArgumentsValidator);
-            put(commandMediator.HELP, noArgumentsValidator);
-            put(commandMediator.INFO, noArgumentsValidator);
-            put(commandMediator.SHOW, noArgumentsValidator);
-            put(commandMediator.EXECUTE_SCRIPT, scriptValidator);
+            put(commandMediator.login, loginValidator);
+            put(commandMediator.logout, noArgumentsValidator);
+            put(commandMediator.register, registerValidator);
+            put(commandMediator.showHistory, noArgumentsValidator);
+            put(commandMediator.clearHistory, noArgumentsValidator);
+            put(commandMediator.add, newWorkerValidator);
+            put(commandMediator.remove, idValidator);
+            put(commandMediator.update, newWorkerIdValidator);
+            put(commandMediator.exit, noArgumentsValidator);
+            put(commandMediator.help, noArgumentsValidator);
+            put(commandMediator.info, noArgumentsValidator);
+            put(commandMediator.show, noArgumentsValidator);
+            put(commandMediator.executeScript, scriptValidator);
           }
         };
 
@@ -403,7 +401,7 @@ public final class ServerModule extends AbstractModule {
     DataSource dataSource;
 
     try {
-      dataSource = new Database(URL, USER, PASSWORD);
+      dataSource = new Database(url, user, password);
     } catch (DataSourceException e) {
       throw new ProvidingException(e);
     }

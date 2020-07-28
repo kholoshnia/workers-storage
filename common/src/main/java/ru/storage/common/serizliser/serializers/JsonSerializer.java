@@ -12,12 +12,12 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 
 public final class JsonSerializer implements Serializer {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(JsonSerializer.class);
+
   private final Gson gson;
 
   @Inject
   public JsonSerializer(Gson gson) {
-    logger = LogManager.getLogger(JsonSerializer.class);
     this.gson = gson;
   }
 

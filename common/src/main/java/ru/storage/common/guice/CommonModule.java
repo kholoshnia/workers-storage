@@ -14,11 +14,7 @@ import ru.storage.common.serizliser.Serializer;
 import ru.storage.common.serizliser.serializers.JsonSerializer;
 
 public class CommonModule extends AbstractModule {
-  private final Logger logger;
-
-  public CommonModule() {
-    logger = LogManager.getLogger(CommonModule.class);
-  }
+  private static final Logger logger = LogManager.getLogger(CommonModule.class);
 
   @Override
   protected void configure() {

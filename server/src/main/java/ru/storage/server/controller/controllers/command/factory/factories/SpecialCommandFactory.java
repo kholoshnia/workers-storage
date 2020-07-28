@@ -53,9 +53,9 @@ public final class SpecialCommandFactory extends CommandFactory {
       CommandMediator commandMediator) {
     return new HashMap<String, Class<? extends SpecialCommand>>() {
       {
-        put(commandMediator.HELP, HelpCommand.class);
-        put(commandMediator.EXECUTE_SCRIPT, ExecuteScriptCommand.class);
-        put(commandMediator.EXIT, ExitCommand.class);
+        put(commandMediator.help, HelpCommand.class);
+        put(commandMediator.executeScript, ExecuteScriptCommand.class);
+        put(commandMediator.exit, ExitCommand.class);
       }
     };
   }

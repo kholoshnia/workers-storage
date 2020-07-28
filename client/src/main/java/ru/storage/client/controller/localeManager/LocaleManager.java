@@ -8,11 +8,11 @@ import java.util.Locale;
 
 /** Observer class that is used to call change locale method of all subscribed listeners. */
 public class LocaleManager {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(LocaleManager.class);
+
   private final List<LocaleListener> listeners;
 
   public LocaleManager(List<LocaleListener> listeners) {
-    logger = LogManager.getLogger(LocaleManager.class);
     this.listeners = listeners;
   }
 

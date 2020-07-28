@@ -14,7 +14,7 @@ import ru.storage.common.CommandMediator;
 import java.util.*;
 
 public final class NewWorkerIdFormer extends WorkerFormer {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(NewWorkerIdFormer.class);
 
   private String wrongArgumentsNumberException;
 
@@ -25,7 +25,6 @@ public final class NewWorkerIdFormer extends WorkerFormer {
       Map<String, ArgumentValidator> validatorMap,
       ArgumentMediator argumentMediator) {
     super(commandMediator, console, validatorMap, argumentMediator);
-    logger = LogManager.getLogger(NewWorkerIdFormer.class);
   }
 
   @Override
@@ -44,7 +43,7 @@ public final class NewWorkerIdFormer extends WorkerFormer {
     }
 
     try {
-      checkArgument(argumentMediator.WORKER_ID, arguments.get(0));
+      checkArgument(argumentMediator.workerId, arguments.get(0));
     } catch (ValidationException e) {
       logger.warn(() -> "Got wrong argument.", e);
       throw new WrongArgumentsException(e.getMessage());
@@ -54,7 +53,7 @@ public final class NewWorkerIdFormer extends WorkerFormer {
   @Override
   public Map<String, String> form(List<String> arguments) throws CancelException {
     Map<String, String> allArguments = new HashMap<>();
-    allArguments.put(argumentMediator.WORKER_ID, arguments.get(0));
+    allArguments.put(argumentMediator.workerId, arguments.get(0));
 
     Map<String, String> workerArguments = formWorker();
     logger.info(() -> "Worker arguments were formed.");

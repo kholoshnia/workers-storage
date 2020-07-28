@@ -12,9 +12,9 @@ public final class RegisterValidator extends ArgumentValidator {
     super(
         new ArrayList<String>() {
           {
-            add(argumentMediator.USER_NAME);
-            add(argumentMediator.USER_LOGIN);
-            add(argumentMediator.USER_PASSWORD);
+            add(argumentMediator.userName);
+            add(argumentMediator.userLogin);
+            add(argumentMediator.userPassword);
           }
         });
   }

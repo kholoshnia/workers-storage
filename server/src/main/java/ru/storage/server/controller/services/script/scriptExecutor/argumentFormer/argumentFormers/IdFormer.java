@@ -9,6 +9,8 @@ import ru.storage.server.controller.services.script.scriptExecutor.argumentForme
 import java.util.*;
 
 public final class IdFormer extends Former {
+  private static final Logger logger = LogManager.getLogger(IdFormer.class);
+
   private static final String WRONG_ARGUMENTS_NUMBER_EXCEPTION;
 
   static {
@@ -17,13 +19,11 @@ public final class IdFormer extends Former {
     WRONG_ARGUMENTS_NUMBER_EXCEPTION = resourceBundle.getString("exceptions.wrongArgumentsNumber");
   }
 
-  private final Logger logger;
   private final ArgumentMediator argumentMediator;
 
   @Inject
   public IdFormer(ArgumentMediator argumentMediator) {
     super(argumentMediator);
-    logger = LogManager.getLogger(IdFormer.class);
     this.argumentMediator = argumentMediator;
   }
 
@@ -38,7 +38,7 @@ public final class IdFormer extends Former {
   @Override
   public Map<String, String> form(List<String> arguments, Iterator<String> script) {
     Map<String, String> allArguments = new HashMap<>();
-    allArguments.put(argumentMediator.WORKER_ID, arguments.get(0));
+    allArguments.put(argumentMediator.workerId, arguments.get(0));
 
     logger.info(() -> "All arguments were formed.");
     return allArguments;

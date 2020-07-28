@@ -41,8 +41,8 @@ public final class HistoryCommandFactory extends CommandFactory {
       CommandMediator commandMediator) {
     return new HashMap<String, Class<? extends HistoryCommand>>() {
       {
-        put(commandMediator.SHOW_HISTORY, ShowHistoryCommand.class);
-        put(commandMediator.CLEAR_HISTORY, ClearHistoryCommand.class);
+        put(commandMediator.showHistory, ShowHistoryCommand.class);
+        put(commandMediator.clearHistory, ClearHistoryCommand.class);
       }
     };
   }

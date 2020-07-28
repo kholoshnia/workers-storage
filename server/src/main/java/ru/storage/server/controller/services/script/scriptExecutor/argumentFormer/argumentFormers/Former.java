@@ -12,12 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Former extends ArgumentFormer {
+  private static final Logger logger = LogManager.getLogger(Former.class);
+
   protected final ArgumentMediator argumentMediator;
 
-  private final Logger logger;
-
   public Former(ArgumentMediator argumentMediator) {
-    logger = LogManager.getLogger(Former.class);
     this.argumentMediator = argumentMediator;
   }
 

@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class UserDAO implements DAO<String, UserDTO> {
+  private static final Logger logger = LogManager.getLogger(UserDAO.class);
+
   private static final String SELECT_ALL = "SELECT * FROM " + UserDTO.TABLE_NAME;
 
   private static final String SELECT_BY_ID = SELECT_ALL + " WHERE " + UserDTO.ID_COLUMN + " = ?";
@@ -76,13 +78,11 @@ public class UserDAO implements DAO<String, UserDTO> {
     CANNOT_DELETE_USER_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteUser");
   }
 
-  private final Logger logger;
   private final DataSource dataSource;
   private final Adapter<Role, String> roleAdapter;
 
   @Inject
   public UserDAO(DataSource dataSource, Adapter<Role, String> roleAdapter) {
-    logger = LogManager.getLogger(UserDAO.class);
     this.dataSource = dataSource;
     this.roleAdapter = roleAdapter;
   }

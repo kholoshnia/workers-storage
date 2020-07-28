@@ -15,6 +15,8 @@ import java.util.ResourceBundle;
 
 /** The Parser class provides methods for parsing a string into other types. */
 public final class Parser {
+  private static final Logger logger = LogManager.getLogger(Parser.class);
+
   private static final String PARSE_LONG_EXCEPTION;
   private static final String PARSE_FLOAT_EXCEPTION;
   private static final String PARSE_DOUBLE_EXCEPTION;
@@ -29,12 +31,6 @@ public final class Parser {
     PARSE_DOUBLE_EXCEPTION = resourceBundle.getString("exceptions.parseDouble");
     PARSE_STATUS_EXCEPTION = resourceBundle.getString("exceptions.parseStatus");
     PARSE_ZONED_DATE_TIME_EXCEPTION = resourceBundle.getString("exceptions.parseZonedDateTime");
-  }
-
-  private final Logger logger;
-
-  public Parser() {
-    logger = LogManager.getLogger(Parser.class);
   }
 
   public Long parseLong(String longString) throws ParserException {

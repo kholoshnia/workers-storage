@@ -10,11 +10,11 @@ import java.time.format.FormatStyle;
 import java.util.Locale;
 
 public final class DateFormatter extends DateFormat {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(DateFormatter.class);
+
   private final DateTimeFormatter dateTimeFormatter;
 
   public DateFormatter(Locale locale) {
-    logger = LogManager.getLogger(DateFormatter.class);
     dateTimeFormatter =
         DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)
             .withLocale(locale)

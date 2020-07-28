@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class ClearHistoryCommand extends HistoryCommand {
-  protected final String CLEARED_SUCCESSFULLY_ANSWER;
+  private static final Logger logger = LogManager.getLogger(ClearHistoryCommand.class);
 
-  private final Logger logger;
+  protected final String clearedSuccessfullyAnswer;
 
   public ClearHistoryCommand(
       Configuration configuration,
@@ -24,24 +24,23 @@ public final class ClearHistoryCommand extends HistoryCommand {
       Locale locale,
       History history) {
     super(configuration, argumentMediator, arguments, locale, history);
-    logger = LogManager.getLogger(ClearHistoryCommand.class);
 
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.ClearHistoryCommand", locale);
 
-    CLEARED_SUCCESSFULLY_ANSWER = resourceBundle.getString("answers.clearedSuccessfully");
+    clearedSuccessfullyAnswer = resourceBundle.getString("answers.clearedSuccessfully");
   }
 
   @Override
   public Response executeCommand() {
     if (history.getSize() == 0L) {
       logger.info(() -> "History is empty.");
-      return new Response(Status.NO_CONTENT, HISTORY_IS_EMPTY_ANSWER);
+      return new Response(Status.NO_CONTENT, historyIsEmptyAnswer);
     }
 
     history.clear();
 
     logger.info(() -> "History was cleared.");
-    return new Response(Status.OK, CLEARED_SUCCESSFULLY_ANSWER);
+    return new Response(Status.OK, clearedSuccessfullyAnswer);
   }
 }

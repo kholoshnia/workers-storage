@@ -7,12 +7,12 @@ import org.apache.logging.log4j.Logger;
 import java.util.Map;
 
 public final class CommandFactoryMediator {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(CommandFactoryMediator.class);
+
   private final Map<String, CommandFactory> commandFactoryMap;
 
   @Inject
   public CommandFactoryMediator(Map<String, CommandFactory> commandFactoryMap) {
-    logger = LogManager.getLogger(CommandFactoryMediator.class);
     this.commandFactoryMap = commandFactoryMap;
   }
 

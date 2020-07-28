@@ -38,7 +38,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class Terminal implements Console, ExitListener, LocaleListener {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(Terminal.class);
+
   private final ExitManager exitManager;
   private final ServerWorker serverWorker;
   private final CommandMediator commandMediator;
@@ -82,7 +83,6 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
       FormerMediator formerMediator,
       List<ResponseHandler> responseHandlers)
       throws ConsoleException {
-    logger = LogManager.getLogger(Terminal.class);
     this.exitManager = exitManager;
     exitManager.subscribe(this);
     this.serverWorker = serverWorker;
@@ -113,9 +113,9 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
   private List<String> initAuthCommandsList() {
     return new ArrayList<String>() {
       {
-        add(commandMediator.LOGIN);
-        add(commandMediator.REGISTER);
-        add(commandMediator.EXIT);
+        add(commandMediator.login);
+        add(commandMediator.register);
+        add(commandMediator.exit);
       }
     };
   }
@@ -238,7 +238,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
       return null;
     }
 
-    if (command.equals(commandMediator.EXIT)) {
+    if (command.equals(commandMediator.exit)) {
       exitManager.exit();
       return null;
     }
@@ -392,7 +392,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
     try {
       input = reader.readLine(prompt, mask);
     } catch (UserInterruptException e) {
-      input = commandMediator.EXIT;
+      input = commandMediator.exit;
     } catch (EndOfFileException e) {
       input = null;
     }

@@ -19,7 +19,8 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 
 public final class ServerWorker implements ExitListener {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(ServerWorker.class);
+
   private final int bufferSize;
   private final Serializer serializer;
   private final InetSocketAddress socketAddress;
@@ -28,7 +29,6 @@ public final class ServerWorker implements ExitListener {
   private ByteBuffer buffer;
 
   public ServerWorker(InetAddress address, int port, int bufferSize, Serializer serializer) {
-    logger = LogManager.getLogger(ServerWorker.class);
     this.bufferSize = bufferSize;
     buffer = ByteBuffer.allocate(bufferSize);
     this.serializer = serializer;

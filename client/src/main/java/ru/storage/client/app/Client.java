@@ -7,12 +7,12 @@ import ru.storage.client.app.exceptions.ClientException;
 import ru.storage.client.view.console.Console;
 
 public final class Client {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(Client.class);
+
   private final Console console;
 
   @Inject
   public Client(Console console) {
-    logger = LogManager.getLogger(Client.class);
     this.console = console;
   }
 

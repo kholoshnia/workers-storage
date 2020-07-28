@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class NewWorkerFormer extends WorkerFormer {
+  private static final Logger logger = LogManager.getLogger(NewWorkerFormer.class);
+
   private static final String WRONG_ARGUMENTS_NUMBER_EXCEPTION;
 
   static {
@@ -21,12 +23,9 @@ public final class NewWorkerFormer extends WorkerFormer {
     WRONG_ARGUMENTS_NUMBER_EXCEPTION = resourceBundle.getString("exceptions.wrongArgumentsNumber");
   }
 
-  private final Logger logger;
-
   @Inject
   public NewWorkerFormer(ArgumentMediator argumentMediator) {
     super(argumentMediator);
-    logger = LogManager.getLogger(NewWorkerFormer.class);
   }
 
   @Override

@@ -41,8 +41,8 @@ public final class ViewCommandFactory extends CommandFactory {
       CommandMediator commandMediator) {
     return new HashMap<String, Class<? extends ViewCommand>>() {
       {
-        put(commandMediator.INFO, InfoCommand.class);
-        put(commandMediator.SHOW, ShowCommand.class);
+        put(commandMediator.info, InfoCommand.class);
+        put(commandMediator.show, ShowCommand.class);
       }
     };
   }

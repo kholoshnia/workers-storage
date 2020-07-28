@@ -15,7 +15,8 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SocketChannel;
 
 public final class ClientWorker {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(ClientWorker.class);
+
   private final int bufferSize;
   private final Serializer serializer;
   private final SocketChannel client;
@@ -24,7 +25,6 @@ public final class ClientWorker {
 
   public ClientWorker(int bufferSize, Serializer serializer, SocketChannel client)
       throws ServerException {
-    logger = LogManager.getLogger(ClientWorker.class);
     this.bufferSize = bufferSize;
     buffer = ByteBuffer.allocate(bufferSize);
     this.serializer = serializer;

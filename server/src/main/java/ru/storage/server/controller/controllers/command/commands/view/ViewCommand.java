@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public abstract class ViewCommand extends Command {
+  private static final Logger logger = LogManager.getLogger(ViewCommand.class);
+
   private static final String NAME_PATTERN = "%s:";
   private static final String EMPTY_PATTERN = "\t%s:";
   private static final String PREFIX_PATTERN = "\t%s: %s";
@@ -30,36 +32,34 @@ public abstract class ViewCommand extends Command {
   protected final StatusFormat statusFormat;
   protected final NumberFormat currencyFormat;
 
-  protected final String WORKER_PREFIX;
-  protected final String WORKER_ID_PREFIX;
-  protected final String WORKER_OWNER_ID_PREFIX;
-  protected final String WORKER_CREATION_DATE_PREFIX;
-  protected final String WORKER_SALARY_PREFIX;
-  protected final String WORKER_STATUS_PREFIX;
-  protected final String WORKER_START_DATE_PREFIX;
-  protected final String WORKER_END_DATE_PREFIX;
+  protected final String workerPrefix;
+  protected final String workerIdPrefix;
+  protected final String workerOwnerIdPrefix;
+  protected final String workerCreationDatePrefix;
+  protected final String workerSalaryPrefix;
+  protected final String workerStatusPrefix;
+  protected final String workerStartDatePrefix;
+  protected final String workerEndDatePrefix;
 
-  protected final String COORDINATES_PREFIX;
-  protected final String COORDINATES_OWNER_ID_PREFIX;
-  protected final String COORDINATES_ID_PREFIX;
-  protected final String COORDINATES_X_PREFIX;
-  protected final String COORDINATES_Y_PREFIX;
-  protected final String COORDINATES_Z_PREFIX;
+  protected final String coordinatesPrefix;
+  protected final String coordinatesOwnerIdPrefix;
+  protected final String coordinatesIdPrefix;
+  protected final String coordinatesXPrefix;
+  protected final String coordinatesYPrefix;
+  protected final String coordinatesZPrefix;
 
-  protected final String PERSON_PREFIX;
-  protected final String PERSON_ID_PREFIX;
-  protected final String PERSON_OWNER_ID_PREFIX;
-  protected final String PERSON_NAME_PREFIX;
-  protected final String PERSON_PASSPORT_ID_PREFIX;
+  protected final String personPrefix;
+  protected final String personIdPrefix;
+  protected final String personOwnerIdPrefix;
+  protected final String personNamePrefix;
+  protected final String personPassportIdPrefix;
 
-  protected final String LOCATION_PREFIX;
-  protected final String LOCATION_ID_PREFIX;
-  protected final String LOCATION_OWNER_ID_PREFIX;
-  protected final String LOCATION_ADDRESS_PREFIX;
-  protected final String LOCATION_LATITUDE_PREFIX;
-  protected final String LOCATION_LONGITUDE_PREFIX;
-
-  private final Logger logger;
+  protected final String locationPrefix;
+  protected final String locationIdPrefix;
+  protected final String locationOwnerIdPrefix;
+  protected final String locationAddressPrefix;
+  protected final String locationLatitudePrefix;
+  protected final String locationLongitudePrefix;
 
   public ViewCommand(
       Configuration configuration,
@@ -68,7 +68,6 @@ public abstract class ViewCommand extends Command {
       Locale locale,
       WorkerRepository workerRepository) {
     super(configuration, argumentMediator, arguments);
-    logger = LogManager.getLogger(ViewCommand.class);
     this.locale = locale;
     this.workerRepository = workerRepository;
     numberFormat = NumberFormat.getNumberInstance(locale);
@@ -78,38 +77,38 @@ public abstract class ViewCommand extends Command {
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ViewCommand", locale);
 
-    WORKER_PREFIX = resourceBundle.getString("prefixes.worker");
-    WORKER_ID_PREFIX = resourceBundle.getString("prefixes.worker.id");
-    WORKER_OWNER_ID_PREFIX = resourceBundle.getString("prefixes.worker.ownerId");
-    WORKER_CREATION_DATE_PREFIX = resourceBundle.getString("prefixes.worker.creationDate");
-    WORKER_SALARY_PREFIX = resourceBundle.getString("prefixes.worker.salary");
-    WORKER_STATUS_PREFIX = resourceBundle.getString("prefixes.worker.status");
-    WORKER_START_DATE_PREFIX = resourceBundle.getString("prefixes.worker.startDate");
-    WORKER_END_DATE_PREFIX = resourceBundle.getString("prefixes.worker.endDate");
+    workerPrefix = resourceBundle.getString("prefixes.worker");
+    workerIdPrefix = resourceBundle.getString("prefixes.worker.id");
+    workerOwnerIdPrefix = resourceBundle.getString("prefixes.worker.ownerId");
+    workerCreationDatePrefix = resourceBundle.getString("prefixes.worker.creationDate");
+    workerSalaryPrefix = resourceBundle.getString("prefixes.worker.salary");
+    workerStatusPrefix = resourceBundle.getString("prefixes.worker.status");
+    workerStartDatePrefix = resourceBundle.getString("prefixes.worker.startDate");
+    workerEndDatePrefix = resourceBundle.getString("prefixes.worker.endDate");
 
-    COORDINATES_PREFIX = resourceBundle.getString("prefixes.coordinates");
-    COORDINATES_ID_PREFIX = resourceBundle.getString("prefixes.coordinates.Id");
-    COORDINATES_OWNER_ID_PREFIX = resourceBundle.getString("prefixes.coordinates.ownerId");
-    COORDINATES_X_PREFIX = resourceBundle.getString("prefixes.coordinates.x");
-    COORDINATES_Y_PREFIX = resourceBundle.getString("prefixes.coordinates.y");
-    COORDINATES_Z_PREFIX = resourceBundle.getString("prefixes.coordinates.z");
+    coordinatesPrefix = resourceBundle.getString("prefixes.coordinates");
+    coordinatesIdPrefix = resourceBundle.getString("prefixes.coordinates.Id");
+    coordinatesOwnerIdPrefix = resourceBundle.getString("prefixes.coordinates.ownerId");
+    coordinatesXPrefix = resourceBundle.getString("prefixes.coordinates.x");
+    coordinatesYPrefix = resourceBundle.getString("prefixes.coordinates.y");
+    coordinatesZPrefix = resourceBundle.getString("prefixes.coordinates.z");
 
-    PERSON_PREFIX = resourceBundle.getString("prefixes.person");
-    PERSON_ID_PREFIX = resourceBundle.getString("prefixes.person.id");
-    PERSON_OWNER_ID_PREFIX = resourceBundle.getString("prefixes.person.ownerId");
-    PERSON_NAME_PREFIX = resourceBundle.getString("prefixes.person.name");
-    PERSON_PASSPORT_ID_PREFIX = resourceBundle.getString("prefixes.person.passportId");
+    personPrefix = resourceBundle.getString("prefixes.person");
+    personIdPrefix = resourceBundle.getString("prefixes.person.id");
+    personOwnerIdPrefix = resourceBundle.getString("prefixes.person.ownerId");
+    personNamePrefix = resourceBundle.getString("prefixes.person.name");
+    personPassportIdPrefix = resourceBundle.getString("prefixes.person.passportId");
 
-    LOCATION_PREFIX = resourceBundle.getString("prefixes.location");
-    LOCATION_ID_PREFIX = resourceBundle.getString("prefixes.location.id");
-    LOCATION_OWNER_ID_PREFIX = resourceBundle.getString("prefixes.location.ownerId");
-    LOCATION_ADDRESS_PREFIX = resourceBundle.getString("prefixes.location.address");
-    LOCATION_LATITUDE_PREFIX = resourceBundle.getString("prefixes.location.latitude");
-    LOCATION_LONGITUDE_PREFIX = resourceBundle.getString("prefixes.location.longitude");
+    locationPrefix = resourceBundle.getString("prefixes.location");
+    locationIdPrefix = resourceBundle.getString("prefixes.location.id");
+    locationOwnerIdPrefix = resourceBundle.getString("prefixes.location.ownerId");
+    locationAddressPrefix = resourceBundle.getString("prefixes.location.address");
+    locationLatitudePrefix = resourceBundle.getString("prefixes.location.latitude");
+    locationLongitudePrefix = resourceBundle.getString("prefixes.location.longitude");
   }
 
   protected final String workerToString(Worker worker) {
-    StringBuilder stringBuilder = new StringBuilder(String.format(NAME_PATTERN, WORKER_PREFIX));
+    StringBuilder stringBuilder = new StringBuilder(String.format(NAME_PATTERN, workerPrefix));
 
     if (worker == null) {
       return stringBuilder.toString();
@@ -117,9 +116,9 @@ public abstract class ViewCommand extends Command {
 
     stringBuilder
         .append(System.lineSeparator())
-        .append(String.format(PREFIX_PATTERN, WORKER_ID_PREFIX, worker.getId()))
+        .append(String.format(PREFIX_PATTERN, workerIdPrefix, worker.getId()))
         .append(System.lineSeparator())
-        .append(String.format(PREFIX_PATTERN, WORKER_OWNER_ID_PREFIX, worker.getOwnerId()))
+        .append(String.format(PREFIX_PATTERN, workerOwnerIdPrefix, worker.getOwnerId()))
         .append(System.lineSeparator());
 
     if (worker.getCreationDate() != null) {
@@ -127,12 +126,12 @@ public abstract class ViewCommand extends Command {
           .append(
               String.format(
                   PREFIX_PATTERN,
-                  WORKER_CREATION_DATE_PREFIX,
+                  workerCreationDatePrefix,
                   dateFormat.format(worker.getCreationDate())))
           .append(System.lineSeparator());
     } else {
       stringBuilder
-          .append(String.format(EMPTY_PATTERN, WORKER_CREATION_DATE_PREFIX))
+          .append(String.format(EMPTY_PATTERN, workerCreationDatePrefix))
           .append(System.lineSeparator());
     }
 
@@ -140,11 +139,11 @@ public abstract class ViewCommand extends Command {
       stringBuilder
           .append(
               String.format(
-                  PREFIX_PATTERN, WORKER_SALARY_PREFIX, currencyFormat.format(worker.getSalary())))
+                  PREFIX_PATTERN, workerSalaryPrefix, currencyFormat.format(worker.getSalary())))
           .append(System.lineSeparator());
     } else {
       stringBuilder
-          .append(String.format(EMPTY_PATTERN, WORKER_SALARY_PREFIX))
+          .append(String.format(EMPTY_PATTERN, workerSalaryPrefix))
           .append(System.lineSeparator());
     }
 
@@ -152,11 +151,11 @@ public abstract class ViewCommand extends Command {
       stringBuilder
           .append(
               String.format(
-                  PREFIX_PATTERN, WORKER_STATUS_PREFIX, statusFormat.format(worker.getStatus())))
+                  PREFIX_PATTERN, workerStatusPrefix, statusFormat.format(worker.getStatus())))
           .append(System.lineSeparator());
     } else {
       stringBuilder
-          .append(String.format(EMPTY_PATTERN, WORKER_STATUS_PREFIX))
+          .append(String.format(EMPTY_PATTERN, workerStatusPrefix))
           .append(System.lineSeparator());
     }
 
@@ -164,13 +163,11 @@ public abstract class ViewCommand extends Command {
       stringBuilder
           .append(
               String.format(
-                  PREFIX_PATTERN,
-                  WORKER_START_DATE_PREFIX,
-                  dateFormat.format(worker.getStartDate())))
+                  PREFIX_PATTERN, workerStartDatePrefix, dateFormat.format(worker.getStartDate())))
           .append(System.lineSeparator());
     } else {
       stringBuilder
-          .append(String.format(EMPTY_PATTERN, WORKER_START_DATE_PREFIX))
+          .append(String.format(EMPTY_PATTERN, workerStartDatePrefix))
           .append(System.lineSeparator());
     }
 
@@ -178,11 +175,11 @@ public abstract class ViewCommand extends Command {
       stringBuilder
           .append(
               String.format(
-                  PREFIX_PATTERN, WORKER_END_DATE_PREFIX, dateFormat.format(worker.getEndDate())))
+                  PREFIX_PATTERN, workerEndDatePrefix, dateFormat.format(worker.getEndDate())))
           .append(System.lineSeparator());
     } else {
       stringBuilder
-          .append(String.format(EMPTY_PATTERN, WORKER_END_DATE_PREFIX))
+          .append(String.format(EMPTY_PATTERN, workerEndDatePrefix))
           .append(System.lineSeparator());
     }
 
@@ -203,8 +200,7 @@ public abstract class ViewCommand extends Command {
   }
 
   protected final String coordinatesToString(Coordinates coordinates) {
-    StringBuilder stringBuilder =
-        new StringBuilder(String.format(NAME_PATTERN, COORDINATES_PREFIX));
+    StringBuilder stringBuilder = new StringBuilder(String.format(NAME_PATTERN, coordinatesPrefix));
 
     if (coordinates == null) {
       return stringBuilder.toString();
@@ -212,21 +208,20 @@ public abstract class ViewCommand extends Command {
 
     stringBuilder
         .append(System.lineSeparator())
-        .append(String.format(PREFIX_PATTERN, COORDINATES_ID_PREFIX, coordinates.getId()))
+        .append(String.format(PREFIX_PATTERN, coordinatesIdPrefix, coordinates.getId()))
         .append(System.lineSeparator())
-        .append(
-            String.format(PREFIX_PATTERN, COORDINATES_OWNER_ID_PREFIX, coordinates.getOwnerId()))
+        .append(String.format(PREFIX_PATTERN, coordinatesOwnerIdPrefix, coordinates.getOwnerId()))
         .append(System.lineSeparator());
 
     if (coordinates.getX() != null) {
       stringBuilder
           .append(
               String.format(
-                  PREFIX_PATTERN, COORDINATES_X_PREFIX, numberFormat.format(coordinates.getX())))
+                  PREFIX_PATTERN, coordinatesXPrefix, numberFormat.format(coordinates.getX())))
           .append(System.lineSeparator());
     } else {
       stringBuilder
-          .append(String.format(EMPTY_PATTERN, COORDINATES_X_PREFIX))
+          .append(String.format(EMPTY_PATTERN, coordinatesXPrefix))
           .append(System.lineSeparator());
     }
 
@@ -234,20 +229,20 @@ public abstract class ViewCommand extends Command {
       stringBuilder
           .append(
               String.format(
-                  PREFIX_PATTERN, COORDINATES_Y_PREFIX, numberFormat.format(coordinates.getY())))
+                  PREFIX_PATTERN, coordinatesYPrefix, numberFormat.format(coordinates.getY())))
           .append(System.lineSeparator());
     } else {
       stringBuilder
-          .append(String.format(EMPTY_PATTERN, COORDINATES_Y_PREFIX))
+          .append(String.format(EMPTY_PATTERN, coordinatesYPrefix))
           .append(System.lineSeparator());
     }
 
     if (coordinates.getZ() != null) {
       stringBuilder.append(
           String.format(
-              PREFIX_PATTERN, COORDINATES_Z_PREFIX, numberFormat.format(coordinates.getZ())));
+              PREFIX_PATTERN, coordinatesZPrefix, numberFormat.format(coordinates.getZ())));
     } else {
-      stringBuilder.append(String.format(EMPTY_PATTERN, COORDINATES_Z_PREFIX));
+      stringBuilder.append(String.format(EMPTY_PATTERN, coordinatesZPrefix));
     }
 
     logger.info(() -> "Coordinates was converted to string.");
@@ -255,7 +250,7 @@ public abstract class ViewCommand extends Command {
   }
 
   protected final String personToString(Person person) {
-    StringBuilder stringBuilder = new StringBuilder(String.format(NAME_PATTERN, PERSON_PREFIX));
+    StringBuilder stringBuilder = new StringBuilder(String.format(NAME_PATTERN, personPrefix));
 
     if (person == null) {
       return stringBuilder.toString();
@@ -263,28 +258,28 @@ public abstract class ViewCommand extends Command {
 
     stringBuilder
         .append(System.lineSeparator())
-        .append(String.format(PREFIX_PATTERN, PERSON_ID_PREFIX, person.getId()))
+        .append(String.format(PREFIX_PATTERN, personIdPrefix, person.getId()))
         .append(System.lineSeparator())
-        .append(String.format(PREFIX_PATTERN, PERSON_OWNER_ID_PREFIX, person.getOwnerId()))
+        .append(String.format(PREFIX_PATTERN, personOwnerIdPrefix, person.getOwnerId()))
         .append(System.lineSeparator());
 
     if (person.getName() != null) {
       stringBuilder
-          .append(String.format(PREFIX_PATTERN, PERSON_NAME_PREFIX, person.getName()))
+          .append(String.format(PREFIX_PATTERN, personNamePrefix, person.getName()))
           .append(System.lineSeparator());
     } else {
       stringBuilder
-          .append(String.format(EMPTY_PATTERN, PERSON_NAME_PREFIX))
+          .append(String.format(EMPTY_PATTERN, personNamePrefix))
           .append(System.lineSeparator());
     }
 
     if (person.getPassportId() != null) {
       stringBuilder
-          .append(String.format(PREFIX_PATTERN, PERSON_PASSPORT_ID_PREFIX, person.getPassportId()))
+          .append(String.format(PREFIX_PATTERN, personPassportIdPrefix, person.getPassportId()))
           .append(System.lineSeparator());
     } else {
       stringBuilder
-          .append(String.format(EMPTY_PATTERN, PERSON_PASSPORT_ID_PREFIX))
+          .append(String.format(EMPTY_PATTERN, personPassportIdPrefix))
           .append(System.lineSeparator());
     }
 
@@ -299,7 +294,7 @@ public abstract class ViewCommand extends Command {
   }
 
   protected final String locationToString(Location location) {
-    StringBuilder stringBuilder = new StringBuilder(String.format(NAME_PATTERN, LOCATION_PREFIX));
+    StringBuilder stringBuilder = new StringBuilder(String.format(NAME_PATTERN, locationPrefix));
 
     if (location == null) {
       return stringBuilder.toString();
@@ -307,18 +302,18 @@ public abstract class ViewCommand extends Command {
 
     stringBuilder
         .append(System.lineSeparator())
-        .append(String.format(PREFIX_PATTERN, LOCATION_ID_PREFIX, location.getId()))
+        .append(String.format(PREFIX_PATTERN, locationIdPrefix, location.getId()))
         .append(System.lineSeparator())
-        .append(String.format(PREFIX_PATTERN, LOCATION_OWNER_ID_PREFIX, location.getOwnerId()))
+        .append(String.format(PREFIX_PATTERN, locationOwnerIdPrefix, location.getOwnerId()))
         .append(System.lineSeparator());
 
     if (location.getAddress() != null) {
       stringBuilder
-          .append(String.format(PREFIX_PATTERN, LOCATION_ADDRESS_PREFIX, location.getAddress()))
+          .append(String.format(PREFIX_PATTERN, locationAddressPrefix, location.getAddress()))
           .append(System.lineSeparator());
     } else {
       stringBuilder
-          .append(String.format(EMPTY_PATTERN, LOCATION_ADDRESS_PREFIX))
+          .append(String.format(EMPTY_PATTERN, locationAddressPrefix))
           .append(System.lineSeparator());
     }
 
@@ -327,12 +322,12 @@ public abstract class ViewCommand extends Command {
           .append(
               String.format(
                   PREFIX_PATTERN,
-                  LOCATION_LATITUDE_PREFIX,
+                  locationLatitudePrefix,
                   numberFormat.format(location.getLatitude())))
           .append(System.lineSeparator());
     } else {
       stringBuilder
-          .append(String.format(EMPTY_PATTERN, LOCATION_LATITUDE_PREFIX))
+          .append(String.format(EMPTY_PATTERN, locationLatitudePrefix))
           .append(System.lineSeparator());
     }
 
@@ -340,10 +335,10 @@ public abstract class ViewCommand extends Command {
       stringBuilder.append(
           String.format(
               PREFIX_PATTERN,
-              LOCATION_LONGITUDE_PREFIX,
+              locationLongitudePrefix,
               numberFormat.format(location.getLongitude())));
     } else {
-      stringBuilder.append(String.format(EMPTY_PATTERN, LOCATION_LONGITUDE_PREFIX));
+      stringBuilder.append(String.format(EMPTY_PATTERN, locationLongitudePrefix));
     }
 
     logger.info(() -> "Location was converted to string.");

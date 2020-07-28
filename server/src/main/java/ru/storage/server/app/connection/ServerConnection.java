@@ -16,7 +16,8 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
 public class ServerConnection extends SelectorConnection {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(ServerConnection.class);
+
   private final int bufferSize;
   private final Serializer serializer;
   private final ServerProcessor serverProcessor;
@@ -29,7 +30,6 @@ public class ServerConnection extends SelectorConnection {
       ServerProcessor serverProcessor,
       Serializer serializer)
       throws SelectorException, ServerException {
-    logger = LogManager.getLogger(ServerConnection.class);
     this.bufferSize = bufferSize;
     this.serializer = serializer;
     this.serverProcessor = serverProcessor;

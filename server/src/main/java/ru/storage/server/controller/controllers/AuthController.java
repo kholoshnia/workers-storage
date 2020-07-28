@@ -19,14 +19,14 @@ import java.util.ResourceBundle;
 
 /** Authorizes user using java web token. */
 public class AuthController implements Controller {
-  private final Logger logger;
+  private static final Logger logger = LogManager.getLogger(AuthController.class);
+
   private final List<String> authCommands;
   private final Key key;
   private final String subject;
 
   @Inject
   public AuthController(Configuration configuration, CommandMediator commandMediator, Key key) {
-    logger = LogManager.getLogger(AuthController.class);
     authCommands = initAuthCommands(commandMediator);
     this.key = key;
     subject = configuration.getString("jwt.subject");
@@ -35,8 +35,8 @@ public class AuthController implements Controller {
   private List<String> initAuthCommands(CommandMediator commandMediator) {
     return new ArrayList<String>() {
       {
-        add(commandMediator.LOGIN);
-        add(commandMediator.REGISTER);
+        add(commandMediator.login);
+        add(commandMediator.register);
       }
     };
   }

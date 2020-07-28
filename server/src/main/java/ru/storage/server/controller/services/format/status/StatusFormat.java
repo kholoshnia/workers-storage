@@ -6,7 +6,7 @@ import java.util.Locale;
 
 public abstract class StatusFormat {
   /**
-   * Returns new instance of the {@link StatusFormatter}.
+   * Returns a new instance of the {@link StatusFormatter}.
    *
    * @param locale formatter locale
    * @return new status format instance
@@ -18,8 +18,8 @@ public abstract class StatusFormat {
   /**
    * Formats {@link Status} using specified {@link Locale}.
    *
-   * @param value status to format
+   * @param status status to format
    * @return localized status string
    */
-  public abstract String format(Status value);
+  public abstract String format(Status status);
 }

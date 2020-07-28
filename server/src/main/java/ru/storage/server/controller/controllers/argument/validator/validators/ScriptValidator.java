@@ -6,6 +6,7 @@ import ru.storage.server.controller.controllers.argument.validator.ArgumentValid
 import ru.storage.server.controller.controllers.argument.validator.exceptions.WrongNumberException;
 import ru.storage.server.controller.controllers.argument.validator.exceptions.WrongValueException;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -15,6 +16,7 @@ public final class ScriptValidator extends ArgumentValidator {
 
   @Inject
   public ScriptValidator(ArgumentMediator argumentMediator) {
+    super(new ArrayList<>());
     scriptLinePattern = Pattern.compile(String.format("^%s\\d+$", argumentMediator.SCRIPT_LINE));
   }
 

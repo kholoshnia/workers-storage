@@ -101,7 +101,7 @@ public final class ScriptFormer extends ArgumentFormer {
     int counter = 0;
     while (scanner.hasNextLine()) {
       allArguments.put(
-          String.format("%s_%d", argumentMediator.SCRIPT_LINE, counter), scanner.next());
+          String.format("%s_%d", argumentMediator.SCRIPT_LINE, counter), scanner.nextLine());
       counter++;
     }
 

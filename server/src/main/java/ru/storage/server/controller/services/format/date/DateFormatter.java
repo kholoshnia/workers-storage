@@ -24,12 +24,13 @@ public final class DateFormatter extends DateFormat {
   @Override
   public String format(ZonedDateTime zonedDateTime) {
     if (zonedDateTime == null) {
+      logger.info(() -> "Got null zoned date time.");
       return null;
     }
 
     String result = dateTimeFormatter.format(zonedDateTime);
 
-    logger.info("Got localized date: {}.", () -> result);
+    logger.info("Got localized zoned date time: {}.", () -> result);
     return result;
   }
 }

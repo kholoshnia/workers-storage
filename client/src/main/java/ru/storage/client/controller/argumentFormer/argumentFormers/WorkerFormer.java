@@ -47,16 +47,10 @@ public abstract class WorkerFormer extends Former implements LocaleListener {
             String.format("%s: ", resourceBundle.getString("offers.worker.status")));
         put(
             argumentMediator.WORKER_START_DATE,
-            String.format(
-                "%s: (%s): ",
-                resourceBundle.getString("offers.worker.startDate"),
-                resourceBundle.getString("offers.dateFormat")));
+            String.format("%s: ", resourceBundle.getString("offers.worker.startDate")));
         put(
             argumentMediator.WORKER_END_DATE,
-            String.format(
-                "%s: (%s): ",
-                resourceBundle.getString("offers.worker.endDate"),
-                resourceBundle.getString("offers.dateFormat")));
+            String.format("%s: ", resourceBundle.getString("offers.worker.endDate")));
       }
     };
   }

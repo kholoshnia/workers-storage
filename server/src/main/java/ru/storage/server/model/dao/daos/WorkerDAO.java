@@ -73,22 +73,23 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
   private static final String DELETE =
       "DELETE FROM " + WorkerDTO.TABLE_NAME + " WHERE " + WorkerDTO.ID_COLUMN + " = ?";
 
-  private static final String GET_ALL_WORKER_EXCEPTION;
-  private static final String GET_WORKER_BY_ID_EXCEPTION;
-  private static final String INSERT_WORKER_EXCEPTION;
-  private static final String GET_GENERATED_WORKER_ID;
-  private static final String UPDATE_WORKER_EXCEPTION;
-  private static final String DELETE_WORKER_EXCEPTION;
+  private static final String CANNOT_GET_ALL_WORKERS_EXCEPTION;
+  private static final String CANNOT_GET_WORKER_BY_ID_EXCEPTION;
+  private static final String CANNOT_INSERT_WORKER_EXCEPTION;
+  private static final String CANNOT_GET_GENERATED_WORKER_ID_EXCEPTION;
+  private static final String CANNOT_UPDATE_WORKER_EXCEPTION;
+  private static final String CANNOT_DELETE_WORKER_EXCEPTION;
 
   static {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.WorkerDAO");
 
-    GET_ALL_WORKER_EXCEPTION = resourceBundle.getString("exceptions.getAllWorkers");
-    GET_WORKER_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.getWorkerById");
-    INSERT_WORKER_EXCEPTION = resourceBundle.getString("exceptions.insertWorker");
-    GET_GENERATED_WORKER_ID = resourceBundle.getString("exceptions.getGeneratedWorkerId");
-    UPDATE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.updateWorker");
-    DELETE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.deleteWorker");
+    CANNOT_GET_ALL_WORKERS_EXCEPTION = resourceBundle.getString("exceptions.cannotGetAllWorkers");
+    CANNOT_GET_WORKER_BY_ID_EXCEPTION = resourceBundle.getString("exceptions.cannotGetWorkerById");
+    CANNOT_INSERT_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotInsertWorker");
+    CANNOT_GET_GENERATED_WORKER_ID_EXCEPTION =
+        resourceBundle.getString("exceptions.cannotGetGeneratedWorkerId");
+    CANNOT_UPDATE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotUpdateWorker");
+    CANNOT_DELETE_WORKER_EXCEPTION = resourceBundle.getString("exceptions.cannotDeleteWorker");
   }
 
   private final Logger logger;
@@ -156,7 +157,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       }
     } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot get all workers.", e);
-      throw new DAOException(GET_ALL_WORKER_EXCEPTION, e);
+      throw new DAOException(CANNOT_GET_ALL_WORKERS_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -207,7 +208,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       }
     } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot get worker by id.", e);
-      throw new DAOException(GET_WORKER_BY_ID_EXCEPTION, e);
+      throw new DAOException(CANNOT_GET_WORKER_BY_ID_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -255,11 +256,11 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
         resultId = generatedKeys.getLong(1);
       } else {
         logger.error(() -> "Cannot get generated worker id.");
-        throw new DAOException(GET_GENERATED_WORKER_ID);
+        throw new DAOException(CANNOT_GET_GENERATED_WORKER_ID_EXCEPTION);
       }
     } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot insert worker.", e);
-      throw new DAOException(INSERT_WORKER_EXCEPTION, e);
+      throw new DAOException(CANNOT_INSERT_WORKER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -334,7 +335,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
       }
     } catch (SQLException | AdapterException e) {
       logger.error(() -> "Cannot update worker.", e);
-      throw new DAOException(UPDATE_WORKER_EXCEPTION, e);
+      throw new DAOException(CANNOT_UPDATE_WORKER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }
@@ -372,7 +373,7 @@ public class WorkerDAO implements DAO<Long, WorkerDTO> {
 
     } catch (SQLException e) {
       logger.error(() -> "Cannot delete worker.", e);
-      throw new DAOException(DELETE_WORKER_EXCEPTION, e);
+      throw new DAOException(CANNOT_DELETE_WORKER_EXCEPTION, e);
     } finally {
       dataSource.closePrepareStatement(preparedStatement);
     }

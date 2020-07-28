@@ -33,6 +33,7 @@ public final class StatusFormatter extends StatusFormat {
   @Override
   public String format(Status status) {
     if (status == null) {
+      logger.info(() -> "Got null status.");
       return null;
     }
 

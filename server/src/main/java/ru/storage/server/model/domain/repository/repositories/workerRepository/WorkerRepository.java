@@ -16,6 +16,7 @@ import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import javax.annotation.Nonnull;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -122,6 +123,10 @@ public final class WorkerRepository implements Repository<Worker> {
 
   @Override
   public synchronized List<Worker> get(@Nonnull Query<Worker> query) throws RepositoryException {
+    if (workers.isEmpty()) {
+      return new ArrayList<>();
+    }
+
     List<Worker> result = query.execute(workers);
 
     logger.debug("Worker query: {} was executed.", () -> query);

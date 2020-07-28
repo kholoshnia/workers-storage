@@ -4,7 +4,7 @@ import java.util.Locale;
 
 public abstract class NumberFormat {
   /**
-   * Returns new instance of the {@link NumberFormatter}.
+   * Returns a new instance of the {@link NumberFormatter}.
    *
    * @param locale formatter locale
    * @return new number format instance

@@ -1,11 +1,12 @@
 package ru.storage.common;
 
 import com.google.inject.Inject;
-import org.apache.commons.configuration2.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
+/** Argument mediator class contains all argument names. */
 public final class ArgumentMediator {
   public final String WORKER;
   public final String WORKER_ID;
@@ -13,49 +14,63 @@ public final class ArgumentMediator {
   public final String WORKER_STATUS;
   public final String WORKER_START_DATE;
   public final String WORKER_END_DATE;
+
   public final String COORDINATES;
   public final String COORDINATES_X;
   public final String COORDINATES_Y;
   public final String COORDINATES_Z;
+
   public final String PERSON;
   public final String PERSON_NAME;
   public final String PERSON_PASSPORT_ID;
+
   public final String LOCATION;
   public final String LOCATION_ADDRESS;
   public final String LOCATION_LATITUDE;
   public final String LOCATION_LONGITUDE;
+
   public final String USER_NAME;
   public final String USER_LOGIN;
   public final String USER_PASSWORD;
+
   public final String SCRIPT_LINE;
+
   public final String INCLUDED;
 
   private final List<String> arguments;
 
   @Inject
-  public ArgumentMediator(Configuration configuration) {
-    WORKER = configuration.getString("arguments.worker");
-    WORKER_ID = configuration.getString("arguments.worker.id");
-    WORKER_SALARY = configuration.getString("arguments.worker.salary");
-    WORKER_STATUS = configuration.getString("arguments.worker.status");
-    WORKER_START_DATE = configuration.getString("arguments.worker.startDate");
-    WORKER_END_DATE = configuration.getString("arguments.worker.endDate");
-    COORDINATES = configuration.getString("arguments.coordinates");
-    COORDINATES_X = configuration.getString("arguments.coordinates.x");
-    COORDINATES_Y = configuration.getString("arguments.coordinates.y");
-    COORDINATES_Z = configuration.getString("arguments.coordinates.z");
-    PERSON = configuration.getString("arguments.person");
-    PERSON_NAME = configuration.getString("arguments.person.name");
-    PERSON_PASSPORT_ID = configuration.getString("arguments.person.passportId");
-    LOCATION = configuration.getString("arguments.location");
-    LOCATION_ADDRESS = configuration.getString("arguments.location.address");
-    LOCATION_LATITUDE = configuration.getString("arguments.location.latitude");
-    LOCATION_LONGITUDE = configuration.getString("arguments.location.longitude");
-    USER_NAME = configuration.getString("arguments.user.name");
-    USER_LOGIN = configuration.getString("arguments.user.login");
-    USER_PASSWORD = configuration.getString("arguments.user.password");
-    SCRIPT_LINE = configuration.getString("arguments.scriptLine");
-    INCLUDED = configuration.getString("arguments.included");
+  public ArgumentMediator() {
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("ArgumentMediator");
+
+    WORKER = resourceBundle.getString("arguments.worker");
+    WORKER_ID = resourceBundle.getString("arguments.worker.id");
+    WORKER_SALARY = resourceBundle.getString("arguments.worker.salary");
+    WORKER_STATUS = resourceBundle.getString("arguments.worker.status");
+    WORKER_START_DATE = resourceBundle.getString("arguments.worker.startDate");
+    WORKER_END_DATE = resourceBundle.getString("arguments.worker.endDate");
+
+    COORDINATES = resourceBundle.getString("arguments.coordinates");
+    COORDINATES_X = resourceBundle.getString("arguments.coordinates.x");
+    COORDINATES_Y = resourceBundle.getString("arguments.coordinates.y");
+    COORDINATES_Z = resourceBundle.getString("arguments.coordinates.z");
+
+    PERSON = resourceBundle.getString("arguments.person");
+    PERSON_NAME = resourceBundle.getString("arguments.person.name");
+    PERSON_PASSPORT_ID = resourceBundle.getString("arguments.person.passportId");
+
+    LOCATION = resourceBundle.getString("arguments.location");
+    LOCATION_ADDRESS = resourceBundle.getString("arguments.location.address");
+    LOCATION_LATITUDE = resourceBundle.getString("arguments.location.latitude");
+    LOCATION_LONGITUDE = resourceBundle.getString("arguments.location.longitude");
+
+    USER_NAME = resourceBundle.getString("arguments.user.name");
+    USER_LOGIN = resourceBundle.getString("arguments.user.login");
+    USER_PASSWORD = resourceBundle.getString("arguments.user.password");
+
+    SCRIPT_LINE = resourceBundle.getString("arguments.scriptLine");
+
+    INCLUDED = resourceBundle.getString("arguments.included");
 
     arguments = initArgumentsList();
   }
@@ -81,6 +96,7 @@ public final class ArgumentMediator {
         if (WORKER_END_DATE != null) {
           add(WORKER_END_DATE);
         }
+
         if (COORDINATES != null) {
           add(COORDINATES);
         }
@@ -93,6 +109,7 @@ public final class ArgumentMediator {
         if (COORDINATES_Z != null) {
           add(COORDINATES_Z);
         }
+
         if (PERSON != null) {
           add(PERSON);
         }
@@ -102,6 +119,7 @@ public final class ArgumentMediator {
         if (PERSON_PASSPORT_ID != null) {
           add(PERSON_PASSPORT_ID);
         }
+
         if (LOCATION != null) {
           add(LOCATION);
         }
@@ -114,6 +132,7 @@ public final class ArgumentMediator {
         if (LOCATION_LONGITUDE != null) {
           add(LOCATION_LONGITUDE);
         }
+
         if (USER_NAME != null) {
           add(USER_NAME);
         }
@@ -123,9 +142,11 @@ public final class ArgumentMediator {
         if (USER_PASSWORD != null) {
           add(USER_PASSWORD);
         }
+
         if (SCRIPT_LINE != null) {
           add(SCRIPT_LINE);
         }
+
         if (INCLUDED != null) {
           add(INCLUDED);
         }

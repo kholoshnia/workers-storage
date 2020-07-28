@@ -13,6 +13,7 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/** The Parser class provides methods for parsing a string into other types. */
 public final class Parser {
   private static final String PARSE_LONG_EXCEPTION;
   private static final String PARSE_FLOAT_EXCEPTION;

@@ -1,13 +1,13 @@
 package ru.storage.client.controller.responseHandler.responseHandlers;
 
 import ru.storage.client.controller.responseHandler.ResponseHandler;
-import ru.storage.client.controller.responseHandler.formatter.StringFormatter;
+import ru.storage.client.controller.responseHandler.formatter.Formatter;
 import ru.storage.common.transfer.response.Status;
 
 public final class ForbiddenResponseHandler extends ResponseHandler {
-  private final StringFormatter stringFormatter;
+  private final Formatter stringFormatter;
 
-  public ForbiddenResponseHandler(StringFormatter stringFormatter) {
+  public ForbiddenResponseHandler(Formatter stringFormatter) {
     this.stringFormatter = stringFormatter;
   }
 

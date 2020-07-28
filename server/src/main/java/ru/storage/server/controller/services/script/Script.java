@@ -58,4 +58,9 @@ public final class Script implements Iterable<String> {
   public Iterator<String> iterator() {
     return lines.iterator();
   }
+
+  @Override
+  public int hashCode() {
+    return lines.stream().mapToInt(String::hashCode).sum();
+  }
 }

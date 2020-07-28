@@ -28,15 +28,14 @@ import java.util.ResourceBundle;
 public abstract class ModificationCommand extends Command {
   protected final String WRONG_ID_ANSWER;
   protected final String WORKER_NOT_FOUND_ANSWER;
-  protected final String COLLECTION_IS_EMPTY_ANSWER;
   protected final String WRONG_WORKER_FORMAT_ANSWER;
   protected final String WRONG_WORKER_DATA_ANSWER;
   protected final String NOT_OWNER_ANSWER;
 
   protected final Locale locale;
+  protected final User user;
   protected final Repository<Worker> workerRepository;
   protected final Parser parser;
-  protected final User user;
 
   private final Logger logger;
 
@@ -45,29 +44,33 @@ public abstract class ModificationCommand extends Command {
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
       Locale locale,
+      User user,
       Repository<Worker> workerRepository,
-      Parser parser,
-      User user) {
+      Parser parser) {
     super(configuration, argumentMediator, arguments);
     logger = LogManager.getLogger(ModificationCommand.class);
     this.locale = locale;
+    this.user = user;
     this.workerRepository = workerRepository;
     this.parser = parser;
-    this.user = user;
 
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.ModificationCommand", locale);
 
     WRONG_ID_ANSWER = resourceBundle.getString("answers.wrongId");
     WORKER_NOT_FOUND_ANSWER = resourceBundle.getString("answers.workerNotFound");
-    COLLECTION_IS_EMPTY_ANSWER = resourceBundle.getString("answers.collectionIsEmpty");
     WRONG_WORKER_FORMAT_ANSWER = resourceBundle.getString("answers.wrongWorkerFormat");
     WRONG_WORKER_DATA_ANSWER = resourceBundle.getString("answers.wrongWorkerData");
     NOT_OWNER_ANSWER = resourceBundle.getString("answers.notOwner");
   }
 
-  protected final CoordinatesDTO createCoordinatesDTO(Map<String, String> arguments)
-      throws ParserException {
+  /**
+   * Creates new coordinates DTO instance using the arguments.
+   *
+   * @return new coordinates DTO instance
+   * @throws ParserException - in case of user arguments parse errors
+   */
+  protected final CoordinatesDTO createCoordinatesDTO() throws ParserException {
     if (arguments.get(argumentMediator.COORDINATES) == null
         || !arguments.get(argumentMediator.COORDINATES).equals(argumentMediator.INCLUDED)) {
       return null;
@@ -83,8 +86,13 @@ public abstract class ModificationCommand extends Command {
     return coordinatesDTO;
   }
 
-  protected final LocationDTO createLocationDTO(Map<String, String> arguments)
-      throws ParserException {
+  /**
+   * Creates new location DTO instance using the arguments.
+   *
+   * @return new location DTO instance
+   * @throws ParserException - in case of user arguments parse errors
+   */
+  protected final LocationDTO createLocationDTO() throws ParserException {
     if (arguments.get(argumentMediator.LOCATION) == null
         || !arguments.get(argumentMediator.LOCATION).equals(argumentMediator.INCLUDED)) {
       return null;
@@ -101,7 +109,14 @@ public abstract class ModificationCommand extends Command {
     return locationDTO;
   }
 
-  protected final PersonDTO createPersonDTO(Map<String, String> arguments) throws ParserException {
+  /**
+   * Creates new person DTO instance using the arguments.
+   *
+   * @return new person DTO instance
+   * @throws ParserException - in case of user arguments parse errors
+   * @see #createLocationDTO
+   */
+  protected final PersonDTO createPersonDTO() throws ParserException {
     if (arguments.get(argumentMediator.PERSON) == null
         || !arguments.get(argumentMediator.PERSON).equals(argumentMediator.INCLUDED)) {
       return null;
@@ -109,7 +124,7 @@ public abstract class ModificationCommand extends Command {
 
     String name = parser.parseString(arguments.get(argumentMediator.PERSON_NAME));
     String passportId = parser.parseString(arguments.get(argumentMediator.PERSON_PASSPORT_ID));
-    LocationDTO locationDTO = createLocationDTO(arguments);
+    LocationDTO locationDTO = createLocationDTO();
 
     PersonDTO personDTO =
         new PersonDTO(Person.DEFAULT_ID, Person.DEFAULT_OWNER_ID, name, passportId, locationDTO);
@@ -118,16 +133,14 @@ public abstract class ModificationCommand extends Command {
   }
 
   /**
-   * Creates new worker DTO instance using specified arguments.
+   * Creates new worker DTO instance using the arguments.
    *
-   * @param arguments user arguments
    * @return new worker DTO instance
    * @throws ParserException - in case of user arguments parse errors
-   * @see #createCoordinatesDTO(Map)
-   * @see #createLocationDTO(Map)
-   * @see #createPersonDTO(Map)
+   * @see #createCoordinatesDTO
+   * @see #createPersonDTO
    */
-  protected final WorkerDTO createWorkerDTO(Map<String, String> arguments) throws ParserException {
+  protected final WorkerDTO createWorkerDTO() throws ParserException {
     if (arguments.get(argumentMediator.WORKER) == null
         || !arguments.get(argumentMediator.WORKER).equals(argumentMediator.INCLUDED)) {
       return null;
@@ -139,8 +152,8 @@ public abstract class ModificationCommand extends Command {
         parser.parseLocalDateTime(arguments.get(argumentMediator.WORKER_START_DATE));
     ZonedDateTime endDate =
         parser.parseLocalDateTime(arguments.get(argumentMediator.WORKER_END_DATE));
-    CoordinatesDTO coordinatesDTO = createCoordinatesDTO(arguments);
-    PersonDTO personDTO = createPersonDTO(arguments);
+    CoordinatesDTO coordinatesDTO = createCoordinatesDTO();
+    PersonDTO personDTO = createPersonDTO();
 
     WorkerDTO workerDTO =
         new WorkerDTO(

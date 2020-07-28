@@ -46,6 +46,9 @@ public final class ExecuteScriptCommand extends SpecialCommand {
     Script script = new Script(locale, user, lines);
 
     logger.info(() -> "Executing script...");
-    return scriptExecutor.execute(script);
+    Response response = scriptExecutor.execute(script);
+
+    logger.info(() -> "Script was executed.");
+    return response;
   }
 }

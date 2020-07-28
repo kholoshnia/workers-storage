@@ -3,23 +3,26 @@ package ru.storage.server.controller.controllers.argument.validator;
 import ru.storage.server.controller.controllers.argument.validator.exceptions.WrongNumberException;
 import ru.storage.server.controller.controllers.argument.validator.exceptions.WrongValueException;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 public abstract class ArgumentValidator {
   protected static final String WRONG_ARGUMENTS_NUMBER_EXCEPTION;
   protected static final String WRONG_ARGUMENTS_VALUE_EXCEPTION;
 
   static {
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ArgumentValidator");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("internal.ArgumentValidator");
 
     WRONG_ARGUMENTS_NUMBER_EXCEPTION = resourceBundle.getString("exceptions.wrongArgumentsNumber");
     WRONG_ARGUMENTS_VALUE_EXCEPTION = resourceBundle.getString("exceptions.wrongArgumentsValue");
   }
 
-  protected List<String> requiredArguments;
+  protected final List<String> requiredArguments;
 
-  public ArgumentValidator() {
-    requiredArguments = new ArrayList<>();
+  public ArgumentValidator(List<String> requiredArguments) {
+    this.requiredArguments = requiredArguments;
   }
 
   /**

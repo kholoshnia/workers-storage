@@ -19,25 +19,25 @@ public final class WorkerValidator implements LocaleListener {
   private String wrongStartDateException;
   private String wrongEndDateException;
 
-  private List<String> statusMap;
+  private List<String> statuses;
 
   @Override
   public void changeLocale(Locale locale) {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.WorkerValidator");
 
-    statusMap =
+    statuses =
         new ArrayList<String>() {
           {
-            add(resourceBundle.getString("constants.fired"));
-            add(resourceBundle.getString("constants.hired"));
-            add(resourceBundle.getString("constants.promotion"));
+            add(resourceBundle.getString("statuses.fired"));
+            add(resourceBundle.getString("statuses.hired"));
+            add(resourceBundle.getString("statuses.promotion"));
           }
         };
 
     wrongIdException = resourceBundle.getString("exceptions.wrongId");
     wrongSalaryException = resourceBundle.getString("exceptions.wrongSalary");
     wrongStatusException =
-        String.format("%s %s", resourceBundle.getString("exceptions.wrongStatus"), statusMap);
+        String.format("%s %s", resourceBundle.getString("exceptions.wrongStatus"), statuses);
     wrongStartDateException = resourceBundle.getString("exceptions.wrongStartDate");
     wrongEndDateException = resourceBundle.getString("exceptions.wrongEndDate");
   }
@@ -83,7 +83,7 @@ public final class WorkerValidator implements LocaleListener {
       return;
     }
 
-    if (!statusMap.contains(statusString)) {
+    if (!statuses.contains(statusString)) {
       throw new ValidationException(wrongStatusException);
     }
   }

@@ -6,9 +6,10 @@ import ru.storage.server.model.domain.entity.entities.worker.person.Person;
 import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 
 public final class PersonDTO implements DTO<Person> {
+  public static final String TABLE_NAME = "persons";
+
   public static final String ID_COLUMN = "id";
   public static final String OWNER_ID_COLUMN = "owner_id";
-  public static final String TABLE_NAME = "persons";
   public static final String NAME_COLUMN = "name";
   public static final String PASSPORT_ID_COLUMN = "passport_id";
   public static final String LOCATION_COLUMN = "location";

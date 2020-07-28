@@ -23,10 +23,13 @@ import java.util.Locale;
 import java.util.Map;
 
 public final class SpecialCommandFactory extends CommandFactory {
+  private final Configuration configuration;
+  private final ArgumentMediator argumentMediator;
   private final CommandMediator commandMediator;
   private final Repository<User> userRepository;
   private final ScriptExecutor scriptExecutor;
   private final ExitManager exitManager;
+
   private final Map<String, Class<? extends SpecialCommand>> specialCommandMap;
 
   @Inject
@@ -37,7 +40,8 @@ public final class SpecialCommandFactory extends CommandFactory {
       Repository<User> userRepository,
       ScriptExecutor scriptExecutor,
       ExitManager exitManager) {
-    super(configuration, argumentMediator);
+    this.configuration = configuration;
+    this.argumentMediator = argumentMediator;
     this.commandMediator = commandMediator;
     this.userRepository = userRepository;
     this.scriptExecutor = scriptExecutor;
@@ -49,9 +53,9 @@ public final class SpecialCommandFactory extends CommandFactory {
       CommandMediator commandMediator) {
     return new HashMap<String, Class<? extends SpecialCommand>>() {
       {
-        put(commandMediator.EXIT, ExitCommand.class);
         put(commandMediator.HELP, HelpCommand.class);
         put(commandMediator.EXECUTE_SCRIPT, ExecuteScriptCommand.class);
+        put(commandMediator.EXIT, ExitCommand.class);
       }
     };
   }
@@ -61,6 +65,7 @@ public final class SpecialCommandFactory extends CommandFactory {
       String command, Map<String, String> arguments, Locale locale, String login)
       throws CommandFactoryException {
     Class<? extends SpecialCommand> clazz = specialCommandMap.get(command);
+
     try {
       Constructor<? extends SpecialCommand> constructor =
           clazz.getConstructor(
@@ -72,6 +77,7 @@ public final class SpecialCommandFactory extends CommandFactory {
               Locale.class,
               ExitManager.class,
               ScriptExecutor.class);
+
       return constructor.newInstance(
           configuration,
           commandMediator,

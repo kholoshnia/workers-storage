@@ -19,7 +19,10 @@ import java.util.Locale;
 import java.util.Map;
 
 public final class HistoryCommandFactory extends CommandFactory {
+  private final Configuration configuration;
+  private final ArgumentMediator argumentMediator;
   private final History history;
+
   private final Map<String, Class<? extends HistoryCommand>> historyCommandMap;
 
   @Inject
@@ -28,7 +31,8 @@ public final class HistoryCommandFactory extends CommandFactory {
       ArgumentMediator argumentMediator,
       CommandMediator commandMediator,
       History history) {
-    super(configuration, argumentMediator);
+    this.configuration = configuration;
+    this.argumentMediator = argumentMediator;
     this.history = history;
     historyCommandMap = initHistoryCommandMap(commandMediator);
   }
@@ -48,10 +52,12 @@ public final class HistoryCommandFactory extends CommandFactory {
       String command, Map<String, String> arguments, Locale locale, String login)
       throws CommandFactoryException {
     Class<? extends HistoryCommand> clazz = historyCommandMap.get(command);
+
     try {
       Constructor<? extends HistoryCommand> constructor =
           clazz.getConstructor(
               Configuration.class, ArgumentMediator.class, Map.class, Locale.class, History.class);
+
       return constructor.newInstance(configuration, argumentMediator, arguments, locale, history);
     } catch (NoSuchMethodException
         | InstantiationException

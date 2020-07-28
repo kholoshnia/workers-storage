@@ -19,7 +19,10 @@ import java.util.Locale;
 import java.util.Map;
 
 public final class ViewCommandFactory extends CommandFactory {
+  private final Configuration configuration;
+  private final ArgumentMediator argumentMediator;
   private final WorkerRepository workerRepository;
+
   private final Map<String, Class<? extends ViewCommand>> viewCommandMap;
 
   @Inject
@@ -28,7 +31,8 @@ public final class ViewCommandFactory extends CommandFactory {
       ArgumentMediator argumentMediator,
       CommandMediator commandMediator,
       WorkerRepository workerRepository) {
-    super(configuration, argumentMediator);
+    this.configuration = configuration;
+    this.argumentMediator = argumentMediator;
     this.workerRepository = workerRepository;
     viewCommandMap = initViewCommandMap(commandMediator);
   }
@@ -48,6 +52,7 @@ public final class ViewCommandFactory extends CommandFactory {
       String command, Map<String, String> arguments, Locale locale, String login)
       throws CommandFactoryException {
     Class<? extends ViewCommand> clazz = viewCommandMap.get(command);
+
     try {
       Constructor<? extends ViewCommand> constructor =
           clazz.getConstructor(
@@ -56,6 +61,7 @@ public final class ViewCommandFactory extends CommandFactory {
               Map.class,
               Locale.class,
               WorkerRepository.class);
+
       return constructor.newInstance(
           configuration, argumentMediator, arguments, locale, workerRepository);
     } catch (NoSuchMethodException

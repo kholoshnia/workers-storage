@@ -34,10 +34,10 @@ public class LoginCommand extends EntryCommand {
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
       Locale locale,
-      HashGenerator hashGenerator,
       Repository<User> userRepository,
+      HashGenerator hashGenerator,
       Key key) {
-    super(configuration, argumentMediator, arguments, locale, hashGenerator, userRepository, key);
+    super(configuration, argumentMediator, arguments, locale, userRepository, hashGenerator, key);
     logger = LogManager.getLogger(LoginCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.LoginCommand", locale);
@@ -58,7 +58,10 @@ public class LoginCommand extends EntryCommand {
     try {
       equalLoginUsers = userRepository.get(query);
     } catch (RepositoryException e) {
-      logger.error("Cannot get users with login equal to {}.", (Supplier<?>) () -> login, e);
+      logger.error(
+          "Cannot get users with login equal to {} to continue login.",
+          (Supplier<?>) () -> login,
+          e);
       return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 

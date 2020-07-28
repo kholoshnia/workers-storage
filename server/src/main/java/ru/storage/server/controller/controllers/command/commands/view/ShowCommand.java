@@ -18,11 +18,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class ShowCommand extends ViewCommand {
-  public static final String BEGINNING =
-      "-------------------------< SHOW >-------------------------";
-  public static final String SEPARATOR =
-      "----------------------------------------------------------";
-
   private final String SHOW_PREFIX;
   private final String COLLECTION_IS_EMPTY_ANSWER;
 
@@ -60,17 +55,13 @@ public final class ShowCommand extends ViewCommand {
       return new Response(Status.NO_CONTENT, COLLECTION_IS_EMPTY_ANSWER);
     }
 
-    StringBuilder result =
-        new StringBuilder(BEGINNING)
-            .append(System.lineSeparator())
-            .append(SHOW_PREFIX)
-            .append(System.lineSeparator())
-            .append(SEPARATOR);
+    StringBuilder result = new StringBuilder(SHOW_PREFIX);
 
     for (Worker worker : allWorkers) {
-      result.append(System.lineSeparator());
-      appendWorker(result, worker);
-      result.append(System.lineSeparator()).append(SEPARATOR);
+      result
+          .append(System.lineSeparator())
+          .append(System.lineSeparator())
+          .append(workerToString(worker));
     }
 
     logger.info(() -> "All workers were converted.");

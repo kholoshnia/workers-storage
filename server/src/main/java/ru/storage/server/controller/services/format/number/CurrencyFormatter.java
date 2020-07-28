@@ -24,7 +24,7 @@ public final class CurrencyFormatter
   @Override
   public String format(Integer value) {
     if (value == null) {
-      logger.info(() -> "Got null integer value");
+      logger.info(() -> "Got null integer.");
       return null;
     }
 
@@ -34,7 +34,7 @@ public final class CurrencyFormatter
   @Override
   public String format(Long value) {
     if (value == null) {
-      logger.info(() -> "Got null long value");
+      logger.info(() -> "Got null long.");
       return null;
     }
 
@@ -44,7 +44,7 @@ public final class CurrencyFormatter
   @Override
   public String format(Float value) {
     if (value == null) {
-      logger.info(() -> "Got null float value");
+      logger.info(() -> "Got null float.");
       return null;
     }
 
@@ -54,7 +54,7 @@ public final class CurrencyFormatter
   @Override
   public String format(Double value) {
     if (value == null) {
-      logger.info(() -> "Got null double value");
+      logger.info(() -> "Got null double.");
       return null;
     }
 

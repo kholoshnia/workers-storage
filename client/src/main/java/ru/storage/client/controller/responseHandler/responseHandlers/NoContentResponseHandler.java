@@ -1,13 +1,13 @@
 package ru.storage.client.controller.responseHandler.responseHandlers;
 
 import ru.storage.client.controller.responseHandler.ResponseHandler;
-import ru.storage.client.controller.responseHandler.formatter.StringFormatter;
+import ru.storage.client.controller.responseHandler.formatter.Formatter;
 import ru.storage.common.transfer.response.Status;
 
 public final class NoContentResponseHandler extends ResponseHandler {
-  private final StringFormatter stringFormatter;
+  private final Formatter stringFormatter;
 
-  public NoContentResponseHandler(StringFormatter stringFormatter) {
+  public NoContentResponseHandler(Formatter stringFormatter) {
     this.stringFormatter = stringFormatter;
   }
 

@@ -1,4 +1,4 @@
-package ru.storage.client.view.console;
+package ru.storage.client.controller.responseHandler;
 
 import ru.storage.client.controller.localeManager.LocaleListener;
 

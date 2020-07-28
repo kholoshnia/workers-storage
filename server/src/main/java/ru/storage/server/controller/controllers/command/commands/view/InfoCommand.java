@@ -13,11 +13,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class InfoCommand extends ViewCommand {
-  public static final String BEGINNING =
-      "-----------------------------< INFO >-----------------------------";
-  public static final String SEPARATOR =
-      "------------------------------------------------------------------";
-
   private final String INFO_PREFIX;
   private final String TYPE_PREFIX;
   private final String INIT_TIME_PREFIX;
@@ -45,20 +40,15 @@ public final class InfoCommand extends ViewCommand {
   @Override
   public Response executeCommand() {
     String result =
-        BEGINNING
+        INFO_PREFIX
             + System.lineSeparator()
-            + INFO_PREFIX
-            + System.lineSeparator()
-            + SEPARATOR
             + System.lineSeparator()
             + String.format("%s: %s", TYPE_PREFIX, workerRepository.getType())
             + System.lineSeparator()
             + String.format(
                 "%s: %s", INIT_TIME_PREFIX, dateFormat.format(workerRepository.getInitTime()))
             + System.lineSeparator()
-            + String.format("%s: %d", SIZE_PREFIX, workerRepository.getSize())
-            + System.lineSeparator()
-            + SEPARATOR;
+            + String.format("%s: %d", SIZE_PREFIX, workerRepository.getSize());
 
     logger.info(() -> "Information was formed.");
     return new Response(Status.OK, result);

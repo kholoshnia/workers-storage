@@ -35,6 +35,7 @@ import ru.storage.server.controller.controllers.command.factory.CommandFactoryMe
 import ru.storage.server.controller.controllers.command.factory.factories.*;
 import ru.storage.server.controller.services.hash.HashGenerator;
 import ru.storage.server.controller.services.hash.SHA256Generator;
+import ru.storage.server.controller.services.parser.Parser;
 import ru.storage.server.controller.services.script.scriptExecutor.ScriptExecutor;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.ArgumentFormer;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.FormerMediator;
@@ -91,6 +92,7 @@ public final class ServerModule extends AbstractModule {
     install(new CommonModule());
     logger.debug("Common module was installed.");
 
+    bind(Parser.class).in(Scopes.SINGLETON);
     bind(SHA256Generator.class).in(Scopes.SINGLETON);
     bind(HashGenerator.class).to(SHA256Generator.class);
     bind(History.class).in(Scopes.SINGLETON);
@@ -112,13 +114,13 @@ public final class ServerModule extends AbstractModule {
     bind(FormerMediator.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Controllers were configured.");
 
-    bind(AddValidator.class).in(Scopes.SINGLETON);
     bind(IdValidator.class).in(Scopes.SINGLETON);
     bind(LoginValidator.class).in(Scopes.SINGLETON);
+    bind(NewWorkerIdValidator.class).in(Scopes.SINGLETON);
+    bind(NewWorkerValidator.class).in(Scopes.SINGLETON);
     bind(NoArgumentsValidator.class).in(Scopes.SINGLETON);
     bind(RegisterValidator.class).in(Scopes.SINGLETON);
     bind(ScriptValidator.class).in(Scopes.SINGLETON);
-    bind(UpdateValidator.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Argument validators were configured.");
 
     bind(EntryCommandFactory.class).in(Scopes.SINGLETON);
@@ -354,13 +356,13 @@ public final class ServerModule extends AbstractModule {
   @Singleton
   Map<String, ArgumentValidator> provideArgumentValidatorMap(
       CommandMediator commandMediator,
-      AddValidator addValidator,
       IdValidator idValidator,
       LoginValidator loginValidator,
+      NewWorkerIdValidator newWorkerIdValidator,
+      NewWorkerValidator newWorkerValidator,
       NoArgumentsValidator noArgumentsValidator,
       RegisterValidator registerValidator,
-      ScriptValidator scriptValidator,
-      UpdateValidator updateValidator) {
+      ScriptValidator scriptValidator) {
     Map<String, ArgumentValidator> validatorMap =
         new HashMap<String, ArgumentValidator>() {
           {
@@ -369,9 +371,9 @@ public final class ServerModule extends AbstractModule {
             put(commandMediator.REGISTER, registerValidator);
             put(commandMediator.SHOW_HISTORY, noArgumentsValidator);
             put(commandMediator.CLEAR_HISTORY, noArgumentsValidator);
-            put(commandMediator.ADD, addValidator);
+            put(commandMediator.ADD, newWorkerValidator);
             put(commandMediator.REMOVE, idValidator);
-            put(commandMediator.UPDATE, updateValidator);
+            put(commandMediator.UPDATE, newWorkerIdValidator);
             put(commandMediator.EXIT, noArgumentsValidator);
             put(commandMediator.HELP, noArgumentsValidator);
             put(commandMediator.INFO, noArgumentsValidator);

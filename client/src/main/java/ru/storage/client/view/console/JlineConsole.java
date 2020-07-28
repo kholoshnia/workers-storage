@@ -123,9 +123,9 @@ public final class JlineConsole implements LocaleListener {
     logger.info("Forming status candidates.");
     return new ArrayList<Candidate>() {
       {
-        add(newStatusCandidate(resourceBundle.getString("constants.fired")));
-        add(newStatusCandidate(resourceBundle.getString("constants.hired")));
-        add(newStatusCandidate(resourceBundle.getString("constants.promotion")));
+        add(newStatusCandidate(resourceBundle.getString("statuses.fired")));
+        add(newStatusCandidate(resourceBundle.getString("statuses.hired")));
+        add(newStatusCandidate(resourceBundle.getString("statuses.promotion")));
       }
     };
   }

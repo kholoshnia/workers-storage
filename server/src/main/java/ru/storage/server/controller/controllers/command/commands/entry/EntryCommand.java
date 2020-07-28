@@ -23,8 +23,8 @@ public abstract class EntryCommand extends Command {
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
       Locale locale,
-      HashGenerator hashGenerator,
       Repository<User> userRepository,
+      HashGenerator hashGenerator,
       Key key) {
     super(configuration, argumentMediator, arguments);
     this.locale = locale;

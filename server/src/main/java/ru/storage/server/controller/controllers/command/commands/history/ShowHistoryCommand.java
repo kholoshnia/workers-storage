@@ -15,9 +15,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public final class ShowHistoryCommand extends HistoryCommand {
-  public static final String BEGINNING = "---------------< HISTORY >---------------";
-  public static final String SEPARATOR = "-----------------------------------------";
-
   private final String SHOW_HISTORY_PREFIX;
 
   private final Logger logger;
@@ -45,27 +42,20 @@ public final class ShowHistoryCommand extends HistoryCommand {
 
     List<Record> records = history.getRecords(10);
     StringBuilder result =
-        new StringBuilder(BEGINNING)
+        new StringBuilder(SHOW_HISTORY_PREFIX)
             .append(System.lineSeparator())
-            .append(SHOW_HISTORY_PREFIX)
-            .append(System.lineSeparator())
-            .append(SEPARATOR);
+            .append(System.lineSeparator());
 
     for (Record record : records) {
       result
+          .append(System.lineSeparator())
           .append(System.lineSeparator())
           .append(record.getCommand())
           .append(System.lineSeparator());
 
       record
           .getArguments()
-          .forEach(
-              (key, value) ->
-                  result
-                      .append(String.format("%s: %s", key, value))
-                      .append(System.lineSeparator()));
-
-      result.append(SEPARATOR);
+          .forEach((key, value) -> result.append(String.format("%s: %s", key, value)));
     }
 
     logger.info(() -> "History was formed.");

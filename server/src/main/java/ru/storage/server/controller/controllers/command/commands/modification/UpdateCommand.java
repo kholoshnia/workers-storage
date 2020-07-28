@@ -36,7 +36,7 @@ public final class UpdateCommand extends ModificationCommand {
       Repository<Worker> workerRepository,
       Parser parser,
       User user) {
-    super(configuration, argumentMediator, arguments, locale, workerRepository, parser, user);
+    super(configuration, argumentMediator, arguments, locale, user, workerRepository, parser);
     logger = LogManager.getLogger(UpdateCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.UpdateCommand");
@@ -51,12 +51,12 @@ public final class UpdateCommand extends ModificationCommand {
     try {
       id = parser.parseLong(arguments.get(argumentMediator.WORKER_ID));
     } catch (ParserException e) {
-      logger.warn(() -> "Got wrong id.", e);
+      logger.warn(() -> "Got wrong update id.", e);
       return new Response(Status.BAD_REQUEST, WRONG_ID_ANSWER);
     }
 
     if (id == null) {
-      logger.warn(() -> "Got null id.");
+      logger.warn(() -> "Got null update id.");
       return new Response(Status.BAD_REQUEST, WRONG_ID_ANSWER);
     }
 
@@ -78,7 +78,7 @@ public final class UpdateCommand extends ModificationCommand {
     WorkerDTO workerDTO;
 
     try {
-      workerDTO = createWorkerDTO(arguments);
+      workerDTO = createWorkerDTO();
     } catch (ParserException e) {
       logger.warn(() -> "Cannot create workerDTO.", e);
       return new Response(Status.BAD_REQUEST, WRONG_WORKER_FORMAT_ANSWER);

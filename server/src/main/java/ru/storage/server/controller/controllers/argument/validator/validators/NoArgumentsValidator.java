@@ -8,6 +8,6 @@ import java.util.ArrayList;
 public final class NoArgumentsValidator extends ArgumentValidator {
   @Inject
   public NoArgumentsValidator() {
-    requiredArguments = new ArrayList<>();
+    super(new ArrayList<>());
   }
 }

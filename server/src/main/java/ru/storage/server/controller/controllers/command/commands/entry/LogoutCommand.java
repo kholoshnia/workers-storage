@@ -25,10 +25,10 @@ public class LogoutCommand extends EntryCommand {
       ArgumentMediator argumentMediator,
       Map<String, String> arguments,
       Locale locale,
-      HashGenerator hashGenerator,
       Repository<User> userRepository,
+      HashGenerator hashGenerator,
       Key key) {
-    super(configuration, argumentMediator, arguments, locale, hashGenerator, userRepository, key);
+    super(configuration, argumentMediator, arguments, locale, userRepository, hashGenerator, key);
     logger = LogManager.getLogger(LogoutCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.LogoutCommand", locale);
@@ -38,8 +38,7 @@ public class LogoutCommand extends EntryCommand {
 
   @Override
   public Response executeCommand() {
-    logger.info(
-        () -> "Returning unauthorized answer, user must be unauthorized on the client size.");
+    logger.info(() -> "Returning empty token, user must be unauthorized on the client size.");
     return new Response(Status.OK, LOGGED_OUT_ANSWER, "");
   }
 }

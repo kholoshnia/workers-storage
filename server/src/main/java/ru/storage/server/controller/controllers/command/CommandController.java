@@ -3,6 +3,7 @@ package ru.storage.server.controller.controllers.command;
 import com.google.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Supplier;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
 import ru.storage.common.transfer.Request;
@@ -12,9 +13,12 @@ import ru.storage.server.controller.Controller;
 import ru.storage.server.controller.controllers.command.factory.CommandFactory;
 import ru.storage.server.controller.controllers.command.factory.CommandFactoryMediator;
 import ru.storage.server.controller.controllers.command.factory.exceptions.CommandFactoryException;
+import ru.storage.server.controller.controllers.command.factory.exceptions.UserNotFoundException;
 import ru.storage.server.model.domain.history.History;
 import ru.storage.server.model.domain.history.Record;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public final class CommandController implements Controller {
@@ -32,6 +36,7 @@ public final class CommandController implements Controller {
   private final CommandMediator commandMediator;
   private final ArgumentMediator argumentMediator;
   private final CommandFactoryMediator commandFactoryMediator;
+  private final List<String> authCommands;
   private final History history;
 
   @Inject
@@ -44,16 +49,17 @@ public final class CommandController implements Controller {
     this.commandMediator = commandMediator;
     this.argumentMediator = argumentMediator;
     this.commandFactoryMediator = commandFactoryMediator;
+    authCommands = initAuthCommandList(argumentMediator);
     this.history = history;
   }
 
-  private void addToHistory(Request request, Response response) {
-    if (request.getCommand().equals(commandMediator.LOGIN)
-        || request.getCommand().equals(commandMediator.REGISTER)) {
-      request.getArguments().replace(argumentMediator.USER_PASSWORD, "");
-    }
-
-    history.addRecord(new Record(request.getCommand(), request.getArguments(), response));
+  private List<String> initAuthCommandList(ArgumentMediator argumentMediator) {
+    return new ArrayList<String>() {
+      {
+        add(commandMediator.LOGIN);
+        add(commandMediator.REGISTER);
+      }
+    };
   }
 
   @Override
@@ -61,6 +67,7 @@ public final class CommandController implements Controller {
     ResourceBundle resourceBundle =
         ResourceBundle.getBundle("localized.CommandController", request.getLocale());
     String noSuchCommandAnswer = resourceBundle.getString("answers.noSuchCommand");
+    String userNotFound = resourceBundle.getString("answers.userNotFound");
 
     CommandFactory commandFactory = commandFactoryMediator.getCommandFactory(request.getCommand());
 
@@ -78,7 +85,11 @@ public final class CommandController implements Controller {
               request.getArguments(),
               request.getLocale(),
               request.getLogin());
+    } catch (UserNotFoundException e) {
+      logger.warn(() -> "User was not found", e);
+      return new Response(Status.NOT_FOUND, userNotFound);
     } catch (CommandFactoryException e) {
+      logger.error("Cannot create command: {}.", (Supplier<?>) request::getCommand, e);
       return new Response(Status.INTERNAL_SERVER_ERROR, COMMAND_CREATION_ERROR_ANSWER);
     }
 
@@ -91,5 +102,20 @@ public final class CommandController implements Controller {
 
     addToHistory(request, response);
     return response;
+  }
+
+  /**
+   * Adds new record to the history. NOTE: in case of authentication command replaces password with
+   * empty string.
+   *
+   * @param request client request
+   * @param response server response
+   */
+  private void addToHistory(Request request, Response response) {
+    if (authCommands.contains(request.getCommand())) {
+      request.getArguments().replace(argumentMediator.USER_PASSWORD, "");
+    }
+
+    history.addRecord(new Record(request.getCommand(), request.getArguments(), response));
   }
 }

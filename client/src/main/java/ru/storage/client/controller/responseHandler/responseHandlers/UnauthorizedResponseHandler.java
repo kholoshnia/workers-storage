@@ -1,18 +1,17 @@
 package ru.storage.client.controller.responseHandler.responseHandlers;
 
+import ru.storage.client.controller.responseHandler.MessageMediator;
 import ru.storage.client.controller.responseHandler.ResponseHandler;
-import ru.storage.client.controller.responseHandler.formatter.StringFormatter;
-import ru.storage.client.view.console.MessageMediator;
+import ru.storage.client.controller.responseHandler.formatter.Formatter;
 import ru.storage.common.transfer.response.Status;
 
 public final class UnauthorizedResponseHandler extends ResponseHandler {
+  private final Formatter stringFormatter;
   private final MessageMediator messageMediator;
-  private final StringFormatter stringFormatter;
 
-  public UnauthorizedResponseHandler(
-      MessageMediator messageMediator, StringFormatter stringFormatter) {
-    this.messageMediator = messageMediator;
+  public UnauthorizedResponseHandler(Formatter stringFormatter, MessageMediator messageMediator) {
     this.stringFormatter = stringFormatter;
+    this.messageMediator = messageMediator;
   }
 
   @Override

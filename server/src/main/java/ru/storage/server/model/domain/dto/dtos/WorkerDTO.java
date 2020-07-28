@@ -10,9 +10,10 @@ import ru.storage.server.model.domain.entity.exceptions.ValidationException;
 import java.time.ZonedDateTime;
 
 public final class WorkerDTO implements DTO<Worker> {
+  public static final String TABLE_NAME = "workers";
+
   public static final String ID_COLUMN = "id";
   public static final String OWNER_ID_COLUMN = "owner_id";
-  public static final String TABLE_NAME = "workers";
   public static final String CREATION_DATE_COLUMN = "creation_date";
   public static final String SALARY_COLUMN = "salary";
   public static final String STATUS_COLUMN = "status";

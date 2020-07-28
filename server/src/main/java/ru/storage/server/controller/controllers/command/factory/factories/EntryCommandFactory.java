@@ -23,9 +23,12 @@ import java.util.Locale;
 import java.util.Map;
 
 public final class EntryCommandFactory extends CommandFactory {
-  private final HashGenerator hashGenerator;
+  private final Configuration configuration;
+  private final ArgumentMediator argumentMediator;
   private final Repository<User> userRepository;
+  private final HashGenerator hashGenerator;
   private final Key key;
+
   private final Map<String, Class<? extends EntryCommand>> entryCommandMap;
 
   @Inject
@@ -33,12 +36,13 @@ public final class EntryCommandFactory extends CommandFactory {
       Configuration configuration,
       ArgumentMediator argumentMediator,
       CommandMediator commandMediator,
-      HashGenerator hashGenerator,
       Repository<User> userRepository,
+      HashGenerator hashGenerator,
       Key key) {
-    super(configuration, argumentMediator);
-    this.hashGenerator = hashGenerator;
+    this.configuration = configuration;
+    this.argumentMediator = argumentMediator;
     this.userRepository = userRepository;
+    this.hashGenerator = hashGenerator;
     this.key = key;
     entryCommandMap = initEntryCommandMap(commandMediator);
   }
@@ -59,6 +63,7 @@ public final class EntryCommandFactory extends CommandFactory {
       String command, Map<String, String> arguments, Locale locale, String login)
       throws CommandFactoryException {
     Class<? extends EntryCommand> clazz = entryCommandMap.get(command);
+
     try {
       Constructor<? extends EntryCommand> constructor =
           clazz.getConstructor(
@@ -66,11 +71,12 @@ public final class EntryCommandFactory extends CommandFactory {
               ArgumentMediator.class,
               Map.class,
               Locale.class,
-              HashGenerator.class,
               Repository.class,
+              HashGenerator.class,
               Key.class);
+
       return constructor.newInstance(
-          configuration, argumentMediator, arguments, locale, hashGenerator, userRepository, key);
+          configuration, argumentMediator, arguments, locale, userRepository, hashGenerator, key);
     } catch (NoSuchMethodException
         | InstantiationException
         | IllegalAccessException

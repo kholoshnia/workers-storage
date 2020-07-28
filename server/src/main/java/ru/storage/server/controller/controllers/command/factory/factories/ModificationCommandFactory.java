@@ -23,9 +23,12 @@ import java.util.Locale;
 import java.util.Map;
 
 public final class ModificationCommandFactory extends CommandFactory {
-  private final Repository<User> userRepository;
+  private final Configuration configuration;
+  private final ArgumentMediator argumentMediator;
   private final Repository<Worker> workerRepository;
+  private final Repository<User> userRepository;
   private final Parser parser;
+
   private final Map<String, Class<? extends ModificationCommand>> modificationCommandMap;
 
   @Inject
@@ -36,9 +39,10 @@ public final class ModificationCommandFactory extends CommandFactory {
       Repository<User> userRepository,
       Repository<Worker> workerRepository,
       Parser parser) {
-    super(configuration, argumentMediator);
-    this.userRepository = userRepository;
+    this.configuration = configuration;
+    this.argumentMediator = argumentMediator;
     this.workerRepository = workerRepository;
+    this.userRepository = userRepository;
     this.parser = parser;
     modificationCommandMap = initModificationCommandMap(commandMediator);
   }
@@ -59,6 +63,7 @@ public final class ModificationCommandFactory extends CommandFactory {
       String command, Map<String, String> arguments, Locale locale, String login)
       throws CommandFactoryException {
     Class<? extends ModificationCommand> clazz = modificationCommandMap.get(command);
+
     try {
       Constructor<? extends ModificationCommand> constructor =
           clazz.getConstructor(
@@ -69,6 +74,7 @@ public final class ModificationCommandFactory extends CommandFactory {
               Repository.class,
               Parser.class,
               User.class);
+
       return constructor.newInstance(
           configuration,
           argumentMediator,

@@ -21,12 +21,13 @@ import ru.storage.client.controller.argumentFormer.FormerMediator;
 import ru.storage.client.controller.argumentFormer.argumentFormers.*;
 import ru.storage.client.controller.localeManager.LocaleListener;
 import ru.storage.client.controller.localeManager.LocaleManager;
+import ru.storage.client.controller.responseHandler.MessageMediator;
 import ru.storage.client.controller.responseHandler.ResponseHandler;
+import ru.storage.client.controller.responseHandler.formatter.Formatter;
 import ru.storage.client.controller.responseHandler.formatter.StringFormatter;
 import ru.storage.client.controller.responseHandler.responseHandlers.*;
 import ru.storage.client.controller.validator.validators.*;
 import ru.storage.client.view.console.Console;
-import ru.storage.client.view.console.MessageMediator;
 import ru.storage.client.view.console.Terminal;
 import ru.storage.client.view.console.exceptions.ConsoleException;
 import ru.storage.common.ArgumentMediator;
@@ -73,12 +74,13 @@ public final class ClientModule extends AbstractModule {
     bind(RegisterValidator.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Validators were configured.");
 
+    bind(StringFormatter.class).in(Scopes.SINGLETON);
+    bind(Formatter.class).to(StringFormatter.class);
     bind(MessageMediator.class).in(Scopes.SINGLETON);
     bind(FormerMediator.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Controller was configured.");
 
     bind(Console.class).to(Terminal.class);
-
     bind(Client.class).in(Scopes.SINGLETON);
     logger.debug(() -> "Client was configured.");
   }
@@ -146,7 +148,7 @@ public final class ClientModule extends AbstractModule {
       IdFormer idFormer,
       LoginFormer loginFormer,
       NewWorkerFormer newWorkerFormer,
-      NewWorkerIdFormer newWorkerId,
+      NewWorkerIdFormer newWorkerIdFormer,
       NoArgumentsFormer noArgumentsFormer,
       RegisterFormer registerFormer,
       ScriptFormer scriptFormer) {
@@ -162,7 +164,7 @@ public final class ClientModule extends AbstractModule {
             add(idFormer);
             add(loginFormer);
             add(newWorkerFormer);
-            add(newWorkerId);
+            add(newWorkerIdFormer);
             add(noArgumentsFormer);
             add(registerFormer);
             add(scriptFormer);
@@ -181,7 +183,7 @@ public final class ClientModule extends AbstractModule {
       IdFormer idFormer,
       LoginFormer loginFormer,
       NewWorkerFormer newWorkerFormer,
-      NewWorkerIdFormer newWorkerId,
+      NewWorkerIdFormer newWorkerIdFormer,
       NoArgumentsFormer noArgumentsFormer,
       RegisterFormer registerFormer,
       ScriptFormer scriptFormer) {
@@ -195,7 +197,7 @@ public final class ClientModule extends AbstractModule {
             put(commandMediator.CLEAR_HISTORY, noArgumentsFormer);
             put(commandMediator.ADD, newWorkerFormer);
             put(commandMediator.REMOVE, idFormer);
-            put(commandMediator.UPDATE, newWorkerId);
+            put(commandMediator.UPDATE, newWorkerIdFormer);
             put(commandMediator.EXIT, noArgumentsFormer);
             put(commandMediator.HELP, noArgumentsFormer);
             put(commandMediator.INFO, noArgumentsFormer);
@@ -246,7 +248,7 @@ public final class ClientModule extends AbstractModule {
   @Provides
   @Singleton
   List<ResponseHandler> provideResponseHandlers(
-      MessageMediator messageMediator, StringFormatter stringFormatter) {
+      Formatter stringFormatter, MessageMediator messageMediator) {
     List<ResponseHandler> responseHandlers =
         new ArrayList<ResponseHandler>() {
           {
@@ -254,12 +256,12 @@ public final class ClientModule extends AbstractModule {
             add(new CreatedResponseHandler(stringFormatter));
             add(new NoContentResponseHandler(stringFormatter));
             add(new NotModifiedResponseHandler(stringFormatter));
-            add(new BadRequestResponseHandler(messageMediator, stringFormatter));
-            add(new UnauthorizedResponseHandler(messageMediator, stringFormatter));
+            add(new BadRequestResponseHandler(stringFormatter, messageMediator));
+            add(new UnauthorizedResponseHandler(stringFormatter, messageMediator));
             add(new NotFoundResponseHandler(stringFormatter));
             add(new ForbiddenResponseHandler(stringFormatter));
-            add(new ConflictResponseHandler(messageMediator, stringFormatter));
-            add(new InternalServerErrorResponseHandler(messageMediator, stringFormatter));
+            add(new ConflictResponseHandler(stringFormatter, messageMediator));
+            add(new InternalServerErrorResponseHandler(stringFormatter, messageMediator));
           }
         };
 

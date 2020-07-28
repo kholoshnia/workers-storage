@@ -32,7 +32,7 @@ public final class AddCommand extends ModificationCommand {
       Repository<Worker> workerRepository,
       Parser parser,
       User user) {
-    super(configuration, argumentMediator, arguments, locale, workerRepository, parser, user);
+    super(configuration, argumentMediator, arguments, locale, user, workerRepository, parser);
     logger = LogManager.getLogger(AddCommand.class);
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.AddCommand");
@@ -45,7 +45,7 @@ public final class AddCommand extends ModificationCommand {
     WorkerDTO workerDTO;
 
     try {
-      workerDTO = createWorkerDTO(arguments);
+      workerDTO = createWorkerDTO();
     } catch (ParserException e) {
       logger.warn(() -> "Cannot create worker DTO.", e);
       return new Response(Status.BAD_REQUEST, WRONG_WORKER_FORMAT_ANSWER);

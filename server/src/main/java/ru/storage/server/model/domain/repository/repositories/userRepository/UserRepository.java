@@ -15,6 +15,7 @@ import ru.storage.server.model.domain.repository.repositories.userRepository.exc
 import ru.storage.server.model.source.exceptions.DataSourceException;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -87,7 +88,7 @@ public final class UserRepository implements Repository<User> {
   @Override
   public synchronized List<User> get(@Nonnull Query<User> query) throws RepositoryException {
     if (users.isEmpty()) {
-      return new CopyOnWriteArrayList<>();
+      return new ArrayList<>();
     }
 
     List<User> result = query.execute(users);

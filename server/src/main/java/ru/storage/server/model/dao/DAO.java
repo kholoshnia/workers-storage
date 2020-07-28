@@ -24,7 +24,7 @@ public interface DAO<Key, Entity> {
   /**
    * Returns entity by key.
    *
-   * @param key concrete entity key
+   * @param key entity key
    * @return Entity with specified key
    * @throws DAOException - in case of incorrect statement execution
    * @throws DataSourceException - in case of getting by key errors
@@ -34,7 +34,7 @@ public interface DAO<Key, Entity> {
   /**
    * Inserts entity. Returns entity with generated id.
    *
-   * @param entity concrete entity
+   * @param entity entity to insert
    * @return Entity with generated id
    * @throws DAOException - in case of incorrect statement execution
    * @throws DataSourceException - in case of inserting errors
@@ -44,7 +44,7 @@ public interface DAO<Key, Entity> {
   /**
    * Updates entity in database.
    *
-   * @param entity new entity
+   * @param entity entity to update
    * @return updated entity
    * @throws DAOException - in case of incorrect statement execution
    * @throws DataSourceException - in case of updating errors
@@ -54,7 +54,7 @@ public interface DAO<Key, Entity> {
   /**
    * Deletes entity from the database.
    *
-   * @param entity concrete entity
+   * @param entity entity to delete
    * @throws DAOException - in case of incorrect statement execution
    * @throws DataSourceException - in case of deleting errors
    */

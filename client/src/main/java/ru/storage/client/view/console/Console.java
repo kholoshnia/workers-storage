@@ -7,7 +7,7 @@ public interface Console extends View {
    * Reads line from the console.
    *
    * @param prompt command prompt
-   * @param mask concrete mask
+   * @param mask input mask
    * @return new line
    */
   String readLine(String prompt, Character mask);
@@ -15,7 +15,7 @@ public interface Console extends View {
   /**
    * Writes string.
    *
-   * @param string concrete string to write
+   * @param string string to write
    */
   void write(String string);
 
@@ -25,7 +25,7 @@ public interface Console extends View {
   /**
    * Wring string and then new line.
    *
-   * @param string concrete string to write
+   * @param string string to write
    */
   void writeLine(String string);
 

@@ -215,6 +215,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
    *
    * @param words user input words
    * @return new request
+   * @throws ExitingException - in case of exceptions while exiting
    */
   private Request createRequest(List<String> words) throws ExitingException {
     String command = words.get(0);
@@ -404,7 +405,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
    *
    * <p>Using the specified in the constructor output stream.
    *
-   * @param string concrete string to write
+   * @param string string to write
    */
   public void write(String string) {
     if (string == null) {
@@ -431,7 +432,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
    *
    * <p>Using the specified in the constructor output stream.
    *
-   * @param string concrete string to write
+   * @param string string to write
    * @see Terminal#write(String)
    */
   public void writeLine(String string) {
@@ -443,7 +444,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
    * Parses string by words in a list of string. Words can be separated by spaces or can be
    * surrounded by " and ' symbols. NOTE: returns empty list if there is no words found.
    *
-   * @param string concrete string to parse
+   * @param string string to parse
    * @return list of words from string
    */
   private List<String> parse(String string) {

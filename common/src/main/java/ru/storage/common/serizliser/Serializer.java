@@ -9,7 +9,7 @@ public interface Serializer {
   /**
    * Returns serialized object in a form of a bytes.
    *
-   * @param serializable concrete serializable object
+   * @param serializable serializable object
    * @return object in a form of a bytes
    */
   byte[] serialize(Serializable serializable);

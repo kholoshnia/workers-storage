@@ -191,7 +191,7 @@ public final class ScriptExecutor {
    * Parses string by words in a list of string. Words can be separated by spaces or can be
    * surrounded by " and ' symbols. NOTE: returns empty list if there is no words found.
    *
-   * @param string concrete string to parse
+   * @param string string to parse
    * @return list of words from string
    */
   private List<String> parse(String string) {

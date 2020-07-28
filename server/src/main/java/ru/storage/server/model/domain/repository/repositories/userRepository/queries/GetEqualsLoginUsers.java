@@ -14,7 +14,7 @@ public final class GetEqualsLoginUsers implements Query<User> {
   /**
    * Creates a query to get users with the specified login.
    *
-   * @param login concrete login
+   * @param login user login
    */
   public GetEqualsLoginUsers(String login) {
     this.login = login;

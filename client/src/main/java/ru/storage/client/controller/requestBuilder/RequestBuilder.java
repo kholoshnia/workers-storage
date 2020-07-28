@@ -25,7 +25,7 @@ public final class RequestBuilder {
   /**
    * Sets command. NOTE: if not set uses default empty arguments.
    *
-   * @param command concrete command
+   * @param command command name
    * @return this request builder
    */
   public RequestBuilder setCommand(@Nonnull String command) {
@@ -53,7 +53,7 @@ public final class RequestBuilder {
    * </ol>
    *
    * @param arguments command arguments
-   * @param formerMediator concrete former mediator
+   * @param formerMediator argument former mediator
    * @return this request builder
    * @throws BuildingException - if got null {@link ArgumentFormer}
    * @throws WrongArgumentsException - if specified arguments are wrong
@@ -76,7 +76,7 @@ public final class RequestBuilder {
   /**
    * Sets locale. NOTE: if not set uses default {@link Locale#ENGLISH}.
    *
-   * @param locale concrete locale
+   * @param locale user locale
    * @return this request builder
    */
   public RequestBuilder setLocale(@Nonnull Locale locale) {
@@ -87,7 +87,7 @@ public final class RequestBuilder {
   /**
    * Sets login. NOTE: if not set uses default empty login.
    *
-   * @param login concrete login
+   * @param login user login
    * @return this request builder.
    */
   public RequestBuilder setLogin(@Nonnull String login) {
@@ -98,7 +98,7 @@ public final class RequestBuilder {
   /**
    * Sets java web token. NOTE: if not set uses default empty token.
    *
-   * @param token concrete token
+   * @param token user token
    * @return this request builder
    */
   public RequestBuilder setToken(@Nonnull String token) {

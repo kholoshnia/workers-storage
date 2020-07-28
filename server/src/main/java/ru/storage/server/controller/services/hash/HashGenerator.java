@@ -17,7 +17,7 @@ public abstract class HashGenerator {
   /**
    * Generates hash.
    *
-   * @param string concrete string to hash
+   * @param string string to hash
    * @return hashed string
    * @throws HashGeneratorException - if the algorithm is not found
    */
@@ -26,7 +26,7 @@ public abstract class HashGenerator {
   /**
    * Generates hash with salt
    *
-   * @param string concrete string to hash with salt
+   * @param string string to hash with salt
    * @return hashed string
    * @throws HashGeneratorException - if the algorithm is not found.
    */
@@ -38,7 +38,7 @@ public abstract class HashGenerator {
   /**
    * Generates hash with pepper and salt
    *
-   * @param string concrete string to hash with pepper and salt
+   * @param string string to hash with pepper and salt
    * @return hashed string
    * @throws HashGeneratorException - if the algorithm is not found
    */

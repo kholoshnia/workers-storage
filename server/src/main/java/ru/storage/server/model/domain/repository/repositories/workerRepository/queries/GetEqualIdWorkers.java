@@ -16,7 +16,7 @@ public final class GetEqualIdWorkers implements Query<Worker> {
   /**
    * Creates a query to get workers with the specified id.
    *
-   * @param id concrete id
+   * @param id worker id
    */
   public GetEqualIdWorkers(long id) {
     this.id = id;

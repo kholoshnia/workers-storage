@@ -173,7 +173,7 @@ public abstract class ModificationCommand extends Command {
   /**
    * Sets worker owner id.
    *
-   * @param worker concrete worker
+   * @param worker worker to set id
    * @throws ValidationException - in case of id validation errors
    */
   protected final void setOwnerId(Worker worker) throws ValidationException {

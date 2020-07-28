@@ -31,7 +31,7 @@ public abstract class Former extends ArgumentFormer {
   /**
    * Checks input according to the specified argument.
    *
-   * @param argument concrete argument
+   * @param argument command argument
    * @param input user input
    * @throws ValidationException - if specified argument is wrong
    */

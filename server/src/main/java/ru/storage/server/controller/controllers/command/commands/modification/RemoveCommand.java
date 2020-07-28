@@ -64,7 +64,7 @@ public final class RemoveCommand extends ModificationCommand {
     try {
       equalIdWorkers = workerRepository.get(query);
     } catch (RepositoryException e) {
-      logger.error("Cannot get workers which ids are equal to {}.", (Supplier<?>) () -> id, e);
+      logger.error("Cannot get workers which id is equal to {}.", (Supplier<?>) () -> id, e);
       return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 

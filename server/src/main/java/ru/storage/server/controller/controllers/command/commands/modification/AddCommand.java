@@ -61,7 +61,7 @@ public final class AddCommand extends ModificationCommand {
       setOwnerId(worker);
       workerRepository.insert(worker);
     } catch (ValidationException e) {
-      logger.error(() -> "Cannot create worker.", e);
+      logger.error(() -> "Cannot create worker from DTO.", e);
       return new Response(Status.BAD_REQUEST, WRONG_WORKER_DATA_ANSWER);
     } catch (RepositoryException e) {
       logger.error(() -> "Cannot add worker.", e);

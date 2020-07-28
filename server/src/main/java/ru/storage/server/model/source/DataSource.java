@@ -79,7 +79,7 @@ public abstract class DataSource implements ExitListener {
    * Returns prepared statement for specified sql statement and type.
    *
    * @param statement sql statement
-   * @param type concrete type
+   * @param type statement type
    * @return prepared statement for specified sql request and type
    * @throws DataSourceException - if preparation is incorrect
    */
@@ -105,7 +105,7 @@ public abstract class DataSource implements ExitListener {
    * <p>NOTE: all prepared statement must be closed after execution or in case of exception in
    * {@code finally} block.
    *
-   * @param preparedStatement concrete prepared statement
+   * @param preparedStatement prepared statement
    * @throws DataSourceException - in case of errors while closing prepared statement
    */
   public final void closePrepareStatement(PreparedStatement preparedStatement)

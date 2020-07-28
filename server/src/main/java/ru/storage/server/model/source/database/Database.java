@@ -208,7 +208,7 @@ public final class Database extends DataSource {
   /**
    * Initializes all tables. NOTE: order is important.
    *
-   * @param url concrete database url for {@link DriverManager}
+   * @param url database url for {@link DriverManager}
    * @param user database user
    * @param password database password
    * @throws DataSourceException - in case of data source exceptions

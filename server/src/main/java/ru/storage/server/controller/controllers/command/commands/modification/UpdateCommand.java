@@ -66,7 +66,7 @@ public final class UpdateCommand extends ModificationCommand {
     try {
       equalIdWorkers = workerRepository.get(query);
     } catch (RepositoryException e) {
-      logger.error("Cannot get workers with id equal to {}.", (Supplier<?>) () -> id, e);
+      logger.error("Cannot get workers with id is equal to {}.", (Supplier<?>) () -> id, e);
       return new Response(Status.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 

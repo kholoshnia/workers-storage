@@ -15,7 +15,7 @@ public abstract class Command {
   /**
    * Takes parameters to then use them during execution.
    *
-   * @param configuration concrete configuration
+   * @param configuration server configuration
    * @param argumentMediator argument key mediator
    * @param arguments command arguments
    * @see ArgumentMediator

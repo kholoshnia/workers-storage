@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * Repository provides methods to encapsulate logic of storage of the concrete {@link Entity}.
+ * Repository provides methods to encapsulate logic of storage of the {@link Entity}.
  *
  * @param <Entity> entity to store.
  */
@@ -14,7 +14,7 @@ public interface Repository<Entity> {
   /**
    * Returns entities in accordance with the specified {@link Query}.
    *
-   * @param query concrete query
+   * @param query query to get entities
    * @return entities in accordance with the specified {@link Query}
    * @throws RepositoryException - in case of getting errors
    */

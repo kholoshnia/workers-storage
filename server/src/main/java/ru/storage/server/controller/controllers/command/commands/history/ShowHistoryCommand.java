@@ -41,21 +41,21 @@ public final class ShowHistoryCommand extends HistoryCommand {
     }
 
     List<Record> records = history.getRecords(10);
-    StringBuilder result =
-        new StringBuilder(SHOW_HISTORY_PREFIX)
-            .append(System.lineSeparator())
-            .append(System.lineSeparator());
+    StringBuilder result = new StringBuilder(SHOW_HISTORY_PREFIX);
 
     for (Record record : records) {
       result
           .append(System.lineSeparator())
           .append(System.lineSeparator())
-          .append(record.getCommand())
-          .append(System.lineSeparator());
+          .append(record.getCommand());
 
       record
           .getArguments()
-          .forEach((key, value) -> result.append(String.format("%s: %s", key, value)));
+          .forEach(
+              (key, value) ->
+                  result
+                      .append(System.lineSeparator())
+                      .append(String.format("%s: %s", key, value)));
     }
 
     logger.info(() -> "History was formed.");

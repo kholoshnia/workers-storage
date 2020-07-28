@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 public class HelpCommand extends SpecialCommand {
   private static final String INFO_PATTERN = "%-25s- %s";
   private static final String ARGUMENT_PATTERN = "%s <%s>";
-  private static final String WORKER_PATTERN = "%s {%s}";
+  private static final String ADDITIONAL_PATTERN = "%s {%s}";
 
   private final String HELP_PREFIX;
 
@@ -45,6 +45,8 @@ public class HelpCommand extends SpecialCommand {
   private final String EXIT_INFO;
 
   private final String LOGIN_ARGUMENT;
+  private final String PASSWORD_ARGUMENT;
+  private final String USER_ARGUMENT;
   private final String WORKER_ARGUMENT;
   private final String ID_ARGUMENT;
   private final String PATH_ARGUMENT;
@@ -96,6 +98,8 @@ public class HelpCommand extends SpecialCommand {
     EXIT_INFO = resourceBundle.getString("infos.exit");
 
     LOGIN_ARGUMENT = resourceBundle.getString("arguments.login");
+    PASSWORD_ARGUMENT = resourceBundle.getString("arguments.password");
+    USER_ARGUMENT = resourceBundle.getString("arguments.user");
     WORKER_ARGUMENT = resourceBundle.getString("arguments.worker");
     ID_ARGUMENT = resourceBundle.getString("arguments.id");
     PATH_ARGUMENT = resourceBundle.getString("arguments.path");
@@ -106,12 +110,18 @@ public class HelpCommand extends SpecialCommand {
         + System.lineSeparator()
         + String.format(
             INFO_PATTERN,
-            String.format(ARGUMENT_PATTERN, commandMediator.LOGIN, LOGIN_ARGUMENT),
+            String.format(
+                ADDITIONAL_PATTERN,
+                String.format(ARGUMENT_PATTERN, commandMediator.LOGIN, LOGIN_ARGUMENT),
+                PASSWORD_ARGUMENT),
             LOGIN_INFO)
         + System.lineSeparator()
         + String.format(INFO_PATTERN, commandMediator.LOGOUT, LOGOUT_INFO)
         + System.lineSeparator()
-        + String.format(INFO_PATTERN, commandMediator.REGISTER, REGISTER_INFO);
+        + String.format(
+            INFO_PATTERN,
+            String.format(ADDITIONAL_PATTERN, commandMediator.REGISTER, USER_ARGUMENT),
+            REGISTER_INFO);
   }
 
   private String formHistoryCommandsInfo() {
@@ -127,7 +137,7 @@ public class HelpCommand extends SpecialCommand {
         + System.lineSeparator()
         + String.format(
             INFO_PATTERN,
-            String.format(WORKER_PATTERN, commandMediator.ADD, WORKER_ARGUMENT),
+            String.format(ADDITIONAL_PATTERN, commandMediator.ADD, WORKER_ARGUMENT),
             ADD_INFO)
         + System.lineSeparator()
         + String.format(
@@ -138,7 +148,7 @@ public class HelpCommand extends SpecialCommand {
         + String.format(
             INFO_PATTERN,
             String.format(
-                WORKER_PATTERN,
+                ADDITIONAL_PATTERN,
                 String.format(ARGUMENT_PATTERN, commandMediator.UPDATE, ID_ARGUMENT),
                 WORKER_ARGUMENT),
             UPDATE_INFO);

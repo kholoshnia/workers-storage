@@ -49,6 +49,7 @@ public final class ClientWorker {
       }
 
       byte[] bytes = new byte[size];
+
       buffer.rewind();
       buffer.get(bytes, 0, size);
       buffer.clear();

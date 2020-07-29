@@ -61,7 +61,6 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
 
   private String connectedMessage;
   private String connectingMessage;
-  private String greetingsMessage;
   private String noSuchCommandMessage;
   private String emptyResponseMessage;
   private String wrongResponseMessage;
@@ -126,7 +125,6 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
 
     connectedMessage = resourceBundle.getString("messages.connected");
     connectingMessage = resourceBundle.getString("messages.connecting");
-    greetingsMessage = resourceBundle.getString("messages.greetings");
     noSuchCommandMessage = resourceBundle.getString("messages.noSuchCommand");
     emptyResponseMessage = resourceBundle.getString("messages.emptyResponse");
     wrongResponseMessage = resourceBundle.getString("messages.wrongResponse");
@@ -146,7 +144,6 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
   /** Processes client console */
   public void process() throws ExitingException {
     localeManager.changeLocale(Locale.getDefault());
-    writeLine(greetingsMessage);
 
     try {
       serverWorker.connect();
@@ -334,7 +331,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
   private Response waitConnection(Request request) {
     Response response = null;
     String anim = "|/-\\";
-    int counter = 0;
+    byte counter = 0;
 
     do {
       try {
@@ -344,6 +341,7 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
       }
 
       counter++;
+
       if (counter > 3) {
         counter = 0;
       }

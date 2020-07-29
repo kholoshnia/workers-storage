@@ -15,6 +15,7 @@ import ru.storage.server.controller.Controller;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /** Authorizes user using java web token. */
@@ -24,6 +25,9 @@ public class AuthController implements Controller {
   private final List<String> authCommands;
   private final Key key;
   private final String subject;
+
+  private String unauthorizedAnswer;
+  private String alreadyAuthorizedAnswer;
 
   @Inject
   public AuthController(Configuration configuration, CommandMediator commandMediator, Key key) {
@@ -41,12 +45,16 @@ public class AuthController implements Controller {
     };
   }
 
+  private void changeLocale(Locale locale) {
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.AuthController", locale);
+
+    unauthorizedAnswer = resourceBundle.getString("answers.unauthorized");
+    alreadyAuthorizedAnswer = resourceBundle.getString("answers.alreadyAuthorized");
+  }
+
   @Override
   public Response handle(Request request) {
-    ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("localized.AuthController", request.getLocale());
-    String unauthorizedAnswer = resourceBundle.getString("answers.unauthorized");
-    String alreadyAuthorizedAnswer = resourceBundle.getString("answers.alreadyAuthorized");
+    changeLocale(request.getLocale());
 
     boolean authorized;
 

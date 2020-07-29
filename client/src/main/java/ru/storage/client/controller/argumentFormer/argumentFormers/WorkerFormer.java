@@ -118,7 +118,7 @@ public abstract class WorkerFormer extends Former implements LocaleListener {
     console.writeLine(workerOffer);
 
     Map<String, String> allArguments = new HashMap<>();
-    allArguments.put(argumentMediator.worker, argumentMediator.included);
+    allArguments.put(argumentMediator.worker, argumentMediator.include);
 
     allArguments.putAll(readArguments(workerOffers));
     logger.info(() -> "Worker arguments were formed.");
@@ -134,7 +134,7 @@ public abstract class WorkerFormer extends Former implements LocaleListener {
     Map<String, String> coordinatesArguments = new HashMap<>();
 
     if (readArgumentQuestion(coordinatesOffer)) {
-      coordinatesArguments.put(argumentMediator.coordinates, argumentMediator.included);
+      coordinatesArguments.put(argumentMediator.coordinates, argumentMediator.include);
       coordinatesArguments.putAll(readArguments(coordinatesOffers));
       logger.info(() -> "Coordinates arguments were formed.");
     } else {
@@ -150,7 +150,7 @@ public abstract class WorkerFormer extends Former implements LocaleListener {
 
     console.writeLine(personOffer);
 
-    personArguments.put(argumentMediator.person, argumentMediator.included);
+    personArguments.put(argumentMediator.person, argumentMediator.include);
     personArguments.putAll(readArguments(personOffers));
     logger.info(() -> "Person arguments were formed.");
 
@@ -162,7 +162,7 @@ public abstract class WorkerFormer extends Former implements LocaleListener {
     Map<String, String> locationArguments = new HashMap<>();
 
     if (readArgumentQuestion(locationOffer)) {
-      locationArguments.put(argumentMediator.location, argumentMediator.included);
+      locationArguments.put(argumentMediator.location, argumentMediator.include);
       locationArguments.putAll(readArguments(locationOffers));
       logger.info(() -> "Person arguments were formed.");
     } else {

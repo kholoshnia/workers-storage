@@ -35,7 +35,7 @@ public final class ArgumentMediator {
 
   public final String scriptLine;
 
-  public final String included;
+  public final String include;
 
   private final List<String> arguments;
 
@@ -70,7 +70,7 @@ public final class ArgumentMediator {
 
     scriptLine = resourceBundle.getString("arguments.scriptLine");
 
-    included = resourceBundle.getString("arguments.included");
+    include = resourceBundle.getString("arguments.include");
 
     arguments = initArgumentsList();
   }
@@ -147,8 +147,8 @@ public final class ArgumentMediator {
           add(scriptLine);
         }
 
-        if (included != null) {
-          add(included);
+        if (include != null) {
+          add(include);
         }
       }
     };

@@ -7,6 +7,7 @@ import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.Controller;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /** Checks if got correct request to continue handling. */
@@ -23,6 +24,20 @@ public final class CheckController implements Controller {
     GOT_NULL_LOCALE_ANSWER = resourceBundle.getString("answers.gotNullLocale");
   }
 
+  private String gotNullCommandAnswer;
+  private String gotNullArgumentsAnswer;
+  private String gotNullTokenAnswer;
+  private String gotNullLoginAnswer;
+
+  private void changeLocale(Locale locale) {
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.CheckController", locale);
+
+    gotNullCommandAnswer = resourceBundle.getString("answers.gotNullCommand");
+    gotNullArgumentsAnswer = resourceBundle.getString("answers.gotNullArguments");
+    gotNullTokenAnswer = resourceBundle.getString("answers.gotNullToken");
+    gotNullLoginAnswer = resourceBundle.getString("answers.gotNullLogin");
+  }
+
   @Override
   public Response handle(Request request) {
     if (request == null) {
@@ -35,13 +50,7 @@ public final class CheckController implements Controller {
       return new Response(Status.BAD_REQUEST, GOT_NULL_LOCALE_ANSWER);
     }
 
-    ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("localized.CheckController", request.getLocale());
-
-    String gotNullCommandAnswer = resourceBundle.getString("answers.gotNullCommand");
-    String gotNullArgumentsAnswer = resourceBundle.getString("answers.gotNullArguments");
-    String gotNullTokenAnswer = resourceBundle.getString("answers.gotNullToken");
-    String gotNullLoginAnswer = resourceBundle.getString("answers.gotNullLogin");
+    changeLocale(request.getLocale());
 
     if (request.getCommand() == null) {
       logger.warn(() -> "Got null command");

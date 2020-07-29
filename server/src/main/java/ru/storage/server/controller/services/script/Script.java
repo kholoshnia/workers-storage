@@ -2,7 +2,6 @@ package ru.storage.server.controller.services.script;
 
 import ru.storage.server.model.domain.entity.entities.user.User;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,15 +34,18 @@ import java.util.Locale;
  *   <li>locationLongitude
  * </ul>
  */
-public final class Script implements Iterable<String> {
+public final class Script {
   private final Locale locale;
   private final User user;
   private final List<String> lines;
+
+  private int current;
 
   public Script(Locale locale, User user, List<String> lines) {
     this.locale = locale;
     this.user = user;
     this.lines = lines;
+    current = -1;
   }
 
   public Locale getLocale() {
@@ -54,9 +56,28 @@ public final class Script implements Iterable<String> {
     return user;
   }
 
-  @Override
-  public Iterator<String> iterator() {
-    return lines.iterator();
+  public int getCurrent() {
+    return current;
+  }
+
+  public boolean hasNext() {
+    return current < lines.size();
+  }
+
+  public String nextLine() {
+    current++;
+
+    if (current < lines.size()) {
+      return lines.get(current);
+    }
+
+    return null;
+  }
+
+  public void back() {
+    if (current > -1) {
+      current--;
+    }
   }
 
   @Override

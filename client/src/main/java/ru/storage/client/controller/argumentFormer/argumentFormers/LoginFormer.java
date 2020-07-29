@@ -65,6 +65,7 @@ public final class LoginFormer extends Former implements LocaleListener {
     allArguments.put(argumentMediator.userLogin, arguments.get(0));
 
     boolean wrong = true;
+
     while (wrong) {
       console.write(passwordOffer);
       logger.info("Offered user input: {}.", () -> passwordOffer);

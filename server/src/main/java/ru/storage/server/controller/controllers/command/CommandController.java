@@ -19,6 +19,7 @@ import ru.storage.server.model.domain.history.Record;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class CommandController implements Controller {
@@ -28,6 +29,11 @@ public final class CommandController implements Controller {
   private final CommandFactoryMediator commandFactoryMediator;
   private final List<String> authCommands;
   private final History history;
+
+  private String noSuchCommandAnswer;
+  private String userNotFoundAnswer;
+  private String commandCreationErrorAnswer;
+  private String commandNotSupportedAnswer;
 
   @Inject
   public CommandController(
@@ -50,14 +56,18 @@ public final class CommandController implements Controller {
     };
   }
 
+  private void changeLocale(Locale locale) {
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.CommandController", locale);
+
+    noSuchCommandAnswer = resourceBundle.getString("answers.noSuchCommand");
+    userNotFoundAnswer = resourceBundle.getString("answers.userNotFound");
+    commandCreationErrorAnswer = resourceBundle.getString("answers.commandCreationError");
+    commandNotSupportedAnswer = resourceBundle.getString("answers.commandNotSupported");
+  }
+
   @Override
   public Response handle(Request request) {
-    ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("localized.CommandController", request.getLocale());
-    String noSuchCommandAnswer = resourceBundle.getString("answers.noSuchCommand");
-    String userNotFound = resourceBundle.getString("answers.userNotFound");
-    String commandCreationErrorAnswer = resourceBundle.getString("answers.commandCreationError");
-    String commandNotSupportedAnswer = resourceBundle.getString("answers.commandNotSupported");
+    changeLocale(request.getLocale());
 
     CommandFactory commandFactory = commandFactoryMediator.getCommandFactory(request.getCommand());
 
@@ -77,7 +87,7 @@ public final class CommandController implements Controller {
               request.getLogin());
     } catch (UserNotFoundException e) {
       logger.warn(() -> "User was not found", e);
-      return new Response(Status.NOT_FOUND, userNotFound);
+      return new Response(Status.NOT_FOUND, userNotFoundAnswer);
     } catch (CommandFactoryException e) {
       logger.error("Cannot create command: {}.", (Supplier<?>) request::getCommand, e);
       return new Response(Status.INTERNAL_SERVER_ERROR, commandCreationErrorAnswer);

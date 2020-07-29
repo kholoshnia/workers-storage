@@ -52,11 +52,11 @@ public abstract class Former extends ArgumentFormer {
    * @throws CancelException - if forming was canceled
    */
   protected final boolean readArgumentQuestion(String question) throws CancelException {
-    String input;
-
     while (true) {
       console.write(String.format("%s [y/n]: ", question));
-      input = console.readLine(null, null);
+      logger.info(() -> "Asked y/n question.");
+
+      String input = console.readLine(null, null);
 
       if (input == null) {
         continue;

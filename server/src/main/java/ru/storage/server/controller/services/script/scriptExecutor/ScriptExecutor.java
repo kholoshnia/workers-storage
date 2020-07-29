@@ -23,13 +23,23 @@ import java.util.regex.Pattern;
 public final class ScriptExecutor {
   private static final Logger logger = LogManager.getLogger(ScriptExecutor.class);
 
-  private static final String ERROR_NEAR_PATTERN = "%s: %d %s - %s";
+  private static final String ERROR_NEAR_PATTERN = "%s: %d \"%s\" - %s";
 
   private final Pattern regex;
   private final List<Integer> scriptList;
   private final Map<String, CommandFactory> commandFactoryMap;
   private final FormerMediator formerMediator;
   private final List<Status> stopStatuses;
+
+  private String scriptStartPrefix;
+  private String errorArLinePrefix;
+  private String scriptEndPrefix;
+
+  private String alreadyExecutedAnswer;
+  private String noSuchCommandAnswer;
+  private String userNotFoundAnswer;
+  private String commandCreationErrorAnswer;
+  private String commandNotSupportedAnswer;
 
   @Inject
   public ScriptExecutor(
@@ -50,6 +60,20 @@ public final class ScriptExecutor {
     };
   }
 
+  private void changeLocale(Locale locale) {
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ScriptExecutor", locale);
+
+    scriptStartPrefix = resourceBundle.getString("prefixes.scriptStart");
+    errorArLinePrefix = resourceBundle.getString("prefixes.errorAtLine");
+    scriptEndPrefix = resourceBundle.getString("prefixes.scriptEnd");
+
+    alreadyExecutedAnswer = resourceBundle.getString("answers.alreadyExecuted");
+    noSuchCommandAnswer = resourceBundle.getString("answers.noSuchCommand");
+    userNotFoundAnswer = resourceBundle.getString("answers.userNotFound");
+    commandCreationErrorAnswer = resourceBundle.getString("answers.commandCreationError");
+    commandNotSupportedAnswer = resourceBundle.getString("answers.commandNotSupported");
+  }
+
   /**
    * Executes {@link Script}.
    *
@@ -57,14 +81,7 @@ public final class ScriptExecutor {
    * @return execution response
    */
   public Response execute(Script script) {
-    ResourceBundle resourceBundle =
-        ResourceBundle.getBundle("localized.ScriptExecutor", script.getLocale());
-    String alreadyExecutedAnswer = resourceBundle.getString("answers.alreadyExecuted");
-    String noSuchCommandAnswer = resourceBundle.getString("answers.noSuchCommand");
-    String errorNear = resourceBundle.getString("answers.errorNear");
-    String userNotFound = resourceBundle.getString("answers.userNotFound");
-    String commandCreationErrorAnswer = resourceBundle.getString("answers.commandCreationError");
-    String commandNotSupportedAnswer = resourceBundle.getString("answers.commandNotSupported");
+    changeLocale(script.getLocale());
 
     Integer hash = script.hashCode();
     if (scriptList.contains(hash)) {
@@ -76,16 +93,12 @@ public final class ScriptExecutor {
 
     StringBuilder answer =
         new StringBuilder()
-            .append(resourceBundle.getString("prefixes.scriptStart"))
+            .append(scriptStartPrefix)
             .append(System.lineSeparator())
             .append(System.lineSeparator());
 
-    Iterator<String> iterator = script.iterator();
-
-    int counter = 0;
-    while (iterator.hasNext()) {
-      counter++;
-      String line = iterator.next();
+    while (script.hasNext()) {
+      String line = script.nextLine();
 
       List<String> words = parse(line);
 
@@ -109,18 +122,25 @@ public final class ScriptExecutor {
         scriptList.remove(hash);
         return new Response(
             Status.BAD_REQUEST,
-            String.format("%s: %d %s - %s", errorNear, counter, line, noSuchCommandAnswer));
+            String.format(
+                ERROR_NEAR_PATTERN,
+                errorArLinePrefix,
+                script.getCurrent(),
+                line,
+                noSuchCommandAnswer));
       }
 
       Map<String, String> allArguments;
 
       try {
-        allArguments = argumentFormer.formArguments(arguments, iterator);
+        allArguments = argumentFormer.formArguments(arguments, script);
       } catch (WrongArgumentsException | FormingException e) {
+        logger.error(() -> "Wrong command arguments.", e);
         scriptList.remove(hash);
         return new Response(
             Status.BAD_REQUEST,
-            String.format(ERROR_NEAR_PATTERN, errorNear, counter, line, e.getMessage()));
+            String.format(
+                ERROR_NEAR_PATTERN, errorArLinePrefix, script.getCurrent(), line, e.getMessage()));
       }
 
       CommandFactory commandFactory = commandFactoryMap.get(commandName);
@@ -130,7 +150,12 @@ public final class ScriptExecutor {
         scriptList.remove(hash);
         return new Response(
             Status.BAD_REQUEST,
-            String.format(ERROR_NEAR_PATTERN, errorNear, counter, line, noSuchCommandAnswer));
+            String.format(
+                ERROR_NEAR_PATTERN,
+                errorArLinePrefix,
+                script.getCurrent(),
+                line,
+                noSuchCommandAnswer));
       }
 
       Command command;
@@ -142,7 +167,7 @@ public final class ScriptExecutor {
       } catch (UserNotFoundException e) {
         logger.warn(() -> "User was not found", e);
         scriptList.remove(hash);
-        return new Response(Status.NOT_FOUND, userNotFound);
+        return new Response(Status.NOT_FOUND, userNotFoundAnswer);
       } catch (CommandFactoryException e) {
         logger.error("Cannot create command: {}.", (Supplier<?>) () -> commandName, e);
         scriptList.remove(hash);
@@ -168,11 +193,16 @@ public final class ScriptExecutor {
         scriptList.remove(hash);
         return new Response(
             response.getStatus(),
-            String.format(ERROR_NEAR_PATTERN, errorNear, counter, line, response.getAnswer()));
+            String.format(
+                ERROR_NEAR_PATTERN,
+                errorArLinePrefix,
+                script.getCurrent(),
+                line,
+                response.getAnswer()));
       }
     }
 
-    answer.append(resourceBundle.getString("prefixes.scriptEnd"));
+    answer.append(scriptEndPrefix);
     scriptList.remove(hash);
     logger.info(() -> "Script was executed.");
     return new Response(Status.OK, answer.toString());

@@ -20,13 +20,16 @@ public abstract class WorkerValidator extends ArgumentValidator {
             add(argumentMediator.workerStatus);
             add(argumentMediator.workerStartDate);
             add(argumentMediator.workerEndDate);
+
             add(argumentMediator.coordinates);
             add(argumentMediator.coordinatesX);
             add(argumentMediator.coordinatesY);
             add(argumentMediator.coordinatesZ);
+
             add(argumentMediator.person);
             add(argumentMediator.personName);
             add(argumentMediator.personPassportId);
+
             add(argumentMediator.location);
             add(argumentMediator.locationAddress);
             add(argumentMediator.locationLatitude);

@@ -71,7 +71,7 @@ public abstract class ModificationCommand extends Command {
    */
   protected final CoordinatesDTO createCoordinatesDTO() throws ParserException {
     if (arguments.get(argumentMediator.coordinates) == null
-        || !arguments.get(argumentMediator.coordinates).equals(argumentMediator.included)) {
+        || !arguments.get(argumentMediator.coordinates).equals(argumentMediator.include)) {
       return null;
     }
 
@@ -93,7 +93,7 @@ public abstract class ModificationCommand extends Command {
    */
   protected final LocationDTO createLocationDTO() throws ParserException {
     if (arguments.get(argumentMediator.location) == null
-        || !arguments.get(argumentMediator.location).equals(argumentMediator.included)) {
+        || !arguments.get(argumentMediator.location).equals(argumentMediator.include)) {
       return null;
     }
 
@@ -117,7 +117,7 @@ public abstract class ModificationCommand extends Command {
    */
   protected final PersonDTO createPersonDTO() throws ParserException {
     if (arguments.get(argumentMediator.person) == null
-        || !arguments.get(argumentMediator.person).equals(argumentMediator.included)) {
+        || !arguments.get(argumentMediator.person).equals(argumentMediator.include)) {
       return null;
     }
 
@@ -141,7 +141,7 @@ public abstract class ModificationCommand extends Command {
    */
   protected final WorkerDTO createWorkerDTO() throws ParserException {
     if (arguments.get(argumentMediator.worker) == null
-        || !arguments.get(argumentMediator.worker).equals(argumentMediator.included)) {
+        || !arguments.get(argumentMediator.worker).equals(argumentMediator.include)) {
       return null;
     }
 

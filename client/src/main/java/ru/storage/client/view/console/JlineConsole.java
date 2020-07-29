@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-/** Setups Jline line reader with specified options. */
+/** Setups Jline line reader with the specified options. */
 public final class JlineConsole implements LocaleListener {
   private static final Logger logger = LogManager.getLogger(JlineConsole.class);
 

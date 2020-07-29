@@ -3,7 +3,6 @@ package ru.storage.server.model.domain.repository.repositories.userRepository.qu
 import ru.storage.server.model.domain.entity.entities.user.User;
 import ru.storage.server.model.domain.repository.Query;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +23,6 @@ public final class GetEqualsLoginUsers implements Query<User> {
   public List<User> execute(List<User> users) {
     return users.stream()
         .filter(user -> user.getLogin().equals(login))
-        .collect(Collectors.toCollection(ArrayList::new));
+        .collect(Collectors.toList());
   }
 }

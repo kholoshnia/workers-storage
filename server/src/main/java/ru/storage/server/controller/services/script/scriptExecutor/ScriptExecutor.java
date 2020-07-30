@@ -15,6 +15,8 @@ import ru.storage.server.controller.services.script.scriptExecutor.argumentForme
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.FormerMediator;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.exceptions.FormingException;
 import ru.storage.server.controller.services.script.scriptExecutor.argumentFormer.exceptions.WrongArgumentsException;
+import ru.storage.server.model.domain.history.History;
+import ru.storage.server.model.domain.history.Record;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -29,6 +31,7 @@ public final class ScriptExecutor {
   private final List<Integer> scriptList;
   private final Map<String, CommandFactory> commandFactoryMap;
   private final FormerMediator formerMediator;
+  private final History history;
   private final List<Status> stopStatuses;
 
   private String scriptStartPrefix;
@@ -43,10 +46,13 @@ public final class ScriptExecutor {
 
   @Inject
   public ScriptExecutor(
-      Map<String, CommandFactory> commandFactoryMap, FormerMediator formerMediator) {
+      Map<String, CommandFactory> commandFactoryMap,
+      FormerMediator formerMediator,
+      History history) {
     regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
     this.commandFactoryMap = commandFactoryMap;
     this.formerMediator = formerMediator;
+    this.history = history;
     stopStatuses = initStopStatuses();
     scriptList = new ArrayList<>();
   }
@@ -181,6 +187,8 @@ public final class ScriptExecutor {
       }
 
       Response response = command.executeCommand();
+
+      history.addRecord(new Record(commandName, allArguments, response));
 
       if (!stopStatuses.contains(response.getStatus())) {
         answer

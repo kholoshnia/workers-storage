@@ -38,12 +38,14 @@ worker:include
             personName:asd
             personPassportId:29131092391
 
-            location:include
-                locationAddress:asd 192 20393
-                locationLatitude:1
-                locationLongitude:1
+show
+info
 
 remove 1
 
 show
 info
+
+show_history
+    clear_history
+    show_history

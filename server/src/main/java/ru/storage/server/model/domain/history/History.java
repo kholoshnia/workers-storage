@@ -29,12 +29,12 @@ public final class History {
 
   public void addRecord(@Nonnull Record record) {
     records.add(record);
-    logger.debug(() -> "New record was added to the history.");
+    logger.info(() -> "New record was added to the history.");
   }
 
   public void clear() {
     records.clear();
-    logger.debug(() -> "History was cleared.");
+    logger.info(() -> "History was cleared.");
   }
 
   public long getSize() {

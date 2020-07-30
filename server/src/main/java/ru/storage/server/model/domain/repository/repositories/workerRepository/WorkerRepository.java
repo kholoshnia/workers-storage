@@ -129,7 +129,7 @@ public final class WorkerRepository implements Repository<Worker> {
 
     List<Worker> result = query.execute(workers);
 
-    logger.debug("Worker query: {} was executed.", () -> query);
+    logger.info("Worker query: {} was executed.", () -> query);
     return result;
   }
 

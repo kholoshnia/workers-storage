@@ -56,8 +56,8 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
   private String user;
   private String login;
   private String prefix;
-  private boolean processing;
   private String token;
+  private boolean processing;
 
   private String connectedMessage;
   private String connectingMessage;
@@ -97,9 +97,10 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
     writer = jlineConsole.getPrintWriter();
     prompt = " ~ $ ";
     prefix = "";
-    processing = true;
+    user = "";
     login = "";
     token = "";
+    processing = true;
   }
 
   /**
@@ -285,13 +286,14 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
     if (token != null) {
       this.token = token;
 
-      if (login == null) {
+      if (token.isEmpty()) {
+        user = "";
+        login = "";
         prefix = "";
       } else {
+        login = user;
         prefix = user;
       }
-
-      login = user;
     }
 
     String answer = null;

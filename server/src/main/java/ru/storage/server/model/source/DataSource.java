@@ -119,7 +119,7 @@ public abstract class DataSource implements ExitListener {
       }
     }
 
-    logger.debug(() -> "Statement was closed.");
+    logger.info(() -> "Statement was closed.");
   }
 
   /**

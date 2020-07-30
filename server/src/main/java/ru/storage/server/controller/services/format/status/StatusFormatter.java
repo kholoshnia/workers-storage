@@ -17,7 +17,7 @@ public final class StatusFormatter extends StatusFormat {
   public StatusFormatter(Locale locale) {
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.StatusFormat", locale);
     statusMap = initStatusMap(resourceBundle);
-    logger.debug(() -> "Status localized map was created.");
+    logger.info(() -> "Status localized map was created.");
   }
 
   private Map<Status, String> initStatusMap(ResourceBundle resourceBundle) {

@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
 import ru.storage.common.exitManager.ExitManager;
-import ru.storage.common.exitManager.exceptions.ExitingException;
 import ru.storage.common.transfer.response.Response;
 import ru.storage.common.transfer.response.Status;
 import ru.storage.server.controller.services.script.scriptExecutor.ScriptExecutor;
@@ -19,43 +18,34 @@ import java.util.ResourceBundle;
 public class ExitCommand extends SpecialCommand {
   private static final Logger logger = LogManager.getLogger(ExitCommand.class);
 
-  private final String exitErrorAnswer;
-  private final String exitSuccessfullyAnswer;
+  private final String clientExitAnswer;
 
   public ExitCommand(
-      Configuration configuration,
-      CommandMediator commandMediator,
-      ArgumentMediator argumentMediator,
-      Map<String, String> arguments,
-      User user,
-      Locale locale,
-      ExitManager exitManager,
-      ScriptExecutor scriptExecutor) {
+          Configuration configuration,
+          CommandMediator commandMediator,
+          ArgumentMediator argumentMediator,
+          Map<String, String> arguments,
+          User user,
+          Locale locale,
+          ExitManager exitManager,
+          ScriptExecutor scriptExecutor) {
     super(
-        configuration,
-        commandMediator,
-        argumentMediator,
-        arguments,
-        user,
-        locale,
-        exitManager,
-        scriptExecutor);
-
+            configuration,
+            commandMediator,
+            argumentMediator,
+            arguments,
+            user,
+            locale,
+            exitManager,
+            scriptExecutor);
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ExitCommand", locale);
 
-    exitErrorAnswer = resourceBundle.getString("answers.exitError");
-    exitSuccessfullyAnswer = resourceBundle.getString("answers.exitSuccessfully");
+    clientExitAnswer = resourceBundle.getString("answers.clientExit");
   }
 
   @Override
   public Response executeCommand() {
-    try {
-      exitManager.exit();
-    } catch (ExitingException e) {
-      logger.fatal(() -> "Cannot exit.", e);
-      return new Response(Status.INTERNAL_SERVER_ERROR, exitErrorAnswer);
-    }
-
-    return new Response(Status.OK, exitSuccessfullyAnswer);
+    logger.info(() -> "Exit must happen on the client.");
+    return new Response(Status.BAD_REQUEST, clientExitAnswer);
   }
 }

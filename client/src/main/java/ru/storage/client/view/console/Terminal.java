@@ -96,9 +96,9 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
     reader = jlineConsole.getLineReader();
     writer = jlineConsole.getPrintWriter();
     prompt = " ~ $ ";
-    prefix = "";
     user = "";
     login = "";
+    prefix = "";
     token = "";
     processing = true;
   }
@@ -367,6 +367,11 @@ public final class Terminal implements Console, ExitListener, LocaleListener {
     logger.info(() -> "Connected to the server.");
     writeLine(String.format("\r%s", connectedMessage));
     writeLine();
+
+    user = "";
+    login = "";
+    prefix = "";
+    token = "";
 
     return response;
   }

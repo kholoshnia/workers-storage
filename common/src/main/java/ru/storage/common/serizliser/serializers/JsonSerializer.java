@@ -33,7 +33,7 @@ public final class JsonSerializer implements Serializer {
   @Override
   public <T extends Serializable> T deserialize(byte[] bytes, Class<T> clazz)
       throws DeserializationException {
-    String json = new String(bytes, StandardCharsets.UTF_8);
+    String json = new String(bytes, StandardCharsets.UTF_8).trim();
     T result;
 
     try {

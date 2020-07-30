@@ -3,6 +3,7 @@ package ru.storage.client.app.connection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.client.app.connection.exceptions.ClientConnectionException;
+import ru.storage.common.chunker.ByteChunker;
 import ru.storage.common.exitManager.ExitListener;
 import ru.storage.common.exitManager.exceptions.ExitingException;
 import ru.storage.common.serizliser.Serializer;
@@ -17,25 +18,36 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public final class ServerWorker implements ExitListener {
   private static final Logger logger = LogManager.getLogger(ServerWorker.class);
 
   private final int bufferSize;
+  private final ByteChunker chunker;
   private final Serializer serializer;
   private final InetSocketAddress socketAddress;
 
   private Socket server;
   private ByteBuffer buffer;
 
-  public ServerWorker(InetAddress address, int port, int bufferSize, Serializer serializer) {
+  public ServerWorker(
+      InetAddress address, int port, int bufferSize, ByteChunker chunker, Serializer serializer) {
     this.bufferSize = bufferSize;
     buffer = ByteBuffer.allocate(bufferSize);
+    this.chunker = chunker;
     this.serializer = serializer;
     socketAddress = new InetSocketAddress(address, port);
     server = new Socket();
   }
 
+  /**
+   * Connects to the server.
+   *
+   * @throws ClientConnectionException - if cannot connect to the server
+   */
   public void connect() throws ClientConnectionException {
     try {
       server.connect(socketAddress);
@@ -51,23 +63,50 @@ public final class ServerWorker implements ExitListener {
     }
   }
 
+  /**
+   * Reads one chunk.
+   *
+   * @param inputStream server input stream
+   * @return chunk
+   * @throws IOException - in case of connection exceptions
+   */
+  private byte[] readChunk(InputStream inputStream) throws IOException {
+    int size = inputStream.read(buffer.array());
+
+    if (size == -1) {
+      buffer = ByteBuffer.allocate(bufferSize);
+      server.close();
+      return null;
+    }
+
+    byte[] chunk = new byte[size];
+
+    buffer.rewind();
+    buffer.get(chunk, 0, size);
+    buffer.clear();
+
+    return chunk;
+  }
+
+  /**
+   * Reads {@link Response} from the server.
+   *
+   * @return response from the server
+   * @throws ClientConnectionException - in case of connection exceptions
+   * @throws DeserializationException - in case of deserialization exceptions
+   */
   public Response read() throws ClientConnectionException, DeserializationException {
     try {
       InputStream inputStream = server.getInputStream();
-      int size = inputStream.read(buffer.array());
+      List<byte[]> chunks = new ArrayList<>();
+      byte[] chunk = readChunk(inputStream);
 
-      if (size == -1) {
-        buffer = ByteBuffer.allocate(bufferSize);
-        server.close();
-        return null;
+      while (!Arrays.equals(chunk, chunker.getStopWordChunk())) {
+        chunks.add(chunk);
+        chunk = readChunk(inputStream);
       }
 
-      byte[] bytes = new byte[size];
-
-      buffer.rewind();
-      buffer.get(bytes, 0, size);
-      buffer.clear();
-
+      byte[] bytes = chunker.join(chunks);
       return serializer.deserialize(bytes, Response.class);
     } catch (IOException e) {
       try {
@@ -83,11 +122,21 @@ public final class ServerWorker implements ExitListener {
     }
   }
 
+  /**
+   * Writes {@link Request} to the server.
+   *
+   * @param request request to the server
+   * @throws ClientConnectionException - in case of connection exceptions
+   */
   public void write(Request request) throws ClientConnectionException {
     try {
       OutputStream outputStream = server.getOutputStream();
       byte[] bytes = serializer.serialize(request);
-      outputStream.write(bytes);
+      List<byte[]> chunks = chunker.split(bytes);
+
+      for (byte[] chunk : chunks) {
+        outputStream.write(chunk);
+      }
     } catch (IOException e) {
       try {
         server.close();

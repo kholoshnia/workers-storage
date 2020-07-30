@@ -12,6 +12,8 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.storage.common.CommandMediator;
+import ru.storage.common.chunker.ByteChunker;
+import ru.storage.common.chunker.Chunker;
 import ru.storage.common.exitManager.ExitListener;
 import ru.storage.common.exitManager.ExitManager;
 import ru.storage.common.guice.CommonModule;
@@ -172,8 +174,22 @@ public final class ServerModule extends AbstractModule {
 
   @Provides
   @Singleton
+  ByteChunker provideChunker(Configuration configuration) {
+    int bufferSize = configuration.getInt("server.bufferSize");
+    String stopWord = configuration.getString("server.stopWord");
+
+    ByteChunker chunker = new Chunker(bufferSize, stopWord);
+    logger.debug(() -> "Provided ByteChunker.");
+    return chunker;
+  }
+
+  @Provides
+  @Singleton
   ServerConnection provideServerConnection(
-      Configuration configuration, ServerProcessor serverProcessor, Serializer serializer)
+      Configuration configuration,
+      ServerProcessor serverProcessor,
+      ByteChunker chunker,
+      Serializer serializer)
       throws ProvidingException {
     ServerConnection serverConnection;
 
@@ -182,7 +198,7 @@ public final class ServerModule extends AbstractModule {
       InetAddress address = InetAddress.getByName(configuration.getString("server.localhost"));
       int port = configuration.getInt("server.port");
       serverConnection =
-          new ServerConnection(bufferSize, address, port, serverProcessor, serializer);
+          new ServerConnection(bufferSize, address, port, serverProcessor, chunker, serializer);
     } catch (SelectorException | ServerException | UnknownHostException e) {
       logger.fatal(() -> "Cannot provide Server.", e);
       throw new ProvidingException(e);

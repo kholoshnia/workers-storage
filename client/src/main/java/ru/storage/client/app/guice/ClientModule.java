@@ -32,6 +32,8 @@ import ru.storage.client.view.console.Terminal;
 import ru.storage.client.view.console.exceptions.ConsoleException;
 import ru.storage.common.ArgumentMediator;
 import ru.storage.common.CommandMediator;
+import ru.storage.common.chunker.ByteChunker;
+import ru.storage.common.chunker.Chunker;
 import ru.storage.common.exitManager.ExitListener;
 import ru.storage.common.exitManager.ExitManager;
 import ru.storage.common.guice.CommonModule;
@@ -114,7 +116,19 @@ public final class ClientModule extends AbstractModule {
 
   @Provides
   @Singleton
-  ServerWorker provideServerWorker(Configuration configuration, Serializer serializer)
+  ByteChunker provideChunker(Configuration configuration) {
+    int bufferSize = configuration.getInt("server.bufferSize");
+    String stopWord = configuration.getString("server.stopWord");
+
+    ByteChunker chunker = new Chunker(bufferSize, stopWord);
+    logger.debug(() -> "Provided ByteChunker.");
+    return chunker;
+  }
+
+  @Provides
+  @Singleton
+  ServerWorker provideServerWorker(
+      Configuration configuration, ByteChunker chunker, Serializer serializer)
       throws ProvidingException {
     ServerWorker serverWorker;
 
@@ -122,7 +136,7 @@ public final class ClientModule extends AbstractModule {
       InetAddress address = InetAddress.getByName(configuration.getString("server.address"));
       int bufferSize = configuration.getInt("server.bufferSize");
       int port = configuration.getInt("server.port");
-      serverWorker = new ServerWorker(address, port, bufferSize, serializer);
+      serverWorker = new ServerWorker(address, port, bufferSize, chunker, serializer);
     } catch (UnknownHostException e) {
       logger.fatal(() -> "Cannot provide Server.", e);
       throw new ProvidingException(e);

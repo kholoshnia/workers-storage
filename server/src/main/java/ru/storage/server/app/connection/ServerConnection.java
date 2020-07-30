@@ -2,6 +2,7 @@ package ru.storage.server.app.connection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.storage.common.chunker.ByteChunker;
 import ru.storage.common.serizliser.Serializer;
 import ru.storage.server.app.connection.exceptions.ServerException;
 import ru.storage.server.app.connection.selector.SelectorConnection;
@@ -19,6 +20,7 @@ public class ServerConnection extends SelectorConnection {
   private static final Logger logger = LogManager.getLogger(ServerConnection.class);
 
   private final int bufferSize;
+  private final ByteChunker chunker;
   private final Serializer serializer;
   private final ServerProcessor serverProcessor;
   private final ServerSocketChannel serverSocketChannel;
@@ -28,9 +30,11 @@ public class ServerConnection extends SelectorConnection {
       InetAddress address,
       int port,
       ServerProcessor serverProcessor,
+      ByteChunker chunker,
       Serializer serializer)
       throws SelectorException, ServerException {
     this.bufferSize = bufferSize;
+    this.chunker = chunker;
     this.serializer = serializer;
     this.serverProcessor = serverProcessor;
 
@@ -51,7 +55,7 @@ public class ServerConnection extends SelectorConnection {
     try {
       SocketChannel client = serverSocketChannel.accept();
       client.configureBlocking(false);
-      ClientWorker clientWorker = new ClientWorker(bufferSize, serializer, client);
+      ClientWorker clientWorker = new ClientWorker(bufferSize, chunker, serializer, client);
       client.register(selector, client.validOps(), clientWorker);
       logger.info("New client was accepted: {}.", client.getRemoteAddress());
     } catch (IOException | ServerException e) {

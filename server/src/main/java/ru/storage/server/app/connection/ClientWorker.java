@@ -2,6 +2,7 @@ package ru.storage.server.app.connection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.storage.common.chunker.ByteChunker;
 import ru.storage.common.serizliser.Serializer;
 import ru.storage.common.serizliser.exceptions.DeserializationException;
 import ru.storage.common.transfer.Request;
@@ -13,20 +14,26 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public final class ClientWorker {
   private static final Logger logger = LogManager.getLogger(ClientWorker.class);
 
   private final int bufferSize;
+  private final ByteChunker chunker;
   private final Serializer serializer;
   private final SocketChannel client;
 
   private ByteBuffer buffer;
 
-  public ClientWorker(int bufferSize, Serializer serializer, SocketChannel client)
+  public ClientWorker(
+      int bufferSize, ByteChunker chunker, Serializer serializer, SocketChannel client)
       throws ServerException {
     this.bufferSize = bufferSize;
     buffer = ByteBuffer.allocate(bufferSize);
+    this.chunker = chunker;
     this.serializer = serializer;
     this.client = client;
 
@@ -38,22 +45,47 @@ public final class ClientWorker {
     }
   }
 
+  /**
+   * Reads one chunk.
+   *
+   * @return chunk
+   * @throws IOException - in case of connection exceptions
+   */
+  private byte[] readChunk() throws IOException {
+    int size = client.read(buffer);
+
+    if (size == -1) {
+      buffer = ByteBuffer.allocate(bufferSize);
+      client.close();
+      return null;
+    }
+
+    byte[] chunk = new byte[size];
+
+    buffer.rewind();
+    buffer.get(chunk, 0, size);
+    buffer.clear();
+
+    return chunk;
+  }
+
+  /**
+   * Reads {@link Request} from the client.
+   *
+   * @return request from the client
+   * @throws SelectorException - in case of selector exceptions
+   */
   public Request read() throws SelectorException {
     try {
-      int size = client.read(buffer);
+      List<byte[]> chunks = new ArrayList<>();
+      byte[] chunk = readChunk();
 
-      if (size == -1) {
-        buffer = ByteBuffer.allocate(bufferSize);
-        client.close();
-        return null;
+      while (!Arrays.equals(chunk, chunker.getStopWordChunk())) {
+        chunks.add(chunk);
+        chunk = readChunk();
       }
 
-      byte[] bytes = new byte[size];
-
-      buffer.rewind();
-      buffer.get(bytes, 0, size);
-      buffer.clear();
-
+      byte[] bytes = chunker.join(chunks);
       return serializer.deserialize(bytes, Request.class);
     } catch (ClosedChannelException e) {
       logger.info(() -> "Client closed connection.");
@@ -72,10 +104,20 @@ public final class ClientWorker {
     }
   }
 
+  /**
+   * Writes {@link Response} to the client.
+   *
+   * @param response response to the client
+   * @throws SelectorException - in case of selector exceptions
+   */
   public void write(Response response) throws SelectorException {
     try {
       byte[] bytes = serializer.serialize(response);
-      client.write(ByteBuffer.wrap(bytes));
+      List<byte[]> chunks = chunker.split(bytes);
+
+      for (byte[] chunk : chunks) {
+        client.write(ByteBuffer.wrap(chunk));
+      }
     } catch (ClosedChannelException e) {
       logger.info(() -> "Client closed connection.");
     } catch (IOException e) {

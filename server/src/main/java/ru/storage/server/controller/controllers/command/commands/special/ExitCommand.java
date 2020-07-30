@@ -21,23 +21,23 @@ public class ExitCommand extends SpecialCommand {
   private final String clientExitAnswer;
 
   public ExitCommand(
-          Configuration configuration,
-          CommandMediator commandMediator,
-          ArgumentMediator argumentMediator,
-          Map<String, String> arguments,
-          User user,
-          Locale locale,
-          ExitManager exitManager,
-          ScriptExecutor scriptExecutor) {
+      Configuration configuration,
+      CommandMediator commandMediator,
+      ArgumentMediator argumentMediator,
+      Map<String, String> arguments,
+      User user,
+      Locale locale,
+      ExitManager exitManager,
+      ScriptExecutor scriptExecutor) {
     super(
-            configuration,
-            commandMediator,
-            argumentMediator,
-            arguments,
-            user,
-            locale,
-            exitManager,
-            scriptExecutor);
+        configuration,
+        commandMediator,
+        argumentMediator,
+        arguments,
+        user,
+        locale,
+        exitManager,
+        scriptExecutor);
     ResourceBundle resourceBundle = ResourceBundle.getBundle("localized.ExitCommand", locale);
 
     clientExitAnswer = resourceBundle.getString("answers.clientExit");

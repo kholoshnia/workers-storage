@@ -23,6 +23,7 @@ public abstract class ArgumentFormer {
   /**
    * Checks number of command arguments and its values.
    *
+   * @param arguments command arguments
    * @throws WrongArgumentsException - if arguments are incorrect
    */
   protected abstract void check(List<String> arguments) throws WrongArgumentsException;

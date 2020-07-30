@@ -19,16 +19,20 @@ import java.util.Locale;
  * <p>List of available arguments:
  *
  * <ul>
- *   <li>id
+ *   <li>worker
+ *   <li>workerId
  *   <li>workerSalary
  *   <li>workerStatus
  *   <li>workerStartDate
  *   <li>workerEndDate
+ *   <li>coordinates
  *   <li>coordinatesX
  *   <li>coordinatesY
  *   <li>coordinatesZ
+ *   <li>person
  *   <li>personName
  *   <li>personPassportId
+ *   <li>location
  *   <li>locationAddress
  *   <li>locationLatitude
  *   <li>locationLongitude
